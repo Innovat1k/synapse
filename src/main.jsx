@@ -16,8 +16,7 @@ const route = createBrowserRouter([
     element: <App />,
     errorElement: <FallbackComponent />,
     children: [
-      { index: true, element: <DashBoard /> },
-      { path: "/dashboard", element: <DashBoard /> },
+      { index: true, path: "/dashboard", element: <DashBoard /> },
       {
         path: "/auth",
         element: <UserAuthPage />,

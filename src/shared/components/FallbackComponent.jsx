@@ -17,7 +17,7 @@ function FallbackComponent({ message, type = "info" }) {
     <div className={containerStyles}>
       <div className="mb-2">{icons[type]}</div>
       <p className={textStyles}>{fallback_message}</p>
-      <Link to="/" className="font-bold text-emerald-600">
+      <Link to="/dashboard" className="font-bold text-emerald-600">
         Return back
       </Link>
     </div>

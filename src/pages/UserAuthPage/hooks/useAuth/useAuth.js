@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../../../services/supabase-client";
 import { useAtom } from "jotai";
-import { notification_atom, session_atom } from "../../../../atoms/atoms";
+import {
+  notification_atom,
+  session_atom,
+  user_atom,
+} from "../../../../atoms/atoms";
 import { useNavigate } from "react-router-dom";
 import { useFormData } from "../../../../shared/hooks/useFormData/useFormData";
 
@@ -16,6 +20,7 @@ export const useAuth = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notification, setNotification] = useAtom(notification_atom);
   const [userSession, setUserSession] = useAtom(session_atom);
+  const [user, setUser] = useAtom(user_atom);
 
   // Get form input methods
   const {
@@ -47,6 +52,15 @@ export const useAuth = () => {
       subscription.unsubscribe();
     };
   }, []);
+
+  // Get user with session
+  useEffect(() => {
+    if (userSession?.user) {
+      setUser(userSession.user);
+    } else {
+      setUser(null);
+    }
+  }, [userSession]);
 
   // Sign In
   const handleSignIn = async (e) => {
@@ -127,6 +141,7 @@ export const useAuth = () => {
     loader: { isSubmitting, isInitialLoading },
     isLogin,
     userSession,
+    user,
     methods: {
       handleChange,
       handleToggleAuth,

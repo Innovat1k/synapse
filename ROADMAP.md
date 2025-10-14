@@ -12,9 +12,9 @@ This document outlines the planned features and improvements for upcoming versio
 
 [X] Protected routes implementation.
 
-[ ] Supabase database setup (defining tables: users, skills, activities).
+[X] Supabase database setup (defining tables: users, skills, activities).
 
-[ ] Base Dashboard layout.
+[X] Base Dashboard layout.
 
 ## Phase 3 – Skill Management
 
