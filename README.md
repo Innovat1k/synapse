@@ -38,7 +38,7 @@ The goal is to build a **solid, intuitive, and visually appealing web app**, whi
 - ✅ **Authentication & Security:** Sign In / Sign Up / Logout flows completed
 - ✅ **UX Polish:** Custom form validation + **Framer Motion** animations
 - ✅ **Protected routes:** Secure access to main app
-- ⬜ **CRUD Skills:** Create, Read, Update, Delete skills (name, category, level 1–5)
+- ✅ **CRUD Skills:** Create, Read, Update, Delete skills (name, category, level 1–5)
 - ⬜ **Linking Skills:** Define dependencies & related skills (graph-style relationships)
 - ⬜ Log activity (time spent, sessions) to track effort
 - ⬜ Dashboard with progress charts & activity timelines

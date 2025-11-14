@@ -9,6 +9,8 @@ import DashBoard from "./pages/DashBoard/DashBoard.jsx";
 import UserAuthPage from "./pages/UserAuthPage/components/UserAuthPage.jsx";
 import CheckEmailPage from "./pages/CheckEmailPage/CheckEmailPage.jsx";
 import { Toast } from "radix-ui";
+import SkillsPage from "./pages/SkillsPage/components/SkillsPage.jsx";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const route = createBrowserRouter([
   {
@@ -22,16 +24,21 @@ const route = createBrowserRouter([
         element: <UserAuthPage />,
       },
       { path: "/auth/check-email", element: <CheckEmailPage /> },
+      { path: "/skills", element: <SkillsPage /> },
     ],
   },
 ]);
 
+const queryClient = new QueryClient();
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <Provider>
-      <Toast.Provider>
-        <RouterProvider router={route} />
-      </Toast.Provider>
-    </Provider>
+    <QueryClientProvider client={queryClient}>
+      <Provider>
+        <Toast.Provider>
+          <RouterProvider router={route} />
+        </Toast.Provider>
+      </Provider>
+    </QueryClientProvider>
   </StrictMode>
 );

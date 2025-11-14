@@ -12,7 +12,7 @@ function NavBar() {
 
   const navigation_menu = [
     { name: "Dashboard", path: "/dashboard", icon: <LuLayoutDashboard /> },
-    { name: "My Skills", path: "/my-skills", icon: <LuGraduationCap /> },
+    { name: "My Skills", path: "/skills", icon: <LuGraduationCap /> },
     { name: "Projects", path: "/projects", icon: <LuBriefcase /> },
     { name: "Goals", path: "/goals", icon: <LuTarget /> },
     { name: "Settings", path: "/settings", icon: <LuSettings /> },
