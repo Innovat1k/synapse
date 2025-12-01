@@ -4,13 +4,14 @@ import SkillFormModal from "./SkillFormModal";
 import userEvent from "@testing-library/user-event";
 
 const mockSkill = {
-  name: "React js",
-  id: 23,
+  name: "React JS",
+  skill_id: "550e8400-e29b-41d4-a716-446655440001",
   category: "frontend",
   level: 4,
-  description: "online free react js course to get certification.",
+  description: "Completed an online React JS course leading to certification.",
   tags: ["programming", "visual"],
 };
+
 const mockHandleDelete = vi.fn();
 
 describe("SkillFormModal", () => {
@@ -43,6 +44,41 @@ describe("SkillFormModal", () => {
     expect(mockClose).toHaveBeenCalledOnce();
   });
 
+  it("allows to add new tag when editing a skill", async () => {
+    render(
+      <SkillFormModal mode="create" initialData={mockSkill} onClose={vi.fn()} />
+    );
+
+    expect(await screen.findByRole("heading", { level: 2 })).toHaveTextContent(
+      /new skill/i
+    );
+
+    const tag_input = screen.getByLabelText(/tags/i);
+    await user.type(tag_input, "oop");
+    expect(tag_input).toHaveValue("oop");
+
+    await user.click(screen.getByRole("button", { name: /add tag/i }));
+    expect(
+      within(screen.getByTestId("skill-tags")).getByText(/oop/i)
+    ).toBeInTheDocument();
+  });
+
+  it("allows to remove existing tag when editing a skill", async () => {
+    render(<SkillFormModal mode="edit" initialData={mockSkill} />);
+
+    expect(
+      within(screen.getByTestId("skill-tags")).getByText(/programming/i)
+    ).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("button", { name: /remove programming tag/i })
+    );
+
+    expect(
+      within(screen.getByTestId("skill-tags")).queryByText(/programming/i)
+    ).not.toBeInTheDocument();
+  });
+
   describe("create modal", () => {
     it("renders SkillFormModal for create new skill", () => {
       render(<SkillFormModal mode="create" />);
@@ -71,18 +107,18 @@ describe("SkillFormModal", () => {
       expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(
         /edit skill/i
       );
-      expect(screen.getByLabelText(/name/i)).toHaveValue("React js");
-      expect(screen.getByLabelText(/category/i)).toHaveValue("frontend");
-      expect(screen.getByLabelText(/level/i)).toHaveValue("4");
-      expect(screen.getByLabelText(/description/i)).toHaveValue(
-        "online free react js course to get certification."
+      expect(screen.getByLabelText(/name/i).value).toMatch(/react js/i);
+      expect(screen.getByLabelText(/category/i).value).toMatch(/frontend/i);
+      expect(screen.getByLabelText(/level/i).value).toMatch("4");
+      expect(screen.getByLabelText(/description/i).value).toMatch(
+        /completed an online React JS course leading to certification/i
       );
       expect(screen.getByLabelText(/tags/i)).toBeInTheDocument();
       expect(
-        within(screen.getByTestId("skill tags")).getByText("visual")
+        within(screen.getByTestId("skill-tags")).getByText(/visual/i)
       ).toBeInTheDocument();
       expect(
-        within(screen.getByTestId("skill tags")).getByText("programming")
+        within(screen.getByTestId("skill-tags")).getByText(/programming/i)
       ).toBeInTheDocument();
 
       expect(

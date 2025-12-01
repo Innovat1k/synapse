@@ -8,8 +8,10 @@ import FallbackComponent from "./shared/components/FallBackComponent.jsx";
 import DashBoard from "./pages/DashBoard/DashBoard.jsx";
 import UserAuthPage from "./pages/UserAuthPage/components/UserAuthPage.jsx";
 import CheckEmailPage from "./pages/CheckEmailPage/CheckEmailPage.jsx";
+import SkillsLayout from "./layouts/SkillsLayout.jsx";
+import SkillsListPage from "./pages/SkillsListPage/SkillsListPage.jsx";
+import SkillDetailPage from "./pages/SkillDetailPage/SkillDetailPage.jsx";
 import { Toast } from "radix-ui";
-import SkillsPage from "./pages/SkillsPage/components/SkillsPage.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const route = createBrowserRouter([
@@ -24,7 +26,14 @@ const route = createBrowserRouter([
         element: <UserAuthPage />,
       },
       { path: "/auth/check-email", element: <CheckEmailPage /> },
-      { path: "/skills", element: <SkillsPage /> },
+      {
+        path: "/skills",
+        element: <SkillsLayout />,
+        children: [
+          { index: true, element: <SkillsListPage /> },
+          { path: ":skillId", element: <SkillDetailPage /> },
+        ],
+      },
     ],
   },
 ]);

@@ -1,26 +1,18 @@
 import { useMemo, useState } from "react";
-import { fetchSkills } from "../../../services/skillService";
-import { useQuery } from "@tanstack/react-query";
-import { acceleratedValues } from "framer-motion";
 
 /**
  * Custom hook for managing the fetched skills.
  * It ensures that users can see, search and sort skills.
  */
 
-export const useSkills = () => {
+export const useSkillsList = (skillsData) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("all skills");
   const [sortBy, setSortBy] = useState("name");
   const [isAscendant, setIsAscendant] = useState(true);
 
-  const { data: skills = [], isLoading } = useQuery({
-    queryKey: ["skills"],
-    queryFn: fetchSkills,
-  });
-
   const filteredSkills = useMemo(() => {
-    let result = [...skills];
+    let result = [...skillsData];
 
     // Filter by category
     if (activeCategory === "others") {
@@ -59,7 +51,7 @@ export const useSkills = () => {
     }
 
     return result;
-  }, [skills, activeCategory, searchTerm, sortBy, isAscendant]);
+  }, [skillsData, activeCategory, searchTerm, sortBy, isAscendant]);
 
   const handleSort = (field) => {
     if (sortBy === field) {
@@ -71,7 +63,6 @@ export const useSkills = () => {
   };
 
   return {
-    isLoading,
     sortStates: { sortBy, isAscendant },
     handleSort,
     search: { searchTerm, setSearchTerm, filteredSkills },

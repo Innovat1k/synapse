@@ -19,7 +19,7 @@ function App() {
   return (
     <div className="relative min-h-screen flex flex-col">
       {isAuthRoute ? (
-        <Outlet context={{ methods, isLogin, loader, formData, touched }} />
+        <Outlet context={{ methods, isLogin, loader, formData, touched }} />  
       ) : (
         <>
           <Header signOut={methods.handleSignOut} user={user} />

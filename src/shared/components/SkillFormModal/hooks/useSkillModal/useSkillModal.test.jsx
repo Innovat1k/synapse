@@ -3,11 +3,14 @@ import { beforeEach, describe, expect, vi } from "vitest";
 import { useSkillModal } from "./useSkillModal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as skillService from "../../../../../services/skillService";
+import { MemoryRouter } from "react-router-dom";
+
+vi.mock("../../../../../services/skillService")
 
 describe("useSkillModal", () => {
   const mockSkill = {
     name: "React js",
-    id: 23,
+    skill_id: "550e8400-e29b-41d4-a716-446655440000",
     category: "frontend",
     level: 4,
     description: "online free react js course to get certification.",
@@ -20,7 +23,9 @@ describe("useSkillModal", () => {
   beforeEach(() => {
     queryClient = new QueryClient();
     wrapper = ({ children }) => (
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>{children}</MemoryRouter>
+      </QueryClientProvider>
     );
   });
 
@@ -70,19 +75,19 @@ describe("useSkillModal", () => {
   });
 
   it("calls createSkill service if modalMode is create while saving", async () => {
-    vi.spyOn(skillService, "createSkill");
+    // vi.spyOn(skillService, "createSkill");
+    vi.mocked(skillService.createSkill).mockResolvedValue(mockSkill);
     const { result } = renderHook(() => useSkillModal(), { wrapper: wrapper });
 
     act(() => {
       result.current.methods.openCreateModal();
     });
-    act(() => {
-      result.current.methods.handleSaveSkill(mockSkill);
+    await act(async () => {
+      await result.current.methods.handleSaveSkill(mockSkill);
     });
 
     await waitFor(() => {
       expect(skillService.createSkill).toHaveBeenCalledWith(mockSkill);
-      // expect(result.current.methods.closeModal).toHaveBeenCalledOnce();
       expect(result.current.isSubmitting).toBeFalsy();
       expect(result.current.modal.modalMode).toEqual("");
     });
@@ -95,16 +100,15 @@ describe("useSkillModal", () => {
     act(() => {
       result.current.methods.openEditModal();
     });
-    act(() => {
-      result.current.methods.handleSaveSkill(mockSkill);
+    await act(async () => {
+      await result.current.methods.handleSaveSkill(mockSkill);
     });
 
     await waitFor(() => {
       expect(skillService.updateSkill).toHaveBeenCalledWith(
-        mockSkill.id,
+        mockSkill.skill_id,
         mockSkill
       );
-      // expect(result.current.methods.closeModal).toHaveBeenCalledOnce();
       expect(result.current.isSubmitting).toBeFalsy();
       expect(result.current.modal.modalMode).toEqual("");
     });
@@ -124,7 +128,9 @@ describe("useSkillModal", () => {
     });
 
     await waitFor(() => {
-      expect(skillService.deleteSkill).toHaveBeenCalledWith(23);
+      expect(skillService.deleteSkill).toHaveBeenCalledWith(
+        "550e8400-e29b-41d4-a716-446655440000"
+      );
       expect(result.current.selectedSkill).toBe(null);
       expect(result.current.modal.isModalOpen).toBeFalsy();
     });

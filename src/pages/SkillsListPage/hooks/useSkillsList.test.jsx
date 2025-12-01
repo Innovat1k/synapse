@@ -1,10 +1,7 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, vi } from "vitest";
-import { useSkills } from "./useSkills";
+import { useSkillsList } from "./useSkillsList";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import * as skillService from "../../../services/skillService";
-
-vi.mock("../../../services/skillService");
 
 const mockSkills = [
   {
@@ -33,7 +30,7 @@ const mockSkills = [
   },
 ];
 
-describe("useSkills", () => {
+describe("useSkillsList", () => {
   let queryCLient;
   let queryWrapper;
 
@@ -45,8 +42,9 @@ describe("useSkills", () => {
   });
 
   it("filters the fetched data by correct category", async () => {
-    vi.mocked(skillService.fetchSkills).mockResolvedValue(mockSkills);
-    const { result } = renderHook(() => useSkills(), { wrapper: queryWrapper });
+    const { result } = renderHook(() => useSkillsList(mockSkills), {
+      wrapper: queryWrapper,
+    });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBeFalsy();
@@ -70,8 +68,9 @@ describe("useSkills", () => {
   });
 
   it("filters the fetched data a-z", async () => {
-    vi.mocked(skillService.fetchSkills).mockResolvedValue(mockSkills);
-    const { result } = renderHook(() => useSkills(), { wrapper: queryWrapper });
+    const { result } = renderHook(() => useSkillsList(mockSkills), {
+      wrapper: queryWrapper,
+    });
 
     let skillsByName = mockSkills.sort((a, b) => a.name.localeCompare(b.name));
 
@@ -94,8 +93,9 @@ describe("useSkills", () => {
   });
 
   it("filters the fetched data z-a", async () => {
-    vi.mocked(skillService.fetchSkills).mockResolvedValue(mockSkills);
-    const { result } = renderHook(() => useSkills(), { wrapper: queryWrapper });
+    const { result } = renderHook(() => useSkillsList(mockSkills), {
+      wrapper: queryWrapper,
+    });
 
     let skillsByZA = mockSkills.sort((a, b) => b.name.localeCompare(a.name));
 
@@ -126,8 +126,9 @@ describe("useSkills", () => {
   });
 
   it("returns the correct elements including search params", async () => {
-    vi.mocked(skillService.fetchSkills).mockResolvedValue(mockSkills);
-    const { result } = renderHook(() => useSkills(), { wrapper: queryWrapper });
+    const { result } = renderHook(() => useSkillsList(mockSkills), {
+      wrapper: queryWrapper,
+    });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBeFalsy();
@@ -151,8 +152,9 @@ describe("useSkills", () => {
   });
 
   it("returns an empty array list if no element includes search params", async () => {
-    vi.mocked(skillService.fetchSkills).mockResolvedValue(mockSkills);
-    const { result } = renderHook(() => useSkills(), { wrapper: queryWrapper });
+    const { result } = renderHook(() => useSkillsList(mockSkills), {
+      wrapper: queryWrapper,
+    });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBeFalsy();

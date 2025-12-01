@@ -5,6 +5,7 @@ import {
   deleteSkill,
   updateSkill,
 } from "../../../../../services/skillService";
+import { useNavigate } from "react-router-dom";
 
 /**
  * Custom hook for managing modal.
@@ -14,6 +15,7 @@ import {
 
 export const useSkillModal = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState("");
@@ -48,7 +50,7 @@ export const useSkillModal = () => {
       if (modalMode === "create") {
         await createSkill(skillData);
       } else {
-        await updateSkill(skillData.id, skillData);
+        await updateSkill(skillData.skill_id, skillData);
       }
 
       await queryClient.invalidateQueries({ queryKey: ["skills"] });
@@ -65,8 +67,10 @@ export const useSkillModal = () => {
   const handleDelete = async () => {
     setIsSubmitting(true);
     try {
-      await deleteSkill(selectedSkill.id);
+      await deleteSkill(selectedSkill.skill_id);
       await queryClient.invalidateQueries({ queryKey: ["skills"] });
+
+      navigate("/skills");
     } catch (error) {
       console.error("Failed to delete skill:", error);
       throw error;

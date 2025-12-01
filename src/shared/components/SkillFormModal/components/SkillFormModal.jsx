@@ -164,7 +164,7 @@ const SkillFormModal = ({
                     <LuPlus size={16} />
                   </button>
                 </div>
-                <div className="flex flex-wrap gap-2" data-testid="skill tags">
+                <div className="flex flex-wrap gap-2" data-testid="skill-tags">
                   {skillFormData.tags.length > 0 &&
                     skillFormData.tags.map((tag) => (
                       <span
@@ -176,7 +176,7 @@ const SkillFormModal = ({
                           type="button"
                           onClick={() => methods.handleRemoveTag(tag)}
                           className="text-slate-400 hover:text-red-400 transition-colors"
-                          aria-label={`Remove tag ${tag}`}
+                          aria-label={`Remove ${tag} tag`}
                         >
                           ×
                         </button>

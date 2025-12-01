@@ -61,7 +61,7 @@ export const updateSkill = async (id, updates) => {
     const { data, error } = await supabase
       .from(SKILLS_TABLE)
       .update(updates)
-      .eq("id", id)
+      .eq("skill_id", id)
       .select();
 
     if (error) throw error;
@@ -80,7 +80,10 @@ export const updateSkill = async (id, updates) => {
 export const deleteSkill = async (id) => {
   try {
     // RLS ensures only the owner of the skill with this ID can delete it.
-    const { error } = await supabase.from(SKILLS_TABLE).delete().eq("id", id);
+    const { error } = await supabase
+      .from(SKILLS_TABLE)
+      .delete()
+      .eq("skill_id", id);
 
     if (error) throw error;
 

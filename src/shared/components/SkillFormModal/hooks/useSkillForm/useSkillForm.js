@@ -66,7 +66,7 @@ export const useSkillForm = ({
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit({
-      ...(initialData?.id ? { id: initialData.id } : {}),
+      ...(initialData?.skill_id ? { skill_id: initialData.skill_id } : {}),
       ...skillFormData,
     });
   };
