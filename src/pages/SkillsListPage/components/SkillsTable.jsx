@@ -21,13 +21,13 @@ function SkillsTable({
           <tr className="text-left text-slate-400 border-b border-slate-800/50">
             <TableHead
               field={sortStates}
-              fieldLabel="Name"
+              fieldLabel="name"
               handleSort={handleSort}
             />
             <th className="py-3 px-4">Category</th>
             <TableHead
               field={sortStates}
-              fieldLabel="Level"
+              fieldLabel="level"
               handleSort={handleSort}
             />
             <th className="py-3 px-4">Last Updated</th>

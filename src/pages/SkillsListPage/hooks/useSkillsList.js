@@ -62,6 +62,8 @@ export const useSkillsList = (skillsData) => {
     }
   };
 
+  console.log(sortBy, isAscendant);
+
   return {
     sortStates: { sortBy, isAscendant },
     handleSort,
