@@ -17,15 +17,15 @@ function App() {
   }
 
   return (
-    <div className="relative min-h-screen flex flex-col">
+    <div className="relative min-h-screen flex flex-col bg-slate-950">
       {isAuthRoute ? (
-        <Outlet context={{ methods, isLogin, loader, formData, touched }} />  
+        <Outlet context={{ methods, isLogin, loader, formData, touched }} />
       ) : (
         <>
           <Header signOut={methods.handleSignOut} user={user} />
           <div className="flex flex-1 overflow-hidden">
             <NavBar />
-            <main className="flex-1 p-4 md:p-6 pb-24 md:pb-0 md:ml-[20%] overflow-y-auto">
+            <main className="flex-1 p-4 md:p-6 pb-24 md:pb-0 md:ml-[20%] overflow-y-auto bg-slate-950">
               <Outlet context={{ methods, user }} />
             </main>
           </div>

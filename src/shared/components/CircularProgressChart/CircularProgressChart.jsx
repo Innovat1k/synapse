@@ -12,7 +12,7 @@ function CircularProgressChart({
     <div className="relative flex flex-col items-center justify-center">
       <svg height={size} width={size} viewBox={`0 0 ${size} ${size}`}>
         <circle
-          stroke="#e5e7eb"
+          stroke="#374151"
           fill="transparent"
           strokeWidth={strokeWidth}
           r={radius}
@@ -32,9 +32,11 @@ function CircularProgressChart({
           className="transition-all duration-1000 ease-out"
         />
       </svg>
-      <span className="absolute text-xl font-bold text-gray-800">{value}%</span>
+      <span className="absolute text-xl font-bold text-slate-100">
+        {value}%
+      </span>
       {label && (
-        <span className="absolute top-full mt-2 text-xs text-gray-500">
+        <span className="absolute top-full mt-2 text-xs text-slate-400">
           {label}
         </span>
       )}

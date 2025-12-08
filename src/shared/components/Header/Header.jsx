@@ -4,10 +4,10 @@ import { Link } from "react-router-dom";
 
 function Header({ signOut, user }) {
   return (
-    <header className="sticky top-0 z-10 flex items-center justify-between px-4 md:px-6 py-4 border-b border-gray-200 bg-white">
+    <header className="sticky top-0 z-10 flex items-center justify-between px-4 md:px-6 py-4 border-b border-slate-800/50 bg-slate-900/60 backdrop-blur-sm">
       <Link
         to="/"
-        className="text-xl md:text-2xl font-bold text-gray-800 uppercase"
+        className="text-xl md:text-2xl font-bold text-slate-100 uppercase"
       >
         Synapse
       </Link>
@@ -15,7 +15,7 @@ function Header({ signOut, user }) {
       <div className="flex items-center gap-4">
         <button
           aria-label="Search"
-          className="text-gray-500 hover:text-gray-700"
+          className="text-slate-400 hover:text-slate-200"
         >
           <LuSearch size={24} />
         </button>
@@ -27,14 +27,14 @@ function Header({ signOut, user }) {
               alt={`Avatar of ${user?.name}`}
               className="w-full h-full object-cover"
             />
-            <Avatar.Fallback className="flex items-center justify-center bg-gray-200 text-gray-600 font-medium">
+            <Avatar.Fallback className="flex items-center justify-center bg-slate-700 text-slate-200 font-medium">
               {user?.name && user?.name.charAt(0)}
             </Avatar.Fallback>
           </Avatar.Root>
 
           <div className="hidden sm:flex flex-col text-sm">
-            <span className="font-bold">{user?.email}</span>
-            <p className="text-gray-500">{user?.region}</p>
+            <span className="font-bold text-slate-100">{user?.email}</span>
+            <p className="text-slate-400">{user?.region}</p>
           </div>
 
           <button

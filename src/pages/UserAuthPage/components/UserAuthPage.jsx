@@ -20,14 +20,16 @@ function UserAuthPage() {
     touched[field] && validation.errors[field];
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-      <div className="p-8 w-full max-w-md bg-white rounded-lg shadow-xl">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-slate-950">
+      <div className="p-8 w-full max-w-md bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-slate-800/50 shadow-xl">
         <img
           className="w-30 mx-auto"
           src="/app-auth-bg.png"
           alt="Synapse Logo"
         />
-        <h2 className="text-2xl font-bold text-center mb-6">{title}</h2>
+        <h2 className="text-2xl font-bold text-slate-100 text-center mb-6">
+          {title}
+        </h2>
 
         <form
           className="space-y-4"
@@ -36,18 +38,18 @@ function UserAuthPage() {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-slate-400"
             >
               Email
             </label>
             <input
               type="email"
               id="email"
-              className={`mt-1 w-full p-2 border ${
+              className={`mt-1 w-full p-2.5 bg-slate-800/30 border ${
                 shouldDisplayError("email")
-                  ? "border-red-600"
-                  : "border-gray-300"
-              }  rounded focus:outline-none focus:ring-1 focus:ring-emerald-500`}
+                  ? "border-red-500"
+                  : "border-slate-600"
+              } rounded-lg focus:outline-none focus:ring-1 focus:ring-teal-400 transition-colors text-slate-100`}
               onBlur={(e) => methods.handleBlur(e)}
               onChange={(e) => methods.handleChange(e)}
               required
@@ -56,12 +58,12 @@ function UserAuthPage() {
             <AnimatePresence>
               {shouldDisplayError("email") && (
                 <motion.p
-                  className="flex items-center text-sm text-red-600 mt-1 space-x-2"
+                  className="flex items-center text-sm text-red-400 mt-1 space-x-2"
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
                 >
-                  <LuCircleAlert className="w-4 h-4 text-red-600 flex-shrink-0" />{" "}
+                  <LuCircleAlert className="w-4 h-4 text-red-400 flex-shrink-0" />{" "}
                   <span>{validation.errors.email}</span>
                 </motion.p>
               )}
@@ -71,18 +73,18 @@ function UserAuthPage() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-slate-400"
             >
               Password
             </label>
             <input
               type="password"
               id="password"
-              className={`mt-1 w-full p-2 border ${
+              className={`mt-1 w-full p-2.5 bg-slate-800/30 border ${
                 shouldDisplayError("password")
-                  ? "border-red-600"
-                  : "border-gray-300"
-              }  rounded focus:outline-none focus:ring-1 focus:ring-emerald-500`}
+                  ? "border-red-500"
+                  : "border-slate-600"
+              } rounded-lg focus:outline-none focus:ring-1 focus:ring-teal-400 transition-colors text-slate-100`}
               onBlur={(e) => methods.handleBlur(e)}
               onChange={(e) => methods.handleChange(e)}
               required
@@ -91,12 +93,12 @@ function UserAuthPage() {
             <AnimatePresence>
               {shouldDisplayError("password") && (
                 <motion.p
-                  className="flex items-center text-sm text-red-600 mt-1 space-x-2"
+                  className="flex items-center text-sm text-red-400 mt-1 space-x-2"
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
                 >
-                  <LuCircleAlert className="w-4 h-4 text-red-600 flex-shrink-0" />{" "}
+                  <LuCircleAlert className="w-4 h-4 text-red-400 flex-shrink-0" />{" "}
                   <span>{validation.errors.password}</span>
                 </motion.p>
               )}
@@ -112,18 +114,18 @@ function UserAuthPage() {
               >
                 <label
                   htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-medium text-slate-400"
                 >
                   Confirm Password
                 </label>
                 <input
                   type="password"
                   id="confirmPassword"
-                  className={`mt-1 w-full p-2 border ${
+                  className={`mt-1 w-full p-2.5 bg-slate-800/30 border ${
                     shouldDisplayError("confirmPassword")
-                      ? "border-red-600"
-                      : "border-gray-300"
-                  } rounded focus:outline-none focus:ring-1 focus:ring-emerald-500`}
+                      ? "border-red-500"
+                      : "border-slate-600"
+                  } rounded-lg focus:outline-none focus:ring-1 focus:ring-teal-400 transition-colors text-slate-100`}
                   onBlur={(e) => methods.handleBlur(e)}
                   onChange={(e) => methods.handleChange(e)}
                   required
@@ -132,12 +134,12 @@ function UserAuthPage() {
                 <AnimatePresence>
                   {shouldDisplayError("confirmPassword") && (
                     <motion.p
-                      className="flex items-center text-sm text-red-600 mt-1 space-x-2"
+                      className="flex items-center text-sm text-red-400 mt-1 space-x-2"
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
                     >
-                      <LuCircleAlert className="w-4 h-4 text-red-600 flex-shrink-0" />{" "}
+                      <LuCircleAlert className="w-4 h-4 text-red-400 flex-shrink-0" />{" "}
                       <span>{validation.errors.confirmPassword}</span>
                     </motion.p>
                   )}
@@ -148,7 +150,7 @@ function UserAuthPage() {
 
           <button
             type="submit"
-            className="w-full bg-emerald-600 text-white p-2 rounded hover:bg-emerald-700 transition-colors disabled:bg-emerald-300"
+            className="w-full bg-emerald-600 text-white p-2.5 rounded-lg hover:bg-emerald-700 transition-colors disabled:bg-emerald-800/50 disabled:cursor-not-allowed"
             disabled={!validation.isValid || loader.isSubmitting}
           >
             {loader.isSubmitting ? <ButtonSpinner /> : buttonText}
@@ -157,16 +159,16 @@ function UserAuthPage() {
 
         <div className="mt-4 text-center">
           {isLogin && (
-            <Link to="#" className="text-sm text-emerald-600 hover:underline">
+            <Link to="#" className="text-sm text-teal-400 hover:underline">
               Forgot Password?
             </Link>
           )}
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-slate-400">
             {linkText}{" "}
             <Link
               to="#"
               onClick={methods.handleToggleAuth}
-              className="text-emerald-600 hover:underline"
+              className="text-teal-400 hover:underline"
             >
               {linkActionText}
             </Link>

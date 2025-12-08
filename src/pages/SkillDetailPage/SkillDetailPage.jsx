@@ -143,7 +143,7 @@ function SkillDetailPage() {
 
           <hr className="my-5 md:my-6 border-slate-800/50" />
 
-          <SkillActivities />
+          <SkillActivities skill={skill} skills={skills} />
         </div>
       </div>
     </>

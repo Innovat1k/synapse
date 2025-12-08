@@ -24,17 +24,23 @@ function WeeklyProgressChart() {
     .join(" ");
   return (
     <div className="relative">
-      <h3 className="text-sm font-medium mb-2">Weekly Progress</h3>
-      <div className="text-xs text-gray-500 mb-2">Planned for Phase 5</div>
+      <h3 className="text-sm font-medium text-slate-100 mb-2">
+        Weekly Progress
+      </h3>
+      <div className="text-xs text-slate-500 mb-2">Planned for Phase 5</div>
 
-      <svg width={width} height={height} className="bg-gray-900. rounded">
+      <svg
+        width={width}
+        height={height}
+        className="bg-slate-900/50 rounded border border-slate-800/50"
+      >
         {/* Y Axis */}
         <line
           x1={padding}
           y1={padding}
           x2={padding}
           y2={height - padding}
-          stroke="#374151"
+          stroke="#475569" // slate-700
           strokeWidth="1"
         />
         {/* X Axis */}
@@ -43,7 +49,7 @@ function WeeklyProgressChart() {
           y1={height - padding}
           x2={width - padding}
           y2={height - padding}
-          stroke="#374151"
+          stroke="#475569" // slate-700
           strokeWidth="1"
         />
 
@@ -55,7 +61,7 @@ function WeeklyProgressChart() {
             y1={height - padding - (val / 30) * (height - 2 * padding)}
             x2={width - padding}
             y2={height - padding - (val / 30) * (height - 2 * padding)}
-            stroke="#374151"
+            stroke="#475569" // slate-700
             strokeWidth="0.5"
             strokeDasharray="4"
           />
@@ -65,7 +71,7 @@ function WeeklyProgressChart() {
         <path
           d={pathData}
           fill="none"
-          stroke="#00ffaa"
+          stroke="#2dd4bf" // teal-400
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -78,8 +84,8 @@ function WeeklyProgressChart() {
             cx={getX(i)}
             cy={getY(d.hours)}
             r="4"
-            fill="#00ffaa"
-            stroke="#000"
+            fill="#2dd4bf" // teal-400
+            stroke="#0f172a" // slate-900
             strokeWidth="1"
           />
         ))}
@@ -91,7 +97,7 @@ function WeeklyProgressChart() {
             x={getX(i)}
             y={height - padding + 15}
             textAnchor="middle"
-            className="text-xs fill-gray-400"
+            className="text-xs fill-slate-400"
           >
             {d.day}
           </text>

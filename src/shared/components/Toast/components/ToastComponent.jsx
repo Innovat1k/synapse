@@ -31,28 +31,28 @@ function ToastComponent() {
               exit={{ opacity: 0, y: -50, scale: 0.9 }}
               transition={{ type: "spring", duration: 0.5 }}
               className={`
-             ${colorClasses} 
-              text-white border-b-4 p-4 rounded-xl shadow-2xl flex items-start space-x-3 cursor-default transition-colors fixed top-0 left-1/2 transform -translate-x-1/2 mt-4 w-11/12 max-w-lg z-[2000] 
-            `}
+         ${colorClasses} 
+          text-slate-100 border-b-4 p-4 rounded-xl shadow-2xl flex items-start space-x-3 cursor-default transition-colors fixed top-0 left-1/2 transform -translate-x-1/2 mt-4 w-11/12 max-w-lg z-[2000] 
+        `}
             >
               <div className="flex-shrink-0 pt-0.5">{icon}</div>
 
               <div className="flex-grow">
-                <Toast.Title className="font-semibold text-lg capitalize mb-1">
+                <Toast.Title className="font-semibold text-lg capitalize mb-1 text-slate-100">
                   {notif.type || (isError ? "Error" : "Success")}
                 </Toast.Title>
 
-                <Toast.Description className="text-sm font-light leading-snug">
+                <Toast.Description className="text-sm font-light leading-snug text-slate-300">
                   {notif.message}
                 </Toast.Description>
               </div>
 
               <Toast.Close asChild>
                 <button
-                  className="flex-shrink-0 ml-4 p-1 rounded-full hover:bg-white/20 transition-colors"
+                  className="flex-shrink-0 ml-4 p-1 rounded-full hover:bg-slate-800/50 transition-colors"
                   aria-label="Close"
                 >
-                  <LuX className="w-4 h-4" />
+                  <LuX className="w-4 h-4 text-slate-400" />
                 </button>
               </Toast.Close>
             </motion.div>
