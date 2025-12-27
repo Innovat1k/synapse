@@ -6,7 +6,28 @@ import {
   updateActivity,
 } from "../../../../services/activityService";
 
-export const useActivityModal = () => {
+/**
+ * Custom hook that encapsulates modal state and CRUD operations for activity management.
+ *
+ * Manages:
+ * - Modal visibility and mode ("create", "edit", "delete")
+ * - Selected activity context for edit/delete actions
+ * - Submission state (loading/error handling)
+ * - Background scroll locking when modal is open
+ * - Automatic cache invalidation via React Query after mutations
+ *
+ * Integrates with Supabase-backed service functions (`createActivity`, `updateActivity`, `deleteActivity`).
+ *
+ * @param {string} skillId - ID of the parent skill (used for query invalidation)
+ *
+ * @returns {Object}
+ * - `modal`: { isOpened: boolean, mode: string }
+ * - `selectedActivity`: the activity being edited or deleted (or null)
+ * - `isSubmitting`: boolean indicating if a mutation is in progress
+ * - `methods`: object containing all modal and CRUD handlers
+ */
+
+export const useActivityModal = (skillId) => {
   const queryClient = useQueryClient();
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,7 +63,7 @@ export const useActivityModal = () => {
   };
 
   const closeModal = () => {
-    setModal({ isOpened: false });
+    setModal({ isOpened: false, mode: "" });
   };
 
   const handleCloseOverlay = (e) => {
@@ -60,7 +81,9 @@ export const useActivityModal = () => {
         await updateActivity(activityData.id, activityData);
       }
 
-      await queryClient.invalidateQueries({ queryKey: ["skill-activities"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["skill-activities", skillId],
+      });
       closeModal();
     } catch (error) {
       console.error("Failed to save activity:", error);
@@ -75,14 +98,16 @@ export const useActivityModal = () => {
     setIsSubmitting(true);
     try {
       await deleteActivity(selectedActivity.id);
-      await queryClient.invalidateQueries({ queryKey: ["skill-activities"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["skill-activities", skillId],
+      });
     } catch (error) {
       console.error("Failed to delete activity:", error);
       throw error;
     } finally {
       setSelectedActivity(null);
       setIsSubmitting(false);
-      setModal({ isOpened: false });
+      setModal({ isOpened: false, mode: "" });
     }
   };
 

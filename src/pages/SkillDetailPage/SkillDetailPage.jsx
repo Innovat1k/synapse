@@ -103,7 +103,6 @@ function SkillDetailPage() {
               )}
             </div>
           </div>
-
           <div className="bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-slate-800/50 p-4 sm:p-5 mb-6 md:mb-8">
             <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 md:mb-5">
               <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-teal-400/20 border border-teal-400/40 text-teal-400 rounded-full text-xs sm:text-sm font-medium">
@@ -140,10 +139,9 @@ function SkillDetailPage() {
               </div>
             )}
           </div>
-
           <hr className="my-5 md:my-6 border-slate-800/50" />
 
-          <SkillActivities skill={skill} skills={skills} />
+          {skill && <SkillActivities skill={skill} skills={skills} />}
         </div>
       </div>
     </>

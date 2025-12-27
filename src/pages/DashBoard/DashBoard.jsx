@@ -20,6 +20,9 @@ import WeeklyProgressChart from "./components/WeeklyProgressChart";
 import ActivityFormModal from "../../shared/components/ActivityFormModal/ActivityFormModal";
 import { useActivityModal } from "../../shared/components/ActivityFormModal/hooks/useActivityModal";
 import { useSkillsQuery } from "../../shared/hooks/useSkillsQuery/useSkillsQuery";
+import SkillFormModal from "../../shared/components/SkillFormModal/components/SkillFormModal";
+import { useSkillModal } from "../../shared/components/SkillFormModal/hooks/useSkillModal/useSkillModal";
+import { AnimatePresence } from "framer-motion";
 
 const Dashboard = () => {
   const goals = [
@@ -37,16 +40,32 @@ const Dashboard = () => {
   ];
 
   const { skills } = useSkillsQuery();
-  const { modal, methods } = useActivityModal();
+  const activityModal = useActivityModal();
+  const skillModal = useSkillModal();
 
   return (
     <>
       <ActivityFormModal
-        mode={modal.mode}
-        isOpened={modal.isOpened}
+        mode={activityModal.modal.mode}
+        isOpened={activityModal.modal.isOpened}
         allSkills={skills}
-        closeModal={methods.closeModal}
+        onSubmit={activityModal.methods.handleSaveActivity}
+        closeModal={activityModal.methods.closeModal}
+        isSubmitting={activityModal.isSubmitting}
+        closeByOverlay={activityModal.methods.handleCloseOverlay}
+        openSkillModal={skillModal.methods.openCreateModal}
       />
+
+      <AnimatePresence>
+        {skillModal.modal.isModalOpen && (
+          <SkillFormModal
+            mode={skillModal.modal.modalMode}
+            isSubmitting={skillModal.isSubmitting}
+            onClose={skillModal.methods.closeModal}
+            onSubmit={skillModal.methods.handleSaveSkill}
+          />
+        )}
+      </AnimatePresence>
 
       <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-6">
         <div className="flex justify-between items-center mb-6">
@@ -75,8 +94,8 @@ const Dashboard = () => {
                   <div className="text-xs text-slate-400">Level 4/5</div>
                   <button
                     type="button"
-                    className="mt-2 bg-teal-400 hover:bg-teal-500 text-slate-900 px-2 py-1 rounded text-xs font-medium transition-colors"
-                    // onClick={methods.openCreateModal}
+                    className="mt-2 bg-teal-400 hover:bg-teal-500 text-slate-900 px-2 py-1 rounded text-xs font-medium transition-colors cursor-pointer"
+                    onClick={activityModal.methods.openCreateModal}
                   >
                     Log Activity
                   </button>
@@ -154,7 +173,10 @@ const Dashboard = () => {
                 <h2 className="text-lg font-semibold text-slate-100">
                   Skill List
                 </h2>
-                <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded text-sm flex items-center gap-1 transition-colors">
+                <button
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded text-sm flex items-center gap-1 transition-colors"
+                  type="button"
+                >
                   <LuCirclePlus /> Add Skill
                 </button>
               </div>

@@ -13,15 +13,18 @@ export const formatDate = (dateStr) => {
 
 // Convert total minutes to hours and minutes
 export const formatDuration = (duration = 0) => {
-  const duration_hours = duration >= 60 ? Math.floor(duration / 60) : 0;
-  const duration_minutes = duration - Math.floor(duration_hours) * 60;
+  if (duration <= 0) return "0 mn";
 
-  const total_time =
-    duration_hours > 0
-      ? `${duration_hours} h ${duration_minutes} mn`
-      : `${duration} mn`;
+  const hours = Math.floor(duration / 60);
+  const minutes = duration % 60;
 
-  return total_time;
+  if (hours > 0 && minutes > 0) {
+    return `${hours} h ${minutes} mn`;
+  }
+  if (hours > 0) {
+    return `${hours} h`;
+  }
+  return `${minutes} mn`;
 };
 
 // Convert hours and minutes to total minutes

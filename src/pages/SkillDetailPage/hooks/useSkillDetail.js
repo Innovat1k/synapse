@@ -1,8 +1,15 @@
 import { useState } from "react";
 
 /**
- * Custom ook for managing skill parameter for the unique skill route for details about it.
- * And to handle the opening and closing of submenu and displayed skill infos.
+ * Custom hook that resolves the current skill from route parameters and manages
+ * the visibility state of its actions submenu (e.g., edit/delete options).
+ *
+ * @param {string} skillParams - Skill ID from route params (e.g., URL segment)
+ * @param {Array} skills - List of available skills to match against
+ *
+ * @returns {Object}
+ * - `skill`: the matched skill object (or undefined if not found)
+ * - `actionsMenu`: { isOpened: boolean, handleToggle: Function }
  */
 
 export const useSkillDetail = (skillParams, skills = []) => {

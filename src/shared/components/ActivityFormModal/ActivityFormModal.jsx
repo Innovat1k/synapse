@@ -1,8 +1,13 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { LuX, LuClock, LuCalendar } from "react-icons/lu";
+import { LuX, LuClock, LuTriangleAlert, LuCircleAlert } from "react-icons/lu";
 import { useActivityForm } from "./hooks/useActivityForm";
-import { formatDateShort, formatDateUTC } from "../../utils/utils";
 import ButtonSpinner from "../ButtonSpinner";
+import DeleteModal from "../DeleteModal/DeleteModal";
+import DatetimeInput from "./components/DatetimeInput/DatetimeInput";
+import SelectInput from "./components/SelectInput";
+import { useKeyboardDismiss } from "../../hooks/useKeyboardDismiss/useKeyboardDismiss";
+import { useFocusTrap } from "../../hooks/useFocusTrap/useFocusTrap";
+import { useRef } from "react";
 
 function ActivityFormModal({
   mode = "create",
@@ -15,6 +20,7 @@ function ActivityFormModal({
   onSubmit,
   onDelete,
   isSubmitting,
+  openSkillModal,
 }) {
   const ACTIVITIES_TYPE = [
     "learning",
@@ -26,20 +32,32 @@ function ActivityFormModal({
     "other",
   ];
 
-  const {
-    activityData,
-    handleChange,
-    durationData,
-    handleChangeDuration,
-    handleSubmit,
-  } = useActivityForm({
-    mode: mode,
-    initialData: selectedActivity,
-    onClose: closeModal,
-    onSubmit: onSubmit,
-    skills: allSkills,
-    id: skill?.skill_id,
-  });
+  const { activityData, durationData, methods, isFormValid, errors } =
+    useActivityForm({
+      mode: mode,
+      initialData: selectedActivity,
+      onSubmit: onSubmit,
+      skills: allSkills,
+      id: skill?.skill_id,
+      isOpened: isOpened,
+    });
+
+  const createFirstSkill = () => {
+    closeModal();
+    openSkillModal();
+  };
+
+  const isBlocked = allSkills.length === 0;
+
+  // Determine if the context is skill
+  const isSkillContext = !!skill;
+
+  // Keyboard dismiss
+  useKeyboardDismiss({ isOpen: isOpened, onDismiss: closeModal });
+
+  // Trap focus
+  const modalRef = useRef(null);
+  useFocusTrap(isOpened, modalRef);
 
   return (
     <AnimatePresence>
@@ -54,85 +72,22 @@ function ActivityFormModal({
           onClick={closeByOverlay}
         >
           {mode == "delete" ? (
-            <motion.div
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="modal-title-delete"
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative bg-gradient-to-br from-slate-900/60 to-slate-800/40 backdrop-blur-xl border border-red-500/40 rounded-2xl p-5 sm:p-6 max-w-md w-full mx-4 shadow-lg"
-            >
-              {/* Glow effect */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-transparent via-red-500/5 to-transparent pointer-events-none opacity-40"></div>
-
-              <div className="flex items-start justify-between gap-2 mb-4">
-                <h2
-                  className="text-lg sm:text-xl font-bold text-slate-100 truncate"
-                  id="modal-title-delete"
-                >
-                  Confirm Deletion
-                </h2>
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="text-slate-400 hover:text-slate-200 flex-shrink-0 transition-colors"
-                  aria-label="Close modal"
-                >
-                  <LuX size={20} />
-                </button>
-              </div>
-
-              <p className="text-slate-300 mb-6 text-sm sm:text-base">
-                Are you sure you want to delete this activity from{" "}
-                <span className="font-semibold text-slate-100 capitalize break-words">
-                  {formatDateShort(selectedActivity.logged_at)}
-                </span>{" "}
-                ?
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-3">
-                {isSubmitting ? (
-                  <button
-                    type="button"
-                    disabled
-                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-red-600/80 text-white rounded-lg text-sm sm:text-base w-full sm:flex-1 cursor-not-allowed"
-                  >
-                    <ButtonSpinner
-                      color="border-white"
-                      label="Deleting skill..."
-                      labelColor="text-white"
-                      inline={true}
-                    />
-                  </button>
-                ) : (
-                  <>
-                    <button
-                      type="button"
-                      onClick={closeModal}
-                      className="flex-1 px-4 py-2.5 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700 text-slate-200 rounded-lg transition-colors text-sm sm:text-base"
-                    >
-                      Keep it
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => onDelete(selectedActivity)}
-                      className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm sm:text-base shadow-[0_0_12px_rgba(239,68,68,0.2)]"
-                    >
-                      Delete permanently
-                    </button>
-                  </>
-                )}
-              </div>
-            </motion.div>
+            <DeleteModal
+              ref={modalRef}
+              entity="activity"
+              initialData={selectedActivity}
+              isSubmitting={isSubmitting}
+              
+              confirmDelete={onDelete}
+              closeModal={closeModal}
+            />
           ) : (
             <motion.div
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-title"
-              className="relative bg-gradient-to-br from-slate-900/60 to-slate-800/40 backdrop-blur-xl rounded-2xl border border-teal-400/30 w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-lg"
+              ref={modalRef}
+              className="relative bg-gradient-to-br from-slate-900/60 to-slate-800/40 backdrop-blur-xl rounded-2xl border border-teal-400/30 w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-lg     [scrollbar-gutter:stable]  /* ← cette ligne */"
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
@@ -140,7 +95,6 @@ function ActivityFormModal({
               onClick={(e) => e.stopPropagation()}
             >
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-transparent via-teal-400/5 to-transparent pointer-events-none opacity-40"></div>
-              {/* <div className="absolute inset-0 rounded-2xl border border-teal-400/30 pointer-events-none"></div> */}
 
               <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800/50">
                 <div className="flex items-center gap-2">
@@ -155,165 +109,218 @@ function ActivityFormModal({
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="text-slate-400 hover:text-slate-200 transition-colors"
+                  className="text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
                   aria-label="Close modal"
                 >
                   <LuX size={20} />
                 </button>
               </div>
 
-              <form
-                onSubmit={handleSubmit}
-                className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6"
-              >
-                <div className="space-y-5">
-                  {/* Skill */}
-                  <div>
-                    <label
-                      className="block text-sm font-medium text-slate-400 mb-1.5"
-                      htmlFor="skill"
-                    >
-                      Skill
-                    </label>
-                    <select
-                      id="skill"
-                      value={skill?.skill_id}
-                      onChange={handleChange}
-                      disabled={!!skill?.name} // Désactivé si skillName est fourni
-                      className={`w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-400/50 transition ${
-                        skill?.name ? "cursor-not-allowed opacity-70" : ""
-                      }`}
-                    >
-                      <option value="">Select a skill...</option>
-                      {allSkills.map((skill) => (
-                        <option key={skill.skill_id} value={skill.skill_id}>
-                          {skill.name}
-                        </option>
-                      ))}
-                    </select>
+              {isBlocked ? (
+                <div className="p-8 text-center">
+                  <div className="flex justify-center mb-4">
+                    <LuTriangleAlert className="text-amber-400 w-8 h-8 animate-pulse" />
                   </div>
-
-                  {/* Date */}
-                  <div>
-                    <label
-                      className="block text-sm font-medium text-slate-400 mb-1.5"
-                      htmlFor="date"
-                    >
-                      Date
-                    </label>
-                    <div className="relative">
-                      <LuCalendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
-                      <input
-                        type="datetime-local"
-                        id="logged_at"
-                        value={formatDateUTC(activityData.logged_at)}
-                        onChange={handleChange}
-                        className="w-full pl-10 pr-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-400/50 transition"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Duration */}
-                  <div>
-                    <label
-                      className="block text-sm font-medium text-slate-400 mb-1.5"
-                      htmlFor="duration"
-                    >
-                      Duration
-                    </label>
-                    <div className="flex gap-2 items-center">
-                      <input
-                        type="number"
-                        id="hours"
-                        placeholder="0"
-                        min="0"
-                        max="24"
-                        value={durationData.hours}
-                        onChange={handleChangeDuration}
-                        className="w-16 px-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-400/50 transition"
-                      />
-                      <span className="text-slate-400">h</span>
-                      <input
-                        type="number"
-                        id="minutes"
-                        placeholder="0"
-                        min="0"
-                        max="59"
-                        value={durationData.minutes}
-                        onChange={handleChangeDuration}
-                        className="w-16 px-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-400/50 transition"
-                      />
-                      <span className="text-slate-400">min</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-5">
-                  <div>
-                    <label
-                      className="block text-sm font-medium text-slate-400 mb-1.5"
-                      htmlFor="activity_type"
-                    >
-                      Activity type
-                    </label>
-                    <select
-                      id="activity_type"
-                      value={activityData.activity_type}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-400/50 transition"
-                    >
-                      {ACTIVITIES_TYPE.map((type) => (
-                        <option key={type} value={type}>
-                          {type}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label
-                      className="block text-sm font-medium text-slate-400 mb-1.5"
-                      htmlFor="notes"
-                    >
-                      Notes
-                    </label>
-                    <textarea
-                      id="notes"
-                      placeholder="Describe what you did..."
-                      className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-100 placeholder-slate-500/60 focus:outline-none focus:ring-2 focus:ring-teal-400/50 transition"
-                      rows={6}
-                      value={activityData.notes}
-                      onChange={handleChange}
-                    ></textarea>
-                  </div>
-                </div>
-
-                <div className="md:col-span-2 flex flex-col sm:flex-row sm:justify-end gap-3 pt-4">
+                  <p className="text-xl text-slate-100 mb-4 animate-pulse">
+                    Cannot log activity
+                  </p>
+                  <p className="text-slate-400 mb-6">
+                    You must have at least one skill to record an activity.
+                  </p>
                   <button
                     type="button"
-                    disabled={isSubmitting}
-                    onClick={closeModal}
-                    className="px-4 py-2.5 border border-slate-700 text-slate-300 rounded-lg hover:bg-slate-800/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
+                    onClick={createFirstSkill}
+                    className="px-4 py-2 bg-teal-600 hover:bg-teal-700 rounded-lg text-white transition-colors cursor-pointer"
                   >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed shadow-[0_0_12px_rgba(16,185,129,0.4)] w-full sm:w-auto"
-                  >
-                    {isSubmitting ? (
-                      <ButtonSpinner
-                        label={mode === "create" ? "Creating..." : "Saving..."}
-                      />
-                    ) : mode === "create" ? (
-                      "Save Skill"
-                    ) : (
-                      "Update Skill"
-                    )}
+                    Create my first skill
                   </button>
                 </div>
-              </form>
+              ) : (
+                <form
+                  onSubmit={methods.handleSubmit}
+                  className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6"
+                >
+                  <div className="space-y-5">
+                    {/* Skill */}
+                    <div>
+                      {isSkillContext ? (
+                        <div>
+                          <div
+                            id="skill-label"
+                            className="block text-sm font-medium text-slate-400 mb-1.5"
+                          >
+                            Skill
+                          </div>
+                          <div
+                            aria-labelledby="skill-label"
+                            aria-readonly="true"
+                            className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-100 opacity-70"
+                          >
+                            {skill.name}
+                          </div>
+                        </div>
+                      ) : (
+                        <SelectInput
+                          label="Skill"
+                          value={activityData?.skill_id || ""}
+                          key={activityData?.skill_id}
+                          id="skill_id"
+                          onChange={(value) =>
+                            methods.handleChange({
+                              target: { id: "skill_id", value },
+                            })
+                          }
+                          options={allSkills.map((s) => ({
+                            value: s.skill_id,
+                            label: s.name,
+                          }))}
+                          placeholder="Select a skill..."
+                          disabled={isSubmitting}
+                        />
+                      )}
+
+                      <AnimatePresence>
+                        {errors.skill && (
+                          <motion.p
+                            className="flex items-center text-sm text-red-500 mt-1 space-x-2"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                          >
+                            {errors.skill}
+                          </motion.p>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    <DatetimeInput
+                      id="logged_at"
+                      value={activityData.logged_at}
+                      onChange={(isoString) => {
+                        methods.handleChange({
+                          target: { id: "logged_at", value: isoString },
+                        });
+                      }}
+                      disabled={isSubmitting}
+                    />
+
+                    {/* Duration */}
+                    <div>
+                      <label
+                        className="block text-sm font-medium text-slate-400 mb-1.5"
+                        htmlFor="duration"
+                      >
+                        Duration
+                      </label>
+
+                      <div className="flex gap-2 items-center">
+                        <label htmlFor="hours" className="sr-only">
+                          Hours
+                        </label>
+                        <input
+                          type="number"
+                          id="hours"
+                          placeholder="0"
+                          min="0"
+                          max="24"
+                          value={durationData.hours}
+                          onChange={methods.handleChangeDuration}
+                          className="w-16 px-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-400/50 transition"
+                        />
+                        <span className="text-slate-400">h</span>
+
+                        <label htmlFor="minutes" className="sr-only">
+                          Minutes
+                        </label>
+                        <input
+                          type="number"
+                          id="minutes"
+                          placeholder="0"
+                          min="0"
+                          max="59"
+                          value={durationData.minutes}
+                          onChange={methods.handleChangeDuration}
+                          className="w-16 px-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-400/50 transition"
+                        />
+                        <span className="text-slate-400">min</span>
+                      </div>
+                      <AnimatePresence>
+                        {errors.duration && (
+                          <motion.p
+                            className="flex items-center text-sm text-red-500 mt-1 space-x-2"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                          >
+                            <LuCircleAlert className="w-4 h-4 text-red-500 flex-shrink-0" />
+                            <span>{errors.duration}</span>
+                          </motion.p>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </div>
+
+                  <div className="space-y-5">
+                    <SelectInput
+                      label="Activity type"
+                      value={activityData.activity_type}
+                      id="activity_type"
+                      key={activityData.activity_type || "empty"}
+                      onChange={(value) =>
+                        methods.handleChange({
+                          target: { id: "activity_type", value },
+                        })
+                      }
+                      options={ACTIVITIES_TYPE}
+                      placeholder="Choose an activity type"
+                      disabled={isSubmitting}
+                    />
+
+                    <div>
+                      <label
+                        className="block text-sm font-medium text-slate-400 mb-1.5"
+                        htmlFor="notes"
+                      >
+                        Notes
+                      </label>
+                      <textarea
+                        id="notes"
+                        placeholder="Describe what you did..."
+                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-100 placeholder-slate-500/60 focus:outline-none focus:ring-2 focus:ring-teal-400/50 transition first-letter:capitalize"
+                        rows={6}
+                        value={activityData?.notes}
+                        onChange={methods.handleChange}
+                      ></textarea>
+                    </div>
+                  </div>
+
+                  <div className="md:col-span-2 flex flex-col sm:flex-row sm:justify-end gap-3 pt-4">
+                    <button
+                      type="button"
+                      disabled={isSubmitting}
+                      onClick={closeModal}
+                      className="px-4 py-2.5 border border-slate-700 text-slate-300 rounded-lg hover:bg-slate-800/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={!isFormValid || isSubmitting}
+                      className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed shadow-[0_0_12px_rgba(16,185,129,0.4)] w-full sm:w-auto cursor-pointer"
+                    >
+                      {isSubmitting ? (
+                        <ButtonSpinner
+                          label={mode === "create" ? "Adding..." : "Saving..."}
+                        />
+                      ) : mode === "create" ? (
+                        "Add activity"
+                      ) : (
+                        "Save changes"
+                      )}
+                    </button>
+                  </div>
+                </form>
+              )}
             </motion.div>
           )}
         </motion.div>

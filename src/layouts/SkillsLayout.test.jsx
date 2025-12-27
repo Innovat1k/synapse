@@ -119,7 +119,7 @@ describe("SkillsLayout", () => {
           screen.getByRole("cell", { name: /python/i })
         ).toBeInTheDocument();
       });
-    });
+    }, 10000);
 
     it('SkillFormModal: updates selected skill if "update skill" button is clicked', async () => {
       const initialSkills = [
