@@ -67,3 +67,20 @@ export const deleteActivity = async (id) => {
     throw error;
   }
 };
+
+// --- Removing activities from a skill ---
+export const purgeActivitiesBySkill = async (skillId) => {
+  try {
+    const { error } = await supabase
+      .from(TABLE)
+      .delete()
+      .eq("skill_id", skillId); // ✅ Filtre avant de supprimer
+
+    if (error) throw error;
+
+    return true;
+  } catch (error) {
+    console.error("Error when purging activities:", error); // ✅ Typo corrigée
+    throw error; // ✅ Lance l'erreur pour que le composant la gère
+  }
+};

@@ -4,8 +4,10 @@ import SkillDetailPage from "./SkillDetailPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter, useOutletContext, useParams } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
+import * as activityService from "../../services/activityService";
 
 vi.mock("../../services/skillService");
+vi.mock("../../services/activityService");
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
   return { ...actual, useOutletContext: vi.fn(), useParams: vi.fn() };
@@ -36,6 +38,26 @@ const mockSkills = [
     level: 3,
     description: "Managing small agile projects and coordinating tasks.",
     tags: ["organization"],
+  },
+];
+
+const mockActivities = [
+  {
+    id: "8a1f2d3e-4c5b-4a9e-9c1a-111111111111",
+    skill_id: "550e8400-e29b-41d4-a716-446655440001",
+    activity_type: "learning",
+    logged_at: "2025-01-08T18:00",
+    duration_minutes: 150,
+    notes: "Completed a React JS module on hooks (useState, useEffect).",
+  },
+  {
+    id: "9b2e3f4a-5d6c-4b8f-a2e3-222222222222",
+    skill_id: "550e8400-e29b-41d4-a716-446655440001",
+    activity_type: "project work",
+    logged_at: "2025-01-11T14:00",
+    duration_minutes: 210,
+    notes:
+      "Developed a small React project: dashboard with components, props, and state management.",
   },
 ];
 
@@ -140,6 +162,292 @@ describe("SkillDetailPage", () => {
     expect(
       screen.getByRole("button", { name: /keep it/i })
     ).toBeInTheDocument();
+  });
+
+  it("removes all activities for the skill after valid purge confirmation", async () => {
+    vi.mocked(useOutletContext).mockReturnValue({ skills: mockSkills });
+    vi.mocked(useParams).mockReturnValue({
+      skillId: "550e8400-e29b-41d4-a716-446655440001",
+    });
+
+    vi.mocked(activityService.fetchActivitiesBySkill)
+      .mockResolvedValueOnce(mockActivities)
+      .mockResolvedValueOnce([]);
+
+    vi.mocked(activityService.purgeActivitiesBySkill).mockResolvedValue([]);
+
+    render(<SkillDetailPage />, { wrapper: Wrapper });
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: /skill: react js/i })
+    ).toBeInTheDocument();
+
+    const skillActivities = within(
+      await screen.findByTestId("list-layout-desktop")
+    );
+
+    const activity = skillActivities.getByTestId(
+      "activity-row-8a1f2d3e-4c5b-4a9e-9c1a-111111111111"
+    );
+
+    expect(within(activity).getByText(/January 8, 2025/i)).toBeInTheDocument();
+    expect(within(activity).getByText(/2 h 30 mn/i)).toBeInTheDocument();
+    expect(within(activity).getByText(/learning/i)).toBeInTheDocument();
+    expect(
+      within(activity).getByText(
+        /Completed a React JS module on hooks \(useState, useEffect\)/i
+      )
+    ).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("button", { name: /open skill actions/i })
+    );
+    await user.click(screen.getByRole("button", { name: /purge activities/i }));
+
+    expect(
+      screen.getByRole("heading", { name: /irreversible purge confirmation/i })
+    ).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("button", { name: /continue to purge/i })
+    );
+
+    expect(
+      screen.getByRole("heading", { name: /confirm skill name/i })
+    ).toBeInTheDocument();
+
+    await user.type(screen.getByLabelText(/enter skill name/i), "React JS");
+    await user.click(
+      screen.getByRole("button", { name: /purge permanently/i })
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId("purge-modal-overlay")
+      ).not.toBeInTheDocument();
+    });
+
+    expect(
+      screen.getByText(/You haven't logged any activity for this skill/i)
+    ).toBeInTheDocument();
+  });
+
+  describe("PurgeActivitiesModal actions", () => {
+    it("shows validation error when skill name does not match during purge confirmation", async () => {
+      vi.mocked(useOutletContext).mockReturnValue({ skills: mockSkills });
+      vi.mocked(useParams).mockReturnValue({
+        skillId: "550e8400-e29b-41d4-a716-446655440001",
+      });
+
+      vi.mocked(activityService.fetchActivitiesBySkill).mockResolvedValue(
+        mockActivities
+      );
+
+      render(<SkillDetailPage />, { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(
+          within(screen.getByTestId("list-layout-desktop")).getByTestId(
+            "activity-row-8a1f2d3e-4c5b-4a9e-9c1a-111111111111"
+          )
+        ).toBeInTheDocument();
+      });
+
+      await user.click(
+        screen.getByRole("button", { name: /open skill actions/i })
+      );
+      await user.click(
+        screen.getByRole("button", { name: /purge activities/i })
+      );
+
+      expect(
+        screen.getByRole("heading", {
+          name: /irreversible purge confirmation/i,
+        })
+      ).toBeInTheDocument();
+
+      await user.click(
+        screen.getByRole("button", { name: /continue to purge/i })
+      );
+
+      expect(
+        screen.getByRole("heading", { name: /confirm skill name/i })
+      ).toBeInTheDocument();
+
+      await user.type(screen.getByLabelText(/enter skill name/i), "Java");
+      await user.click(
+        screen.getByRole("button", { name: /purge permanently/i })
+      );
+
+      expect(
+        screen.getByText(/The skill name does not match. Please try again/i)
+      ).toBeInTheDocument();
+    });
+
+    it("shows validation error when skill name is empty during purge confirmation", async () => {
+      vi.mocked(useOutletContext).mockReturnValue({ skills: mockSkills });
+      vi.mocked(useParams).mockReturnValue({
+        skillId: "550e8400-e29b-41d4-a716-446655440001",
+      });
+
+      vi.mocked(activityService.fetchActivitiesBySkill).mockResolvedValue(
+        mockActivities
+      );
+
+      render(<SkillDetailPage />, { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(
+          within(screen.getByTestId("list-layout-desktop")).getByTestId(
+            "activity-row-8a1f2d3e-4c5b-4a9e-9c1a-111111111111"
+          )
+        ).toBeInTheDocument();
+      });
+
+      await user.click(
+        screen.getByRole("button", { name: /open skill actions/i })
+      );
+      await user.click(
+        screen.getByRole("button", { name: /purge activities/i })
+      );
+
+      expect(
+        screen.getByRole("heading", {
+          name: /irreversible purge confirmation/i,
+        })
+      ).toBeInTheDocument();
+
+      await user.click(
+        screen.getByRole("button", { name: /continue to purge/i })
+      );
+
+      expect(
+        screen.getByRole("heading", { name: /confirm skill name/i })
+      ).toBeInTheDocument();
+
+      await user.clear(screen.getByLabelText(/enter skill name/i));
+      await user.click(
+        screen.getByRole("button", { name: /purge permanently/i })
+      );
+
+      expect(
+        screen.getByText(/Please enter the skill name/i)
+      ).toBeInTheDocument();
+    });
+
+    it("closes purge confirmation modal when Escape key is pressed", async () => {
+      vi.mocked(useOutletContext).mockReturnValue({ skills: mockSkills });
+      vi.mocked(useParams).mockReturnValue({
+        skillId: "550e8400-e29b-41d4-a716-446655440001",
+      });
+
+      vi.mocked(activityService.fetchActivitiesBySkill).mockResolvedValue(
+        mockActivities
+      );
+
+      render(<SkillDetailPage />, { wrapper: Wrapper });
+
+      await user.click(
+        screen.getByRole("button", { name: /open skill actions/i })
+      );
+      await user.click(
+        screen.getByRole("button", { name: /purge activities/i })
+      );
+
+      expect(screen.getByTestId("purge-modal-overlay")).toBeInTheDocument();
+
+      await user.keyboard("{Escape}");
+
+      await waitFor(() => {
+        expect(
+          screen.queryByTestId("purge-modal-overlay")
+        ).not.toBeInTheDocument();
+      });
+    });
+
+    it("closes purge confirmation modal when clicking outside the modal content (on overlay)", async () => {
+      vi.mocked(useOutletContext).mockReturnValue({ skills: mockSkills });
+      vi.mocked(useParams).mockReturnValue({
+        skillId: "550e8400-e29b-41d4-a716-446655440001",
+      });
+      vi.mocked(activityService.fetchActivitiesBySkill).mockResolvedValue(
+        mockActivities
+      );
+
+      render(<SkillDetailPage />, { wrapper: Wrapper });
+
+      await user.click(
+        screen.getByRole("button", { name: /open skill actions/i })
+      );
+      await user.click(
+        screen.getByRole("button", { name: /purge activities/i })
+      );
+
+      expect(screen.getByTestId("purge-modal-overlay")).toBeInTheDocument();
+
+      await user.click(screen.getByTestId("purge-modal-overlay"));
+
+      await waitFor(() => {
+        expect(
+          screen.queryByTestId("purge-modal-overlay")
+        ).not.toBeInTheDocument();
+      });
+    });
+
+    it("keeps focus trapped within the purge modal when tabbing", async () => {
+      vi.mocked(useOutletContext).mockReturnValue({ skills: mockSkills });
+      vi.mocked(useParams).mockReturnValue({
+        skillId: "550e8400-e29b-41d4-a716-446655440001",
+      });
+      vi.mocked(activityService.fetchActivitiesBySkill).mockResolvedValue(
+        mockActivities
+      );
+
+      render(<SkillDetailPage />, { wrapper: Wrapper });
+
+      await user.click(
+        screen.getByRole("button", { name: /open skill actions/i })
+      );
+
+      await user.click(
+        screen.getByRole("button", { name: /purge activities/i })
+      );
+
+      await user.click(
+        screen.getByRole("button", { name: /continue to purge/i })
+      );
+
+      const overlay = screen.getByTestId("purge-modal-overlay");
+      const input = screen.getByLabelText(/enter skill name/i);
+      const cancelButton = screen.getByRole("button", { name: /cancel/i });
+      const purgeButton = screen.getByRole("button", {
+        name: /purge permanently/i,
+      });
+      const closeButton = screen.getByLabelText(/close modal/i);
+
+      await waitFor(() => {
+        expect(overlay.contains(document.activeElement)).toBe(true);
+        expect(input).toHaveFocus();
+      });
+
+      // 1. Tab → Cancel
+      await user.tab();
+      expect(cancelButton).toHaveFocus();
+
+      // 2. Tab → Purge
+      await user.tab();
+      expect(purgeButton).toHaveFocus();
+
+      // 3. Tab → Close (×)
+      await user.tab();
+      expect(closeButton).toHaveFocus();
+
+      // 4. Tab → retour à l'input (cycle complet)
+      await user.tab();
+      expect(input).toHaveFocus();
+
+      screen.debug(undefined, 20000);
+    });
   });
 
   it("allows to add new tag when editing a skill", async () => {

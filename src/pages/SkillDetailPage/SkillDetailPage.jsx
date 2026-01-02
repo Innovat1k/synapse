@@ -12,12 +12,17 @@ import { AnimatePresence } from "framer-motion";
 import SkillFormModal from "../../shared/components/SkillFormModal/components/SkillFormModal";
 import SkillActivities from "./components/SkillActivities/SkillActivities";
 import { useSkillModal } from "../../shared/components/SkillFormModal/hooks/useSkillModal/useSkillModal";
+import PurgeActivitiesModal from "./components/PurgeActivitiesModal/PurgeActivitiesModal";
+import { usePurgeActivities } from "./components/PurgeActivitiesModal/usePurgeActivities";
+import { useActivitiesQuery } from "../../shared/hooks/useActivitiesQuery/useActivitiesQuery";
 
 function SkillDetailPage() {
   const { skills } = useOutletContext();
   const { skillId } = useParams();
   const { skill, actionsMenu } = useSkillDetail(skillId, skills);
   const { modal, isSubmitting, methods } = useSkillModal();
+  const activityPurge = usePurgeActivities(skillId, skill.name);
+  const { activities } = useActivitiesQuery(skillId);
 
   return (
     <>
@@ -41,6 +46,20 @@ function SkillDetailPage() {
         )}
       </AnimatePresence>
 
+      <PurgeActivitiesModal
+        isOpened={activityPurge.modal.isOpened}
+        context={activityPurge.modal.context}
+        skill={skill}
+        activityCount={activities.length}
+        closeModal={activityPurge.closePurgeModal}
+        openFinalVerification={activityPurge.openFinalVerification}
+        handlePurge={activityPurge.confirmPurge}
+        skillValue={activityPurge.typedSkillName}
+        changeValue={activityPurge.handleChange}
+        hasError={activityPurge.hasError}
+        isSubmitting={activityPurge.isSubmitting}
+      />
+
       <div className="min-h-screen bg-slate-950 text-slate-100 px-4 sm:px-5 md:px-6 py-4">
         <div className="max-w-full mx-auto">
           <div className="flex justify-between items-start gap-4 mb-6">
@@ -61,7 +80,7 @@ function SkillDetailPage() {
               {!actionsMenu.isOpened ? (
                 <button
                   type="button"
-                  aria-label="Open actions menu"
+                  aria-label="Open skill actions"
                   className="p-2 rounded-full border border-slate-700/60 hover:border-teal-400/60 hover:text-teal-400 text-slate-400 transition-colors"
                   onClick={actionsMenu.handleToggle}
                 >
@@ -97,6 +116,22 @@ function SkillDetailPage() {
                     >
                       <LuTrash2 size={18} aria-hidden="true" />
                       <span>Delete skill</span>
+                    </button>
+
+                    <button
+                      className={`bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 ${
+                        activities.length === 0
+                          ? "opacity-50 cursor-not-allowed bg-red-600/50"
+                          : "cursor-pointer"
+                      }`}
+                      onClick={activityPurge.openPurgeModal}
+                      disabled={activities.length === 0}
+                      type="button"
+                    >
+                      <LuTrash2 size={16} />
+                      <span className="uppercase text-xs sm:text-sm">
+                        Purge Activities
+                      </span>
                     </button>
                   </div>
                 </div>
