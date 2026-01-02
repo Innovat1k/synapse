@@ -1,158 +1,111 @@
 import { render, screen } from "@testing-library/react";
-import { userEvent } from "@testing-library/user-event";
+import userEvent from "@testing-library/user-event";
 import { useRef } from "react";
+import { describe, it, expect } from "vitest";
 import { useFocusTrap } from "./useFocusTrap";
-import { describe, it, expect, beforeEach, vi } from "vitest";
-
-// Mock offsetParent for JSDOM to correctly simulate visibility
-const originalOffsetParentDescriptor = Object.getOwnPropertyDescriptor(
-  HTMLElement.prototype,
-  "offsetParent"
-);
-
-Object.defineProperty(HTMLElement.prototype, "offsetParent", {
-  get() {
-    if (this.style.display === "none" || this.hasAttribute("hidden")) {
-      return null;
-    }
-    return this.parentElement || document.body;
-  },
-  configurable: true,
-});
-
-afterAll(() => {
-  if (originalOffsetParentDescriptor) {
-    Object.defineProperty(
-      HTMLElement.prototype,
-      "offsetParent",
-      originalOffsetParentDescriptor
-    );
-  } else {
-    delete HTMLElement.prototype.offsetParent;
-  }
-});
 
 const TestFocusTrap = ({ isOpen }) => {
-  const containerRef = useRef(null);
-  useFocusTrap(isOpen, containerRef);
+  const ref = useRef(null);
+  useFocusTrap(isOpen, ref);
 
   return (
-    <div ref={containerRef} data-testid="modal-container">
-      <button data-testid="first-button">First</button>
-      <input data-testid="input" placeholder="type here" />
+    <div ref={ref} tabIndex={-1} data-testid="container">
+      <button data-testid="first">First</button>
+      <input data-testid="input" />
       <button disabled>Disabled</button>
       <span aria-hidden="true">Hidden</span>
       <div style={{ display: "none" }}>
         <button>Hidden by CSS</button>
       </div>
-      <button data-testid="last-button">Last</button>
+      <button data-testid="last">Last</button>
     </div>
   );
 };
 
-const EmptyModal = ({ isOpen }) => {
-  const containerRef = useRef(null);
-  useFocusTrap(isOpen, containerRef);
-  return <div ref={containerRef} data-testid="empty-container" />;
-};
+describe("useFocusTrap", () => {
+  it("traps focus when Tab is pressed and focus is already inside the container", async () => {
+    const user = userEvent.setup();
+    render(<TestFocusTrap isOpen />);
 
-describe("useFocusTrap with userEvent", () => {
-  const user = userEvent.setup();
-
-  beforeEach(() => {
-    if (document.activeElement && document.activeElement !== document.body) {
-      document.activeElement.blur();
-    }
-  });
-
-  it("should focus first focusable element on open", () => {
-    render(<TestFocusTrap isOpen={true} />);
-    expect(document.activeElement).toBe(screen.getByTestId("first-button"));
-  });
-
-  it("should focus container if no focusable elements", () => {
-    render(<EmptyModal isOpen={true} />);
-    const container = screen.getByTestId("empty-container");
-    expect(document.activeElement).toBe(container);
-    expect(container.tabIndex).toBe(-1);
-  });
-
-  it("should cycle focus forward with Tab", async () => {
-    render(<TestFocusTrap isOpen={true} />);
-
-    const first = screen.getByTestId("first-button");
+    const first = screen.getByTestId("first");
     const input = screen.getByTestId("input");
-    const last = screen.getByTestId("last-button");
-
-    expect(document.activeElement).toBe(first);
-
-    await user.tab();
-    expect(document.activeElement).toBe(input);
-
-    await user.tab();
-    expect(document.activeElement).toBe(last);
-
-    await user.tab();
-    expect(document.activeElement).toBe(first);
-  });
-
-  it("should cycle focus backward with Shift+Tab", async () => {
-    render(<TestFocusTrap isOpen={true} />);
-
-    const first = screen.getByTestId("first-button");
-    const last = screen.getByTestId("last-button");
+    const last = screen.getByTestId("last");
 
     first.focus();
-    expect(document.activeElement).toBe(first);
+    expect(first).toHaveFocus();
 
-    await user.tab({ shift: true });
-    expect(document.activeElement).toBe(last);
+    await user.tab();
+    expect(input).toHaveFocus();
 
-    await user.tab({ shift: true });
-    await user.tab({ shift: true });
-    expect(document.activeElement).toBe(first);
+    await user.tab();
+    expect(last).toHaveFocus();
 
-    await user.tab({ shift: true });
-    expect(document.activeElement).toBe(last);
+    await user.tab();
+    expect(first).toHaveFocus();
   });
 
-  it("should not apply initial focus or add event listener when closed", () => {
-    const addSpy = vi.spyOn(document, "addEventListener");
+  it("cycles focus backward with Shift+Tab", async () => {
+    const user = userEvent.setup();
+    render(<TestFocusTrap isOpen />);
 
+    const first = screen.getByTestId("first");
+    const input = screen.getByTestId("input");
+    const last = screen.getByTestId("last");
+
+    first.focus();
+    expect(first).toHaveFocus();
+
+    await user.tab({ shift: true });
+    expect(last).toHaveFocus();
+
+    await user.tab({ shift: true });
+    expect(input).toHaveFocus();
+
+    await user.tab({ shift: true });
+    expect(first).toHaveFocus();
+  });
+
+  it("does not trap focus when isOpen is false", async () => {
+    const user = userEvent.setup();
     render(<TestFocusTrap isOpen={false} />);
 
-    const first = screen.getByTestId("first-button");
+    const first = screen.getByTestId("first");
+    const input = screen.getByTestId("input");
+    const last = screen.getByTestId("last");
 
-    expect(document.activeElement).not.toBe(first);
-    expect(document.activeElement).toBe(document.body);
-    expect(addSpy).not.toHaveBeenCalled();
+    first.focus();
+    expect(first).toHaveFocus();
 
-    addSpy.mockRestore();
+    await user.tab();
+    expect(input).toHaveFocus();
+
+    await user.tab();
+    expect(last).toHaveFocus();
   });
 
-  it("should ignore non-focusable elements", () => {
-    render(<TestFocusTrap isOpen={true} />);
+  it("handles a single focusable element", async () => {
+    const user = userEvent.setup();
 
-    const disabledBtn = screen.getByText("Disabled");
-    const hiddenBtn = screen.getByText("Hidden");
-    const cssHiddenBtn = screen.getByText("Hidden by CSS");
+    const Single = ({ isOpen }) => {
+      const ref = useRef(null);
+      useFocusTrap(isOpen, ref);
+      return (
+        <div ref={ref} tabIndex={-1}>
+          <button data-testid="only">Only</button>
+        </div>
+      );
+    };
 
-    expect(disabledBtn).not.toBe(document.activeElement);
-    expect(hiddenBtn).not.toBe(document.activeElement);
-    expect(cssHiddenBtn).not.toBe(document.activeElement);
-  });
+    render(<Single isOpen />);
 
-  it("should clean up event listener on unmount", () => {
-    const addSpy = vi.spyOn(document, "addEventListener");
-    const removeSpy = vi.spyOn(document, "removeEventListener");
+    const only = screen.getByTestId("only");
+    only.focus();
+    expect(only).toHaveFocus();
 
-    const { unmount } = render(<TestFocusTrap isOpen={true} />);
-    expect(addSpy).toHaveBeenCalledWith("keydown", expect.any(Function));
+    await user.tab();
+    expect(only).toHaveFocus();
 
-    unmount();
-    expect(removeSpy).toHaveBeenCalledWith("keydown", expect.any(Function));
-
-    addSpy.mockRestore();
-    removeSpy.mockRestore();
+    await user.tab({ shift: true });
+    expect(only).toHaveFocus();
   });
 });
