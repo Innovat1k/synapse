@@ -1,5 +1,4 @@
 import { LuSearch, LuPlus, LuFilter } from "react-icons/lu";
-import { AnimatePresence } from "framer-motion";
 import { useSkillsList } from "../SkillsListPage/hooks/useSkillsList";
 import { useSkillModal } from "../../shared/components/SkillFormModal/hooks/useSkillModal/useSkillModal";
 import SkillFormModal from "../../shared/components/SkillFormModal/components/SkillFormModal";
@@ -17,25 +16,15 @@ const SkillsListPage = () => {
 
   return (
     <>
-      <AnimatePresence>
-        {modal.isModalOpen && (
-          <SkillFormModal
-            key={
-              modal.isModalOpen
-                ? modal.modalMode === "create"
-                  ? "create"
-                  : `edit-${selectedSkill?.skill_id}`
-                : "closed"
-            }
-            initialData={selectedSkill}
-            isSubmitting={isSubmitting}
-            mode={modal.modalMode}
-            onClose={methods.closeModal}
-            onDelete={methods.handleDelete}
-            onSubmit={methods.handleSaveSkill}
-          />
-        )}
-      </AnimatePresence>
+      <SkillFormModal
+        isOpened={modal.isModalOpen}
+        initialData={selectedSkill}
+        isSubmitting={isSubmitting}
+        mode={modal.modalMode}
+        onClose={methods.closeModal}
+        onDelete={methods.handleDelete}
+        onSubmit={methods.handleSaveSkill}
+      />
 
       <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-6">
         <h1 className="text-2xl font-bold mb-6">Skill Management</h1>

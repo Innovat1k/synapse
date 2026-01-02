@@ -8,7 +8,6 @@ import {
 } from "react-icons/lu";
 import { Link, useOutletContext, useParams } from "react-router-dom";
 import { useSkillDetail } from "./hooks/useSkillDetail";
-import { AnimatePresence } from "framer-motion";
 import SkillFormModal from "../../shared/components/SkillFormModal/components/SkillFormModal";
 import SkillActivities from "./components/SkillActivities/SkillActivities";
 import { useSkillModal } from "../../shared/components/SkillFormModal/hooks/useSkillModal/useSkillModal";
@@ -26,25 +25,15 @@ function SkillDetailPage() {
 
   return (
     <>
-      <AnimatePresence>
-        {modal.isModalOpen && (
-          <SkillFormModal
-            key={
-              modal.isModalOpen
-                ? modal.modalMode === "create"
-                  ? "create"
-                  : `edit-${skill?.skill_id}`
-                : "closed"
-            }
-            initialData={skill}
-            isSubmitting={isSubmitting}
-            mode={modal.modalMode}
-            onClose={methods.closeModal}
-            onDelete={methods.handleDelete}
-            onSubmit={methods.handleSaveSkill}
-          />
-        )}
-      </AnimatePresence>
+      <SkillFormModal
+        isOpened={modal.isModalOpen}
+        initialData={skill}
+        isSubmitting={isSubmitting}
+        mode={modal.modalMode}
+        onClose={methods.closeModal}
+        onDelete={methods.handleDelete}
+        onSubmit={methods.handleSaveSkill}
+      />
 
       <PurgeActivitiesModal
         isOpened={activityPurge.modal.isOpened}

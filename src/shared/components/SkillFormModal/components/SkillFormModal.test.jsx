@@ -25,7 +25,12 @@ describe("SkillFormModal", () => {
     // since all close actions (X, Cancel, Keep it) delegate to the same onClose prop.
     const mockClose = vi.fn();
     render(
-      <SkillFormModal mode="edit" initialData={mockSkill} onClose={mockClose} />
+      <SkillFormModal
+        isOpened={true}
+        mode="edit"
+        initialData={mockSkill}
+        onClose={mockClose}
+      />
     );
 
     await user.click(screen.getByLabelText(/close modal/i));
@@ -35,7 +40,12 @@ describe("SkillFormModal", () => {
   it("calls onClose when clicking the overlay (background)", async () => {
     const mockClose = vi.fn();
     render(
-      <SkillFormModal mode="edit" initialData={mockSkill} onClose={mockClose} />
+      <SkillFormModal
+        isOpened={true}
+        mode="edit"
+        initialData={mockSkill}
+        onClose={mockClose}
+      />
     );
 
     const overlay = screen.getByTestId(/modal-overlay/i);
@@ -46,7 +56,12 @@ describe("SkillFormModal", () => {
 
   it("allows to add new tag when editing a skill", async () => {
     render(
-      <SkillFormModal mode="create" initialData={mockSkill} onClose={vi.fn()} />
+      <SkillFormModal
+        isOpened={true}
+        mode="create"
+        initialData={mockSkill}
+        onClose={vi.fn()}
+      />
     );
 
     expect(await screen.findByRole("heading", { level: 2 })).toHaveTextContent(
@@ -64,7 +79,9 @@ describe("SkillFormModal", () => {
   });
 
   it("allows to remove existing tag when editing a skill", async () => {
-    render(<SkillFormModal mode="edit" initialData={mockSkill} />);
+    render(
+      <SkillFormModal isOpened={true} mode="edit" initialData={mockSkill} />
+    );
 
     expect(
       within(screen.getByTestId("skill-tags")).getByText(/programming/i)
@@ -81,7 +98,7 @@ describe("SkillFormModal", () => {
 
   describe("create modal", () => {
     it("renders SkillFormModal for create new skill", () => {
-      render(<SkillFormModal mode="create" />);
+      render(<SkillFormModal isOpened={true} mode="create" />);
 
       expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(
         /new skill/i
@@ -102,7 +119,9 @@ describe("SkillFormModal", () => {
 
   describe("edit modal", () => {
     it("renders SkillFormModal for edit existing skill", () => {
-      render(<SkillFormModal mode="edit" initialData={mockSkill} />);
+      render(
+        <SkillFormModal isOpened={true} mode="edit" initialData={mockSkill} />
+      );
 
       expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(
         /edit skill/i
@@ -132,7 +151,9 @@ describe("SkillFormModal", () => {
 
   describe("delete modal", () => {
     it("renders SkillFormModal for delete skill", () => {
-      render(<SkillFormModal mode="delete" initialData={mockSkill} />);
+      render(
+        <SkillFormModal isOpened={true} mode="delete" initialData={mockSkill} />
+      );
 
       expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(
         /confirm deletion/i
@@ -152,6 +173,7 @@ describe("SkillFormModal", () => {
     it("calls onDelete : handleDelete if 'delete permanently' button is clicked", async () => {
       render(
         <SkillFormModal
+          isOpened={true}
           mode="delete"
           initialData={mockSkill}
           onDelete={mockHandleDelete}
