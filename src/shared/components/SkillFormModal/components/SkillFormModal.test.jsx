@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect } from "vitest";
 import SkillFormModal from "./SkillFormModal";
 import userEvent from "@testing-library/user-event";
@@ -184,6 +184,80 @@ describe("SkillFormModal", () => {
         screen.getByRole("button", { name: /delete permanently/i })
       );
       expect(mockHandleDelete).toHaveBeenCalledOnce();
+    });
+  });
+
+  describe("SkillFormModal accessibility", () => {
+    let user;
+
+    beforeEach(() => {
+      user = userEvent.setup();
+    });
+
+    it("calls closeModal when Escape key is pressed", async () => {
+      const mockOnClose = vi.fn();
+      render(
+        <SkillFormModal isOpened={true} mode="create" onClose={mockOnClose} />
+      );
+
+      expect(screen.getByTestId("modal-overlay")).toBeInTheDocument();
+
+      await user.keyboard("{Escape}");
+
+      await waitFor(() => {
+        expect(mockOnClose).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    it("maintains correct focus order and traps focus in ActivityFormModal", async () => {
+      render(
+        <SkillFormModal isOpened={true} mode="create" onClose={vi.fn()} />
+      );
+
+      const modalOverlay = screen.getByTestId("modal-overlay");
+      const nameField = screen.getByLabelText(/name/i);
+      const categoryField = screen.getByLabelText(/category/i);
+      const levelField = screen.getByLabelText(/level/i);
+      const tagsField = screen.getByLabelText(/tags/i);
+      const tagButton = screen.getByRole("button", { name: /add tag/i });
+      const descriptionField = screen.getByLabelText(/description/i);
+      const cancelButton = screen.getByRole("button", { name: /cancel/i });
+      const saveButton = screen.getByRole("button", { name: /save skill/i });
+      const closeButton = screen.getByLabelText(/close modal/i);
+
+      await waitFor(() => {
+        expect(modalOverlay.contains(document.activeElement)).toBe(true);
+        expect(nameField).toHaveFocus();
+      });
+
+      // 🔁 Tabulation on logical order
+      await user.tab();
+      expect(categoryField).toHaveFocus();
+
+      await user.tab();
+      expect(levelField).toHaveFocus();
+
+      await user.tab();
+      expect(tagsField).toHaveFocus();
+
+      await user.tab();
+      expect(tagButton).toHaveFocus();
+
+      await user.tab();
+      expect(descriptionField).toHaveFocus();
+
+      await user.tab();
+      expect(cancelButton).toHaveFocus();
+
+      await user.tab();
+      expect(saveButton).toHaveFocus();
+
+      await user.tab();
+      expect(closeButton).toHaveFocus();
+
+      // 🔄 Complete cycle
+      await user.tab();
+      expect(nameField).toHaveFocus();
     });
   });
 });

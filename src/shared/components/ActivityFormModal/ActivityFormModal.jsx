@@ -8,6 +8,7 @@ import SelectInput from "./components/SelectInput";
 import { useKeyboardDismiss } from "../../hooks/useKeyboardDismiss/useKeyboardDismiss";
 import { useFocusTrap } from "../../hooks/useFocusTrap/useFocusTrap";
 import { useRef } from "react";
+import { useInitialFocus } from "../../hooks/useInitialFocus/useInitialFocus";
 
 function ActivityFormModal({
   mode = "create",
@@ -56,7 +57,11 @@ function ActivityFormModal({
   useKeyboardDismiss({ isOpen: isOpened, onDismiss: closeModal });
 
   // Trap focus
+  // Trap focus to the modal contents
   const modalRef = useRef(null);
+  const dateInputRef = useRef(null);
+
+  useInitialFocus(isOpened, modalRef, dateInputRef);
   useFocusTrap(isOpened, modalRef);
 
   return (
@@ -77,7 +82,6 @@ function ActivityFormModal({
               entity="activity"
               initialData={selectedActivity}
               isSubmitting={isSubmitting}
-              
               confirmDelete={onDelete}
               closeModal={closeModal}
             />
@@ -201,6 +205,7 @@ function ActivityFormModal({
                           target: { id: "logged_at", value: isoString },
                         });
                       }}
+                      ref={dateInputRef}
                       disabled={isSubmitting}
                     />
 

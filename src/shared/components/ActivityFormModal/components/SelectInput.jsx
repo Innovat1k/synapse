@@ -11,6 +11,7 @@ import { LuChevronDown } from "react-icons/lu";
 export const SelectInput = ({
   id,
   value,
+  inputRef,
   onChange,
   options = [],
   placeholder = "Sélectionner un élément",
@@ -34,14 +35,20 @@ export const SelectInput = ({
       onSelectionChange={onChange}
       isDisabled={disabled}
       className="w-full"
+      // domRef={inputRef}
     >
       {label && (
-        <Label className="block text-sm font-medium text-slate-400 mb-1.5">
+        <Label
+          className="block text-sm font-medium text-slate-400 mb-1.5"
+          htmlFor={id}
+        >
           {label}
         </Label>
       )}
 
       <Button
+        id={id}
+        ref={inputRef}
         className={`
           w-full px-4 py-3 pr-10
           bg-slate-800/50 border border-slate-700 rounded-lg

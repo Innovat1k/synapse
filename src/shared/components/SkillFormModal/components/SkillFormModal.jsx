@@ -23,16 +23,20 @@ const SkillFormModal = ({
     onSubmit,
   });
 
-  // Dismiss with ESCAPE key
+  // Handle Escape key to close the modal (WCAG-compliant)
   useKeyboardDismiss({
     isOpen: isOpened,
     onDismiss: onClose,
   });
 
-  // Trap focus to the modal contents
+  // Manage focus for accessibility:
+  // - Initial focus goes to the skill name input
+  // - Tab navigation is trapped inside the modal
   const modalRef = useRef(null);
-  useInitialFocus(isOpened, modalRef);
-  useFocusTrap(isOpened, modalRef);
+  const skillNameRef = useRef(null);
+
+  useInitialFocus(isOpened, modalRef, skillNameRef); // Focus first field on open
+  useFocusTrap(isOpened, modalRef); // Prevent focus from leaving modal
 
   const inputClass =
     "w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-400/70 transition-colors duration-200";
@@ -112,6 +116,7 @@ const SkillFormModal = ({
                       value={skillFormData.name}
                       onChange={methods.handleChange}
                       required
+                      ref={skillNameRef}
                     />
                   </div>
 

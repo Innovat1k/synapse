@@ -16,7 +16,7 @@ const DatetimeInput = forwardRef(
     const labelStyle = "block text-sm font-medium text-slate-400 mb-1.5";
 
     return (
-      <div className={`flex gap-2 ${className}`} ref={ref}>
+      <div className={`flex gap-2 ${className}`}>
         <div className="flex-1">
           <label htmlFor={`${id}-date`} className={labelStyle}>
             Date
@@ -28,6 +28,7 @@ const DatetimeInput = forwardRef(
             onChange={(e) => setDateValue(e.target.value)}
             disabled={disabled}
             className={inputStyle}
+            ref={ref}
           />
         </div>
         <div className="flex-1">

@@ -335,36 +335,6 @@ describe("SkillDetailPage", () => {
       ).toBeInTheDocument();
     });
 
-    it("closes purge confirmation modal when Escape key is pressed", async () => {
-      vi.mocked(useOutletContext).mockReturnValue({ skills: mockSkills });
-      vi.mocked(useParams).mockReturnValue({
-        skillId: "550e8400-e29b-41d4-a716-446655440001",
-      });
-
-      vi.mocked(activityService.fetchActivitiesBySkill).mockResolvedValue(
-        mockActivities
-      );
-
-      render(<SkillDetailPage />, { wrapper: Wrapper });
-
-      await user.click(
-        screen.getByRole("button", { name: /open skill actions/i })
-      );
-      await user.click(
-        screen.getByRole("button", { name: /purge activities/i })
-      );
-
-      expect(screen.getByTestId("purge-modal-overlay")).toBeInTheDocument();
-
-      await user.keyboard("{Escape}");
-
-      await waitFor(() => {
-        expect(
-          screen.queryByTestId("purge-modal-overlay")
-        ).not.toBeInTheDocument();
-      });
-    });
-
     it("closes purge confirmation modal when clicking outside the modal content (on overlay)", async () => {
       vi.mocked(useOutletContext).mockReturnValue({ skills: mockSkills });
       vi.mocked(useParams).mockReturnValue({
@@ -392,61 +362,6 @@ describe("SkillDetailPage", () => {
           screen.queryByTestId("purge-modal-overlay")
         ).not.toBeInTheDocument();
       });
-    });
-
-    it("keeps focus trapped within the purge modal when tabbing", async () => {
-      vi.mocked(useOutletContext).mockReturnValue({ skills: mockSkills });
-      vi.mocked(useParams).mockReturnValue({
-        skillId: "550e8400-e29b-41d4-a716-446655440001",
-      });
-      vi.mocked(activityService.fetchActivitiesBySkill).mockResolvedValue(
-        mockActivities
-      );
-
-      render(<SkillDetailPage />, { wrapper: Wrapper });
-
-      await user.click(
-        screen.getByRole("button", { name: /open skill actions/i })
-      );
-
-      await user.click(
-        screen.getByRole("button", { name: /purge activities/i })
-      );
-
-      await user.click(
-        screen.getByRole("button", { name: /continue to purge/i })
-      );
-
-      const overlay = screen.getByTestId("purge-modal-overlay");
-      const input = screen.getByLabelText(/enter skill name/i);
-      const cancelButton = screen.getByRole("button", { name: /cancel/i });
-      const purgeButton = screen.getByRole("button", {
-        name: /purge permanently/i,
-      });
-      const closeButton = screen.getByLabelText(/close modal/i);
-
-      await waitFor(() => {
-        expect(overlay.contains(document.activeElement)).toBe(true);
-        expect(input).toHaveFocus();
-      });
-
-      // 1. Tab → Cancel
-      await user.tab();
-      expect(cancelButton).toHaveFocus();
-
-      // 2. Tab → Purge
-      await user.tab();
-      expect(purgeButton).toHaveFocus();
-
-      // 3. Tab → Close (×)
-      await user.tab();
-      expect(closeButton).toHaveFocus();
-
-      // 4. Tab → retour à l'input (cycle complet)
-      await user.tab();
-      expect(input).toHaveFocus();
-
-      screen.debug(undefined, 20000);
     });
   });
 

@@ -1,5 +1,5 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, vi } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, vi } from "vitest";
 import ActivityFormModal from "./ActivityFormModal";
 import userEvent from "@testing-library/user-event";
 
@@ -121,6 +121,87 @@ describe("ActivityFormModal", () => {
       );
 
       expect(mockOnSubmit).toHaveBeenCalled();
+    });
+  });
+
+  describe("ActivityFormModal accessibility", () => {
+    let user;
+
+    beforeEach(() => {
+      user = userEvent.setup();
+    });
+
+    it("calls closeModal when Escape key is pressed", async () => {
+      const mockCloseModal = vi.fn();
+      render(
+        <ActivityFormModal
+          isOpened={true}
+          mode="create"
+          skill={mockSkills[1]}
+          allSkills={mockSkills}
+          closeModal={mockCloseModal}
+        />
+      );
+
+      expect(screen.getByTestId("modal-overlay")).toBeInTheDocument();
+
+      await user.keyboard("{Escape}");
+
+      await waitFor(() => {
+        expect(mockCloseModal).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    it("maintains correct focus order and traps focus in ActivityFormModal", async () => {
+      render(
+        <ActivityFormModal
+          isOpened={true}
+          mode="create"
+          skill={mockSkills[1]}
+          allSkills={mockSkills}
+        />
+      );
+
+      const modalOverlay = screen.getByTestId("modal-overlay");
+      const dateField = screen.getByLabelText(/date/i);
+      const timeField = screen.getByLabelText(/time/i);
+      const hoursField = screen.getByLabelText(/hours/i);
+      const minutesField = screen.getByLabelText(/minutes/i);
+      const activityTypeField = screen.getByLabelText(/activity type/i);
+      const notesField = screen.getByLabelText(/notes/i);
+      const cancelButton = screen.getByRole("button", { name: /cancel/i });
+      const closeButton = screen.getByLabelText(/close modal/i);
+
+      await waitFor(() => {
+        expect(modalOverlay.contains(document.activeElement)).toBe(true);
+        expect(dateField).toHaveFocus();
+      });
+
+      // 🔁 Tabulation on logical order
+      await user.tab();
+      expect(timeField).toHaveFocus();
+
+      await user.tab();
+      expect(hoursField).toHaveFocus();
+
+      await user.tab();
+      expect(minutesField).toHaveFocus();
+
+      await user.tab();
+      expect(activityTypeField).toHaveFocus();
+
+      await user.tab();
+      expect(notesField).toHaveFocus();
+
+      await user.tab();
+      expect(cancelButton).toHaveFocus();
+
+      await user.tab();
+      expect(closeButton).toHaveFocus();
+
+      // 🔄 Complete cycle
+      await user.tab();
+      expect(dateField).toHaveFocus();
     });
   });
 });
