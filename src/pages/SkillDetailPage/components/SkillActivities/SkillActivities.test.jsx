@@ -72,6 +72,33 @@ describe("SkillActivities", () => {
           /Built reusable UI components and improved frontend responsiveness./i
         )
       ).toBeInTheDocument();
+      expect(screen.getByTestId("activity-count-badge")).toHaveTextContent("1");
+    });
+
+    it("renders activity count badge when activities exist", async () => {
+      vi.mocked(activityService.fetchActivitiesBySkill).mockResolvedValue([
+        mockActivity,
+      ]);
+
+      render(<SkillActivities skill={mockSkills[0]} skills={mockSkills} />, {
+        wrapper: Wrapper,
+      });
+
+      expect(await screen.findByText("1")).toBeInTheDocument();
+      expect(screen.getByTestId("activity-count-badge")).toHaveTextContent("1");
+    });
+
+    it("does not render activity count badge when no activities", () => {
+      vi.mocked(activityService.fetchActivitiesBySkill).mockResolvedValue([]);
+
+      render(<SkillActivities skill={mockSkills[0]} skills={mockSkills} />, {
+        wrapper: Wrapper,
+      });
+
+      expect(screen.queryByText(/0|activities/i)).not.toBeInTheDocument();
+      expect(
+        screen.getByText(/You haven't logged any activity/i)
+      ).toBeInTheDocument();
     });
 
     it("disables the skill selector when creating activity", async () => {
@@ -147,6 +174,7 @@ describe("SkillActivities", () => {
           /Built reusable UI components and improved frontend responsiveness./i
         )
       ).toBeInTheDocument();
+      expect(screen.getByTestId("activity-count-badge")).toHaveTextContent("1");
     }, 10000);
 
     it("updates the selected activity", async () => {
@@ -224,6 +252,7 @@ describe("SkillActivities", () => {
       expect(
         desktop_layout.getByRole("cell", { name: /1 h 17 mn/i })
       ).toBeInTheDocument();
+      expect(screen.getByTestId("activity-count-badge")).toHaveTextContent("1");
 
       await user.click(
         desktop_layout.getByRole("button", {
@@ -256,6 +285,9 @@ describe("SkillActivities", () => {
       ).not.toBeInTheDocument();
       expect(
         screen.queryByRole("cell", { name: /1 h 17 mn/i })
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId("activity-count-badge")
       ).not.toBeInTheDocument();
     });
 
@@ -322,6 +354,8 @@ describe("SkillActivities", () => {
         })
       ).toBeInTheDocument();
 
+      expect(screen.getByTestId("activity-count-badge")).toHaveTextContent("2");
+
       await user.click(
         targetRow.getByRole("button", {
           name: /delete activity n11a47c2-8jj0b-4e6d-9db1-4z2f6b2c5f33/i,
@@ -367,6 +401,7 @@ describe("SkillActivities", () => {
           name: /Reviewed code and provided feedback to team members/i,
         })
       ).toBeInTheDocument();
+      expect(screen.getByTestId("activity-count-badge")).toHaveTextContent("1");
     });
 
     // We test the "X" button as a representative close trigger,

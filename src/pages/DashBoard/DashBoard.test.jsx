@@ -131,7 +131,8 @@ describe("DashBoard", () => {
     await waitFor(() => {
       expect(screen.queryByTestId("modal-overlay")).not.toBeInTheDocument();
     });
-  });
+    expect(screen.getByTestId("skill-count-badge")).toHaveTextContent("1");
+  }, 7000);
 
   it("opens log activity modal from Dashboard then allows to create an activity", async () => {
     const mockNewActivity = {

@@ -1,4 +1,4 @@
-import { LuSearch, LuPlus, LuFilter } from "react-icons/lu";
+import { LuSearch, LuPlus, LuFilter, LuBookOpen } from "react-icons/lu";
 import { useSkillsList } from "../SkillsListPage/hooks/useSkillsList";
 import { useSkillModal } from "../../shared/components/SkillFormModal/hooks/useSkillModal/useSkillModal";
 import SkillFormModal from "../../shared/components/SkillFormModal/components/SkillFormModal";
@@ -27,7 +27,23 @@ const SkillsListPage = () => {
       />
 
       <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-6">
-        <h1 className="text-2xl font-bold mb-6">Skill Management</h1>
+        <div className="flex items-center gap-3 mb-6">
+          <h1 className="text-2xl font-bold">Skill Management</h1>
+
+          <div
+            className="flex items-center gap-1.5 bg-slate-900/50 px-2 py-0.5 rounded-md border border-slate-800/40 translate-y-0.5"
+            data-testid="skill-count-badge"
+          >
+            <LuBookOpen size={14} className="text-slate-500 flex-shrink-0" />
+            {isLoading ? (
+              <div className="h-4 w-4 bg-slate-800 animate-pulse rounded" />
+            ) : (
+              <span className="text-sm font-medium text-slate-300">
+                {search.filteredSkills.length}
+              </span>
+            )}
+          </div>
+        </div>
 
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
           <div className="flex flex-col sm:flex-row gap-3 flex-1">

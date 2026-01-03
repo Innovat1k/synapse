@@ -118,6 +118,7 @@ describe("SkillsLayout", () => {
         expect(
           screen.getByRole("cell", { name: /python/i })
         ).toBeInTheDocument();
+        expect(screen.getByTestId("skill-count-badge")).toHaveTextContent("1");
       });
     }, 10000);
 
@@ -229,6 +230,7 @@ describe("SkillsLayout", () => {
       expect(
         screen.queryByRole("heading", { name: /confirm deletion/i })
       ).not.toBeInTheDocument();
+      expect(screen.getByTestId("skill-count-badge")).toHaveTextContent("3");
     });
 
     it("navigates to the skill detail page if skill name is clicked", async () => {

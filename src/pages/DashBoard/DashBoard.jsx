@@ -10,6 +10,7 @@ import {
   LuCircleCheck,
   LuClock,
   LuArrowUpRight,
+  LuBookOpen,
 } from "react-icons/lu";
 import CircularProgressChart from "../../shared/components/CircularProgressChart/CircularProgressChart";
 import Card from "../DashBoard/components/Card";
@@ -39,7 +40,7 @@ const Dashboard = () => {
     { text: "Created 'Typoophy' skill", time: "Last week" },
   ];
 
-  const { skills } = useSkillsQuery();
+  const { skills, isLoading } = useSkillsQuery();
   const activityModal = useActivityModal();
   const skillModal = useSkillModal();
 
@@ -56,16 +57,13 @@ const Dashboard = () => {
         openSkillModal={skillModal.methods.openCreateModal}
       />
 
-      <AnimatePresence>
-        {skillModal.modal.isModalOpen && (
-          <SkillFormModal
-            mode={skillModal.modal.modalMode}
-            isSubmitting={skillModal.isSubmitting}
-            onClose={skillModal.methods.closeModal}
-            onSubmit={skillModal.methods.handleSaveSkill}
-          />
-        )}
-      </AnimatePresence>
+      <SkillFormModal
+        isOpened={skillModal.modal.isModalOpen}
+        mode={skillModal.modal.modalMode}
+        isSubmitting={skillModal.isSubmitting}
+        onClose={skillModal.methods.closeModal}
+        onSubmit={skillModal.methods.handleSaveSkill}
+      />
 
       <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-6">
         <div className="flex justify-between items-center mb-6">
@@ -169,10 +167,29 @@ const Dashboard = () => {
             </Card>
 
             <Card>
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex justify-between items-start gap-4 mb-4">
                 <h2 className="text-lg font-semibold text-slate-100">
                   Skill List
                 </h2>
+
+                <div
+                  className="flex items-center gap-1.5 bg-slate-900/50 px-2 py-0.5 rounded-md border border-slate-800/40"
+                  data-testid="skill-count-badge"
+                >
+                  <LuBookOpen
+                    size={14}
+                    className="text-slate-500 flex-shrink-0"
+                  />
+
+                  {isLoading ? (
+                    <div className="h-4 w-4 bg-slate-800 animate-pulse rounded" />
+                  ) : (
+                    <span className="text-sm font-medium text-slate-200">
+                      {skills.length}
+                    </span>
+                  )}
+                </div>
+
                 <button
                   className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded text-sm flex items-center gap-1 transition-colors"
                   type="button"

@@ -2,6 +2,7 @@ import {
   LuAlarmClockPlus,
   LuCalendar,
   LuClock,
+  LuListChecks,
   LuPencil,
   LuTrash2,
 } from "react-icons/lu";
@@ -40,9 +41,28 @@ function SkillActivities({ skill, skills }) {
 
       <div>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 md:mb-6">
-          <h2 className="text-lg sm:text-xl font-semibold text-slate-100">
-            Activity log
-          </h2>
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="text-lg sm:text-xl font-semibold text-slate-100">
+              Activity log
+            </h2>
+
+            {!isLoading && activities?.length > 0 && (
+              <div
+                data-testid="activity-count-badge"
+                className="flex items-center gap-1.5 bg-slate-900/50 px-2 py-0.5 rounded-md border border-slate-800/40"
+              >
+                <LuListChecks
+                  size={14}
+                  className="text-slate-500 flex-shrink-0"
+                  aria-hidden="true"
+                />
+                <span className="text-sm font-medium text-slate-200 tabular-nums">
+                  {activities.length}
+                </span>
+              </div>
+            )}
+          </div>
+
           <button
             type="button"
             className="flex items-center justify-center gap-1.5 sm:gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg transition-colors text-xs sm:text-sm cursor-pointer"

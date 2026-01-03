@@ -199,6 +199,8 @@ describe("SkillDetailPage", () => {
       )
     ).toBeInTheDocument();
 
+    expect(screen.getByTestId("activity-count-badge")).toHaveTextContent("2");
+
     await user.click(
       screen.getByRole("button", { name: /open skill actions/i })
     );
@@ -227,6 +229,9 @@ describe("SkillDetailPage", () => {
       ).not.toBeInTheDocument();
     });
 
+    expect(
+      screen.queryByTestId("activity-count-badge")
+    ).not.toBeInTheDocument();
     expect(
       screen.getByText(/You haven't logged any activity for this skill/i)
     ).toBeInTheDocument();
