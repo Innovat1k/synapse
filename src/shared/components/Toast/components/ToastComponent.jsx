@@ -2,8 +2,10 @@ import { Toast } from "radix-ui";
 import { useToast } from "../hooks/useToast";
 import { useAtomValue } from "jotai";
 import { notification_atom } from "../../../../atoms/atoms";
-import { motion, AnimatePresence } from "framer-motion";
 import { LuCircleCheck, LuCircleX, LuX } from "react-icons/lu";
+
+// eslint-disable-next-line no-unused-vars
+import { motion, AnimatePresence } from "framer-motion";
 
 function ToastComponent() {
   const { closeNotif } = useToast();

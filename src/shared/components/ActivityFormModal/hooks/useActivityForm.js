@@ -49,12 +49,12 @@ export const useActivityForm = ({
   });
 
   //
-  const initialTouchedState = {
-    skill_id: false,
-    logged_at: false,
-    duration: false,
-    activity_type: false,
-  };
+const initialTouchedState = useMemo(() => ({
+  skill_id: false,
+  logged_at: false,
+  duration: false,
+  activity_type: false,
+}), []);
 
   const [touched, setTouched] = useState(initialTouchedState);
 
@@ -76,7 +76,7 @@ export const useActivityForm = ({
       setDurationData({ hours: 0, minutes: 0 });
       setTouched(initialTouchedState);
     }
-  }, [isOpened]);
+  }, [isOpened, initialTouchedState]);
 
   // 2. Initialize data when modal get opened
   useEffect(() => {

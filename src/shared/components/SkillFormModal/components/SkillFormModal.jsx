@@ -1,11 +1,13 @@
 import { LuX, LuPlus } from "react-icons/lu";
-import { AnimatePresence, motion } from "framer-motion";
 import { useSkillForm } from "../hooks/useSkillForm/useSkillForm";
 import ButtonSpinner from "../../ButtonSpinner";
 import { useRef } from "react";
 import { useFocusTrap } from "../../../hooks/useFocusTrap/useFocusTrap";
 import { useInitialFocus } from "../../../hooks/useInitialFocus/useInitialFocus";
 import { useKeyboardDismiss } from "../../../hooks/useKeyboardDismiss/useKeyboardDismiss";
+
+// eslint-disable-next-line no-unused-vars
+import { AnimatePresence, motion } from "framer-motion";
 
 const SkillFormModal = ({
   isOpened,
@@ -37,9 +39,6 @@ const SkillFormModal = ({
 
   useInitialFocus(isOpened, modalRef, skillNameRef); // Focus first field on open
   useFocusTrap(isOpened, modalRef); // Prevent focus from leaving modal
-
-  const inputClass =
-    "w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-400/70 transition-colors duration-200";
 
   return (
     <AnimatePresence>

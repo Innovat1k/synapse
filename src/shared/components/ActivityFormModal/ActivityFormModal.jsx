@@ -1,4 +1,3 @@
-import { AnimatePresence, motion } from "framer-motion";
 import { LuX, LuClock, LuTriangleAlert, LuCircleAlert } from "react-icons/lu";
 import { useActivityForm } from "./hooks/useActivityForm";
 import ButtonSpinner from "../ButtonSpinner";
@@ -9,6 +8,9 @@ import { useKeyboardDismiss } from "../../hooks/useKeyboardDismiss/useKeyboardDi
 import { useFocusTrap } from "../../hooks/useFocusTrap/useFocusTrap";
 import { useRef } from "react";
 import { useInitialFocus } from "../../hooks/useInitialFocus/useInitialFocus";
+
+// eslint-disable-next-line no-unused-vars
+import { AnimatePresence, motion } from "framer-motion";
 
 function ActivityFormModal({
   mode = "create",

@@ -20,11 +20,10 @@ export const fetchSkills = async () => {
       .order("created_at", { ascending: false }); // Latest skills first
 
     if (error) throw error;
-
     return data;
-  } catch (error) {
-    console.error("Error fetching skills:", error.message);
-    return [];
+  } catch {
+    // TODO: log to monitoring service (e.g., Sentry)
+    return []; // fallback safe for UI
   }
 };
 
@@ -33,21 +32,15 @@ export const fetchSkills = async () => {
  * @param {object} skillData - { name, description, type, level }
  */
 export const createSkill = async (skillData) => {
-  try {
-    // We rely on RLS policy to automatically set or verify the user_id
-    // during the insert operation to ensure security.
-    const { data, error } = await supabase
-      .from(SKILLS_TABLE)
-      .insert(skillData)
-      .select();
+  // We rely on RLS policy to automatically set or verify the user_id
+  // during the insert operation to ensure security.
+  const { data, error } = await supabase
+    .from(SKILLS_TABLE)
+    .insert(skillData)
+    .select();
 
-    if (error) throw error;
-
-    return data[0];
-  } catch (error) {
-    console.error("Error creating skill:", error.message);
-    throw error;
-  }
+  if (error) throw error;
+  return data[0];
 };
 
 // --- UPDATE (Modifying an existing skill) ---
@@ -56,21 +49,15 @@ export const createSkill = async (skillData) => {
  * @param {object} updates - The fields to update { name?, description?, level? }
  */
 export const updateSkill = async (id, updates) => {
-  try {
-    // RLS ensures only the owner of the skill with this ID can update it.
-    const { data, error } = await supabase
-      .from(SKILLS_TABLE)
-      .update(updates)
-      .eq("skill_id", id)
-      .select();
+  // RLS ensures only the owner of the skill with this ID can update it.
+  const { data, error } = await supabase
+    .from(SKILLS_TABLE)
+    .update(updates)
+    .eq("skill_id", id)
+    .select();
 
-    if (error) throw error;
-
-    return data[0];
-  } catch (error) {
-    console.error("Error updating skill:", error.message);
-    throw error;
-  }
+  if (error) throw error;
+  return data[0];
 };
 
 // --- DELETE (Removing a skill) ---
@@ -78,18 +65,12 @@ export const updateSkill = async (id, updates) => {
  * @param {string} id - The UUID of the skill to delete
  */
 export const deleteSkill = async (id) => {
-  try {
-    // RLS ensures only the owner of the skill with this ID can delete it.
-    const { error } = await supabase
-      .from(SKILLS_TABLE)
-      .delete()
-      .eq("skill_id", id);
+  // RLS ensures only the owner of the skill with this ID can delete it.
+  const { error } = await supabase
+    .from(SKILLS_TABLE)
+    .delete()
+    .eq("skill_id", id);
 
-    if (error) throw error;
-
-    return true;
-  } catch (error) {
-    console.error("Error deleting skill:", error.message);
-    throw error;
-  }
+  if (error) throw error;
+  return true;
 };
