@@ -49,11 +49,9 @@ function SkillsTable({
                   className="border-b border-slate-800/50 hover:bg-slate-900/40 transition-colors capitalize"
                   data-testid={`skill-row-${skill.skill_id}`}
                 >
-                  <Link to={`${skill.skill_id}`}>
-                    <td className="py-3 px-4 font-medium text-slate-100">
-                      {skill.name}
-                    </td>
-                  </Link>
+                  <td className="py-3 px-4 font-medium text-slate-100">
+                    <Link to={`${skill.skill_id}`}>{skill.name}</Link>
+                  </td>
                   <td className="py-3 px-4">
                     <span className="inline-block px-2.5 py-1 text-xs rounded-full bg-slate-800/50 text-slate-200">
                       {skill.category}
