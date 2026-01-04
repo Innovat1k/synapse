@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
 import { Provider } from "jotai";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import FallbackComponent from "./shared/components/FallBackComponent.jsx";
 import DashBoard from "./pages/DashBoard/DashBoard.jsx";
 import UserAuthPage from "./pages/UserAuthPage/components/UserAuthPage.jsx";
@@ -20,7 +20,8 @@ const route = createBrowserRouter([
     element: <App />,
     errorElement: <FallbackComponent />,
     children: [
-      { index: true, path: "/dashboard", element: <DashBoard /> },
+      { index: true, element: <Navigate to="/dashboard" replace /> },
+      { path: "/dashboard", element: <DashBoard /> },
       {
         path: "/auth",
         element: <UserAuthPage />,
