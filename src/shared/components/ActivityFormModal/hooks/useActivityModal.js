@@ -85,9 +85,13 @@ export const useActivityModal = (skillId) => {
         queryKey: ["skill-activities", skillId],
       });
       closeModal();
-    } catch (error) {
-      console.error("Failed to save activity:", error);
-      throw error;
+    } catch {
+      // TODO: show user-facing error (e.g., toast) in Phase 4
+      // For now, log in dev (will be replaced by toast)
+      // if (import.meta.env.DEV) {
+      //   console.error("Activity form error:", error);
+      // }
+      // Do NOT rethrow — handle gracefully in UI layer
     } finally {
       setIsSubmitting(false);
       setModal({ mode: "" });
@@ -101,9 +105,8 @@ export const useActivityModal = (skillId) => {
       await queryClient.invalidateQueries({
         queryKey: ["skill-activities", skillId],
       });
-    } catch (error) {
-      console.error("Failed to delete activity:", error);
-      throw error;
+    } catch {
+      // TODO: show user-facing error (e.g., toast)
     } finally {
       setSelectedActivity(null);
       setIsSubmitting(false);

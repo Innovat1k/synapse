@@ -1,7 +1,9 @@
-import { motion } from "framer-motion";
 import { LuX } from "react-icons/lu";
 import ButtonSpinner from "../ButtonSpinner";
 import { formatDateShort } from "../../utils/utils";
+
+// eslint-disable-next-line no-unused-vars
+import { motion } from "framer-motion";
 
 function DeleteModal({
   entity = "skill",
@@ -9,7 +11,7 @@ function DeleteModal({
   isSubmitting,
   closeModal,
   confirmDelete,
-  ref
+  ref,
 }) {
   return (
     <motion.div

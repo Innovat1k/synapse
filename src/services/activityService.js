@@ -12,75 +12,48 @@ export const fetchActivitiesBySkill = async (skillId) => {
       .order("logged_at", { ascending: false });
 
     if (error) throw error;
-
     return data;
-  } catch (error) {
-    console.error("Error fetching activities:", error.message);
-    return [];
+  } catch {
+    // TODO: log to monitoring service (e.g., Sentry)
+    return []; // fallback safe for UI
   }
 };
 
 // --- Adding activity ---
 export const createActivity = async (activityData) => {
-  try {
-    const { data, error } = await supabase
-      .from(TABLE)
-      .insert(activityData)
-      .select();
+  const { data, error } = await supabase
+    .from(TABLE)
+    .insert(activityData)
+    .select();
 
-    if (error) throw error;
-
-    return data[0];
-  } catch (error) {
-    console.error("Error creating activity:", error.message);
-    throw error;
-  }
+  if (error) throw error;
+  return data[0];
 };
 
+// --- Updating activity ---
 export const updateActivity = async (id, updates) => {
-  try {
-    const { data, error } = await supabase
-      .from(TABLE)
-      .update(updates)
-      .eq("id", id)
-      .select();
+  const { data, error } = await supabase
+    .from(TABLE)
+    .update(updates)
+    .eq("id", id)
+    .select();
 
-    if (error) throw error;
-
-    return data[0];
-  } catch (error) {
-    console.error("Error updating activity:", error.message);
-    throw error;
-  }
+  if (error) throw error;
+  return data[0];
 };
 
 // --- Removing activity ---
 export const deleteActivity = async (id) => {
-  try {
-    const { error } = await supabase.from(TABLE).delete().eq("id", id);
+  const { error } = await supabase.from(TABLE).delete().eq("id", id);
 
-    if (error) throw error;
-
-    return true;
-  } catch (error) {
-    console.error("Error deleting activity:", error.message);
-    throw error;
-  }
+  if (error) throw error;
+  return true;
 };
 
-// --- Removing activities from a skill ---
+// --- Removing all activities for a skill ---
 export const purgeActivitiesBySkill = async (skillId) => {
-  try {
-    const { error } = await supabase
-      .from(TABLE)
-      .delete()
-      .eq("skill_id", skillId); // ✅ Filtre avant de supprimer
+  const { error } = await supabase.from(TABLE).delete().eq("skill_id", skillId);
 
-    if (error) throw error;
-
-    return true;
-  } catch (error) {
-    console.error("Error when purging activities:", error); // ✅ Typo corrigée
-    throw error; // ✅ Lance l'erreur pour que le composant la gère
-  }
+  if (error) throw error;
+  return true;
 };

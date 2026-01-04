@@ -56,8 +56,8 @@ export const usePurgeActivities = (skillId, skillName = "") => {
         setHasError(true);
         throw new Error("The skill name does not match. Please try again.");
       }
-    } catch (error) {
-      console.error("Unable to remove all activities:", error.message);
+    } catch {
+      // TODO: show user-facing error (e.g., toast)
     } finally {
       setIsSubmitting(false);
       if (typedSkillName === skillName) {

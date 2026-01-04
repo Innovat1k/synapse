@@ -1,10 +1,12 @@
-import { AnimatePresence, motion } from "framer-motion";
 import { LuX } from "react-icons/lu";
 import { useKeyboardDismiss } from "../../../../shared/hooks/useKeyboardDismiss/useKeyboardDismiss";
 import { useFocusTrap } from "../../../../shared/hooks/useFocusTrap/useFocusTrap";
 import { useInitialFocus } from "../../../../shared/hooks/useInitialFocus/useInitialFocus";
 import { useRef } from "react";
 import ButtonSpinner from "../../../../shared/components/ButtonSpinner";
+
+// eslint-disable-next-line no-unused-vars
+import { AnimatePresence, motion } from "framer-motion";
 
 function PurgeActivitiesModal({
   // Modal state
@@ -48,6 +50,7 @@ function PurgeActivitiesModal({
 
   return (
     <AnimatePresence>
+      motion
       {isOpened && (
         <motion.div
           className="fixed inset-0 bg-gradient-to-br from-slate-950/60 via-slate-900/50 to-slate-950/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm"

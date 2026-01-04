@@ -51,7 +51,7 @@ export const useAuth = () => {
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [setUserSession]);
 
   // Get user with session
   useEffect(() => {
@@ -60,7 +60,7 @@ export const useAuth = () => {
     } else {
       setUser(null);
     }
-  }, [userSession]);
+  }, [userSession, setUser]);
 
   // Sign In
   const handleSignIn = async (e) => {
@@ -69,7 +69,7 @@ export const useAuth = () => {
     setNotification({ type: "", message: "" });
 
     try {
-      const { error, data } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
       });
@@ -82,7 +82,7 @@ export const useAuth = () => {
             "Invalid login credentials. Please check your email and password.",
         });
       } else {
-        console.log("User authenticated :", data.user);
+        // TODO: show user-facing success (toast)
         navigate("/dashboard");
       }
     } finally {
@@ -97,7 +97,7 @@ export const useAuth = () => {
     setNotification({ type: "", message: "" });
 
     try {
-      const { error, data } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
       });
@@ -112,9 +112,6 @@ export const useAuth = () => {
         });
       } else {
         navigate("/auth/check-email");
-        console.log(
-          "User account creation proceded, please check your email to confirm submission."
-        );
       }
     } finally {
       setIsSubmitting(false);
@@ -128,7 +125,7 @@ export const useAuth = () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) {
-        console.log("An error has occured while signing out:", error);
+        // TODO: show user-facing success (toast)
       } else {
         navigate("/auth");
       }

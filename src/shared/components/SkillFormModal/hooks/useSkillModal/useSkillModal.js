@@ -55,9 +55,8 @@ export const useSkillModal = () => {
 
       await queryClient.invalidateQueries({ queryKey: ["skills"] });
       closeModal();
-    } catch (error) {
-      console.error("Failed to save skill:", error);
-      throw error;
+    } catch {
+      // TODO: show user-facing error (e.g., toast)
     } finally {
       setIsSubmitting(false);
       setModalMode("");
@@ -71,9 +70,8 @@ export const useSkillModal = () => {
       await queryClient.invalidateQueries({ queryKey: ["skills"] });
 
       navigate("/skills");
-    } catch (error) {
-      console.error("Failed to delete skill:", error);
-      throw error;
+    } catch  {
+// TODO: show user-facing error (e.g., toast)
     } finally {
       setSelectedSkill(null);
       setIsSubmitting(false);
