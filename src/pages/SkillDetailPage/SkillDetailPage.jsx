@@ -14,14 +14,20 @@ import { useSkillModal } from "../../shared/components/SkillFormModal/hooks/useS
 import PurgeActivitiesModal from "./components/PurgeActivitiesModal/PurgeActivitiesModal";
 import { usePurgeActivities } from "./components/PurgeActivitiesModal/usePurgeActivities";
 import { useActivitiesQuery } from "../../shared/hooks/useActivitiesQuery/useActivitiesQuery";
+import SkillSkeleton from "./components/SkillSkeleton";
 
 function SkillDetailPage() {
   const { skills } = useOutletContext();
   const { skillId } = useParams();
   const { skill, actionsMenu } = useSkillDetail(skillId, skills);
   const { modal, isSubmitting, methods } = useSkillModal();
-  const activityPurge = usePurgeActivities(skillId, skill.name);
+  const activityPurge = usePurgeActivities(skillId, skill?.name);
   const { activities } = useActivitiesQuery(skillId);
+
+  // Show the skeleton if skill is not ready
+  if (!skill) {
+    return <SkillSkeleton />;
+  }
 
   return (
     <>
