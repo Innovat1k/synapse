@@ -36,19 +36,28 @@ export const useAuth = () => {
 
   // Check and update user session
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUserSession(session);
+    let isSubscribed = true;
+
+    const initAuth = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (isSubscribed) {
+        setUserSession(data.session);
+        setIsInitialLoading(false);
+      }
+    };
+
+    const authListener = supabase.auth.onAuthStateChange((_, session) => {
+      if (isSubscribed) {
+        setUserSession(session);
+      }
     });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUserSession(session);
-    });
+    const subscription = authListener.data.subscription;
 
-    setIsInitialLoading(false);
+    initAuth();
 
     return () => {
+      isSubscribed = false;
       subscription.unsubscribe();
     };
   }, [setUserSession]);
@@ -136,6 +145,7 @@ export const useAuth = () => {
 
   return {
     loader: { isSubmitting, isInitialLoading },
+    isLoading: isInitialLoading,
     isLogin,
     userSession,
     user,
