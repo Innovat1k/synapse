@@ -37,14 +37,34 @@ export const useAuth = () => {
   // Check and update user session
   useEffect(() => {
     let isSubscribed = true;
+    let timeoutId;
 
     const initAuth = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (isSubscribed) {
-        setUserSession(data.session);
-        setIsInitialLoading(false);
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (isSubscribed) {
+          setUserSession(data.session);
+          setIsInitialLoading(false);
+          clearTimeout(timeoutId);
+        }
+      } catch (error) {
+        console.warn("Auth check failed:", error);
+        if (isSubscribed) {
+          setIsInitialLoading(false);
+          clearTimeout(timeoutId);
+        }
       }
     };
+
+    // Guard Timeout (5 seconds)
+    timeoutId = setTimeout(() => {
+      if (isSubscribed) {
+        console.warn(
+          "Auth check timed out after 5s – proceeding unauthenticated"
+        );
+        setIsInitialLoading(false);
+      }
+    }, 5000);
 
     const authListener = supabase.auth.onAuthStateChange((_, session) => {
       if (isSubscribed) {
@@ -58,6 +78,7 @@ export const useAuth = () => {
 
     return () => {
       isSubscribed = false;
+      clearTimeout(timeoutId);
       subscription.unsubscribe();
     };
   }, [setUserSession]);
