@@ -1,9 +1,22 @@
 import { useState } from "react";
 
 /**
- * Custom hook for managing form and user inputs data.
- * It ensures switching between SignIn and SignUp form
- * and collects user data while filling inputs.
+ * Manages form state and user input for authentication (sign-in / sign-up).
+ *
+ * Tracks field values and touched status for real-time validation.
+ * Allows toggling between login and registration modes,
+ * and provides a secure way to reset sensitive data (e.g., after sign-out).
+ *
+ * @param {void} — This hook takes no parameters.
+ * @returns {{
+ *   isLogin: boolean,
+ *   formData: { email: string; password: string; confirmPassword: string },
+ *   touched: { email: boolean; password: boolean; confirmPassword: boolean },
+ *   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
+ *   handleBlur: (event: React.FocusEvent<HTMLInputElement>) => void,
+ *   handleToggleAuth: () => void,
+ *   resetForm: () => void
+ * }} Object containing form state, metadata, and handlers.
  */
 
 const initialFormData = {
@@ -45,6 +58,13 @@ export const useFormData = () => {
     setIsLogin((prev) => !prev);
   };
 
+  // Reset form to initial state (used after sign out to clear sensitive data)
+  const resetForm = () => {
+    setFormData(initialFormData);
+    setTouched(initialTouchedState);
+    setIsLogin(true);
+  };
+
   return {
     isLogin,
     formData,
@@ -52,5 +72,6 @@ export const useFormData = () => {
     handleChange,
     handleBlur,
     handleToggleAuth,
+    resetForm,
   };
 };

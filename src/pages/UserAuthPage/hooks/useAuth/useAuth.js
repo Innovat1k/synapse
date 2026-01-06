@@ -30,6 +30,7 @@ export const useAuth = () => {
     handleBlur,
     handleToggleAuth,
     handleChange,
+    resetForm,
   } = useFormData();
 
   const navigate = useNavigate();
@@ -157,6 +158,7 @@ export const useAuth = () => {
       if (error) {
         // TODO: show user-facing success (toast)
       } else {
+        resetForm();
         navigate("/auth");
       }
     } finally {
