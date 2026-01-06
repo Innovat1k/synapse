@@ -42,6 +42,7 @@ const mockUseFormData = {
   handleBlur: vi.fn(),
   handleToggleAuth: vi.fn(),
   handleChange: vi.fn(),
+  resetForm: vi.fn(),
 };
 
 vi.mock("../../../../shared/hooks/useFormData/useFormData", () => ({
@@ -62,7 +63,7 @@ describe("useAuth", () => {
     mockNavigate.mockClear();
   });
 
-  it("nitializes the session and stops initial loading", async () => {
+  it("initializes the session and stops initial loading", async () => {
     const mockSession = { user: { id: "active-user" } };
     mockAuth.getSession.mockResolvedValueOnce({
       data: { session: mockSession },
@@ -73,9 +74,9 @@ describe("useAuth", () => {
     await waitFor(() => {
       expect(mockAuth.getSession).toHaveBeenCalled();
       expect(mockAuth.onAuthStateChange).toHaveBeenCalled();
+      expect(result.current.loader.isInitialLoading).toBe(false);
     });
 
-    expect(result.current.loader.isInitialLoading).toBe(false);
   });
 
   it("handleSignIn: navigates to /dashboard while success", async () => {
@@ -151,12 +152,13 @@ describe("useAuth", () => {
   it("handleSignOut: calls signOut and navigate to /auth", async () => {
     const { result } = renderHook(() => useAuth());
 
-    result.current.methods.handleSignOut();
+    await result.current.methods.handleSignOut();
 
     await waitFor(() => {
       expect(mockAuth.signOut).toHaveBeenCalled();
       expect(mockNavigate).toHaveBeenCalledWith("/auth");
       expect(result.current.loader.isInitialLoading).toBe(false);
+      expect(result.current.loader.isSigningOut).toBe(false);
     });
   });
 });

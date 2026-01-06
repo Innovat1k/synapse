@@ -12,7 +12,11 @@ function App() {
 
   const isAuthRoute = window.location.pathname.startsWith("/auth");
 
-  if (loader.isInitialLoading) {
+  if (loader.isInitialLoading && !loader.isSigningOut) {
+    return <Loader />;
+  }
+
+  if (loader.isSigningOut) {
     return <Loader />;
   }
 

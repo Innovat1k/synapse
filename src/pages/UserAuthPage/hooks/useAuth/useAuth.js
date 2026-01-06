@@ -18,6 +18,8 @@ import { useFormData } from "../../../../shared/hooks/useFormData/useFormData";
 export const useAuth = () => {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
   const [notification, setNotification] = useAtom(notification_atom);
   const [userSession, setUserSession] = useAtom(session_atom);
   const [user, setUser] = useAtom(user_atom);
@@ -151,6 +153,7 @@ export const useAuth = () => {
 
   // Sign Out user
   const handleSignOut = async () => {
+    setIsSigningOut(true);
     setIsInitialLoading(true);
 
     try {
@@ -162,12 +165,13 @@ export const useAuth = () => {
         navigate("/auth");
       }
     } finally {
+      setIsSigningOut(false);
       setIsInitialLoading(false);
     }
   };
 
   return {
-    loader: { isSubmitting, isInitialLoading },
+    loader: { isSubmitting, isInitialLoading, isSigningOut },
     isLoading: isInitialLoading,
     isLogin,
     userSession,
