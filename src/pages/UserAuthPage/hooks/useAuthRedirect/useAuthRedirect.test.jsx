@@ -31,7 +31,7 @@ describe("useAuthRedirect", () => {
   it("redirects to '/auth' if userSession is null and if user isn't in auth page", () => {
     useAuthModule.useAuth.mockReturnValue({
       userSession: null,
-      isLoading: false,
+      loader: { isInitialLoading: false },
     });
     routerDom.useLocation.mockReturnValue({ pathname: "/dashboard" });
 
@@ -43,7 +43,7 @@ describe("useAuthRedirect", () => {
   it("doesn't redirect if userSession is null and location is '/auth'", () => {
     useAuthModule.useAuth.mockReturnValue({
       userSession: null,
-      isLoading: false,
+      loader: { isInitialLoading: false },
     });
     routerDom.useLocation.mockReturnValue({ pathname: "/auth" });
 
@@ -55,7 +55,7 @@ describe("useAuthRedirect", () => {
   it("redirects to /dashboard if there is userSession and location is '/auth'", () => {
     useAuthModule.useAuth.mockReturnValue({
       userSession: { id: "123" },
-      isLoading: false,
+      loader: { isInitialLoading: false },
     });
     routerDom.useLocation.mockReturnValue({ pathname: "/auth" });
 
@@ -64,10 +64,10 @@ describe("useAuthRedirect", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/dashboard", { replace: true });
   });
 
-  it("doen't redirect while loading", () => {
+  it("doesn't redirect while loading", () => {
     useAuthModule.useAuth.mockReturnValue({
       userSession: null,
-      isLoading: true,
+      loader: { isInitialLoading: true },
     });
     routerDom.useLocation.mockReturnValue({ pathname: "/settings" });
 

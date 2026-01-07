@@ -1,11 +1,20 @@
-import { useState } from "react";
+import {
+  formDataAtom,
+  isLoginAtom,
+  resetFormAtom,
+  touchedAtom,
+} from "../../../atoms/formDataAtom";
+import { useAtom, useSetAtom } from "jotai";
 
 /**
- * Manages form state and user input for authentication (sign-in / sign-up).
+ * Manages authentication form state (sign-in / sign-up) using Jotai atoms
+ * to ensure stable initial values during component mounting.
  *
- * Tracks field values and touched status for real-time validation.
- * Allows toggling between login and registration modes,
- * and provides a secure way to reset sensitive data (e.g., after sign-out).
+ * Prevents undefined state issues on initial render by initializing form data,
+ * touched status, and auth mode via atoms. Provides handlers for:
+ * - Input changes and blur events (with touched tracking)
+ * - Switching between login and registration modes
+ * - Secure reset of sensitive fields (e.g., after sign-out)
  *
  * @param {void} — This hook takes no parameters.
  * @returns {{
@@ -16,33 +25,20 @@ import { useState } from "react";
  *   handleBlur: (event: React.FocusEvent<HTMLInputElement>) => void,
  *   handleToggleAuth: () => void,
  *   resetForm: () => void
- * }} Object containing form state, metadata, and handlers.
+ * }} Object containing form state and interaction handlers.
  */
 
-const initialFormData = {
-  email: "",
-  password: "",
-  confirmPassword: "",
-};
-
-const initialTouchedState = {
-  email: false,
-  password: false,
-  confirmPassword: false,
-};
-
 export const useFormData = () => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState(initialFormData);
-
-  // state for touched input
-  const [touched, setTouched] = useState(initialTouchedState);
+  const [isLogin, setIsLogin] = useAtom(isLoginAtom);
+  const [formData, setFormData] = useAtom(formDataAtom);
+  const [touched, setTouched] = useAtom(touchedAtom);
+  const resetForm = useSetAtom(resetFormAtom);
 
   // Update formData while user inputs
   const handleChange = (event) => {
     const { id, value } = event.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
-    setTouched((prev) => ({ ...prev, [id]: true }));
+    // setTouched((prev) => ({ ...prev, [id]: true }));
   };
 
   // Trigger an input with it's unfocused
@@ -53,16 +49,9 @@ export const useFormData = () => {
 
   // Toggle between SignIn and SignUp
   const handleToggleAuth = () => {
-    setFormData(initialFormData);
-    setTouched(initialTouchedState);
+    setFormData({ email: "", password: "", confirmPassword: "" });
+    setTouched({ email: false, password: false, confirmPassword: false });
     setIsLogin((prev) => !prev);
-  };
-
-  // Reset form to initial state (used after sign out to clear sensitive data)
-  const resetForm = () => {
-    setFormData(initialFormData);
-    setTouched(initialTouchedState);
-    setIsLogin(true);
   };
 
   return {

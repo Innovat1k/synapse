@@ -10,9 +10,33 @@ import { useNavigate } from "react-router-dom";
 import { useFormData } from "../../../../shared/hooks/useFormData/useFormData";
 
 /**
- * Custom hook for managing users authentication and session.
- * It ensures that users can create account and login with existing account
- * and also allows logged users to sign out.
+ * Manages user authentication and session state with Supabase.
+ *
+ * Handles:
+ * - Initial session restoration on app load (with timeout fallback)
+ * - Sign-in and sign-up flows with user feedback via notifications
+ * - Secure sign-out (clears form data and navigates away)
+ * - Real-time auth state sync via Supabase listener
+ *
+ * Uses Jotai atoms only to ensure stable state during mounting
+ * (prevents undefined values), not for cross-component sharing.
+ *
+ * @param {void} — This hook takes no parameters.
+ * @returns {{
+ *   loader: { isSubmitting: boolean; isInitialLoading: boolean; isSigningOut: boolean },
+ *   isLoading: boolean,
+ *   userSession: import('@supabase/supabase-js').Session | null,
+ *   user: import('@supabase/supabase-js').User | null,
+ *   notification: { isVisible?: boolean; type: string; message: string },
+ *   methods: {
+ *     handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
+ *     handleBlur: (e: React.FocusEvent<HTMLInputElement>) => void,
+ *     handleToggleAuth: () => void,
+ *     handleSignIn: (e: React.FormEvent) => Promise<void>,
+ *     handleSignUp: (e: React.FormEvent) => Promise<void>,
+ *     handleSignOut: () => Promise<void>
+ *   }
+ * }} Authentication state and action handlers.
  */
 
 export const useAuth = () => {
@@ -25,15 +49,8 @@ export const useAuth = () => {
   const [user, setUser] = useAtom(user_atom);
 
   // Get form input methods
-  const {
-    isLogin,
-    formData,
-    touched,
-    handleBlur,
-    handleToggleAuth,
-    handleChange,
-    resetForm,
-  } = useFormData();
+  const { formData, handleBlur, handleToggleAuth, handleChange, resetForm } =
+    useFormData();
 
   const navigate = useNavigate();
 
@@ -62,9 +79,6 @@ export const useAuth = () => {
     // Guard Timeout (5 seconds)
     timeoutId = setTimeout(() => {
       if (isSubscribed) {
-        console.warn(
-          "Auth check timed out after 5s – proceeding unauthenticated"
-        );
         setIsInitialLoading(false);
       }
     }, 5000);
@@ -151,7 +165,7 @@ export const useAuth = () => {
     }
   };
 
-  // Sign Out user
+  // Sign Out
   const handleSignOut = async () => {
     setIsSigningOut(true);
     setIsInitialLoading(true);
@@ -172,10 +186,9 @@ export const useAuth = () => {
 
   return {
     loader: { isSubmitting, isInitialLoading, isSigningOut },
-    isLoading: isInitialLoading,
-    isLogin,
     userSession,
     user,
+    notification,
     methods: {
       handleChange,
       handleToggleAuth,
@@ -184,8 +197,5 @@ export const useAuth = () => {
       handleSignUp,
       handleBlur,
     },
-    notification,
-    formData,
-    touched,
   };
 };

@@ -8,7 +8,7 @@ import { useAuth } from "../useAuth/useAuth";
  * and that authenticated users do not remain on authentication pages.
  */
 export const useAuthRedirect = () => {
-  const { userSession, isLoading } = useAuth();
+  const { userSession, loader } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -18,7 +18,7 @@ export const useAuthRedirect = () => {
   );
 
   useEffect(() => {
-    if (isLoading) return;
+    if (loader.isInitialLoading) return;
 
     // Redirect non authenticated user
     if (!userSession && !isAuthRoute) {
@@ -31,6 +31,6 @@ export const useAuthRedirect = () => {
       navigate("/dashboard", { replace: true });
       return;
     }
-  }, [userSession, isLoading, isAuthRoute, navigate]);
+  }, [userSession, loader.isInitialLoading, isAuthRoute, navigate]);
 };
 

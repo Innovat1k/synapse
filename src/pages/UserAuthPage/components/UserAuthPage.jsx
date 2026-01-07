@@ -5,11 +5,23 @@ import { useFormValidation } from "../../../shared/hooks/useFormValidation/useFo
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
+import { useAtomValue } from "jotai";
+import {
+  formDataAtom,
+  isLoginAtom,
+  touchedAtom,
+} from "../../../atoms/formDataAtom";
+import { useAuth } from "../hooks/useAuth/useAuth";
 
 function UserAuthPage() {
-  const { isLogin, loader, methods, formData, touched } = useOutletContext();
+  const formData = useAtomValue(formDataAtom);
+  const touched = useAtomValue(touchedAtom);
+  const isLogin = useAtomValue(isLoginAtom);
+
+  const { loader, methods } = useAuth();
   const validation = useFormValidation(formData, isLogin);
 
+  // UI helpers
   const title = isLogin ? "Sign In" : "Sign Up";
   const buttonText = isLogin ? "Sign In" : "Sign Up";
   const linkText = isLogin

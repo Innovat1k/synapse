@@ -7,7 +7,7 @@ import NavBar from "./shared/components/NavBar/NavBar";
 import ToastComponent from "./shared/components/Toast/components/ToastComponent";
 
 function App() {
-  const { isLogin, loader, methods, formData, touched, user } = useAuth();
+  const { loader, methods, user } = useAuth();
   useAuthRedirect();
 
   const isAuthRoute = window.location.pathname.startsWith("/auth");
@@ -23,7 +23,7 @@ function App() {
   return (
     <div className="relative min-h-screen flex flex-col bg-slate-950">
       {isAuthRoute ? (
-        <Outlet context={{ methods, isLogin, loader, formData, touched }} />
+        <Outlet />
       ) : (
         <>
           <Header signOut={methods.handleSignOut} user={user} />
