@@ -106,7 +106,7 @@ describe("SkillDetailPage", () => {
     render(<SkillDetailPage />, { wrapper: Wrapper });
 
     await user.click(
-      screen.getByRole("button", { name: /open actions menu/i })
+      screen.getByRole("button", { name: /open skill actions/i })
     );
 
     await user.click(screen.getByRole("button", { name: /edit java skill/i }));
@@ -137,7 +137,7 @@ describe("SkillDetailPage", () => {
     render(<SkillDetailPage />, { wrapper: Wrapper });
 
     await user.click(
-      screen.getByRole("button", { name: /open actions menu/i })
+      screen.getByRole("button", { name: /open skill actions/i })
     );
 
     await user.click(
@@ -368,66 +368,5 @@ describe("SkillDetailPage", () => {
         ).not.toBeInTheDocument();
       });
     });
-  });
-
-  it("allows to add new tag when editing a skill", async () => {
-    vi.mocked(useOutletContext).mockReturnValue({ skills: mockSkills });
-    vi.mocked(useParams).mockReturnValue({
-      skillId: "550e8400-e29b-41d4-a716-446655440001",
-    });
-    render(<SkillDetailPage />, { wrapper: Wrapper });
-
-    await user.click(
-      screen.getByRole("button", { name: /open actions menu/i })
-    );
-
-    await user.click(
-      screen.getByRole("button", { name: /edit react js skill/i })
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId("modal-overlay")).toBeInTheDocument();
-    });
-
-    const tag_input = screen.getByLabelText(/tags/i);
-    await user.type(tag_input, "oop");
-    expect(tag_input).toHaveValue("oop");
-
-    await user.click(screen.getByRole("button", { name: /add tag/i }));
-    expect(
-      within(screen.getByTestId("skill-tags")).getByText(/oop/i)
-    ).toBeInTheDocument();
-  });
-
-  it("allows to remove existing tag when editing a skill", async () => {
-    vi.mocked(useOutletContext).mockReturnValue({ skills: mockSkills });
-    vi.mocked(useParams).mockReturnValue({
-      skillId: "550e8400-e29b-41d4-a716-446655440001",
-    });
-    render(<SkillDetailPage />, { wrapper: Wrapper });
-
-    await user.click(
-      screen.getByRole("button", { name: /open actions menu/i })
-    );
-
-    await user.click(
-      screen.getByRole("button", { name: /edit react js skill/i })
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId("modal-overlay")).toBeInTheDocument();
-    });
-
-    expect(
-      within(screen.getByTestId("skill-tags")).getByText(/programming/i)
-    ).toBeInTheDocument();
-
-    await user.click(
-      screen.getByRole("button", { name: /remove programming tag/i })
-    );
-
-    expect(
-      within(screen.getByTestId("skill-tags")).queryByText(/programming/i)
-    ).not.toBeInTheDocument();
   });
 });

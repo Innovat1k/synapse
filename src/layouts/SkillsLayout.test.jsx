@@ -303,7 +303,7 @@ describe("SkillsLayout", () => {
       ).toBeInTheDocument();
 
       await user.click(
-        screen.getByRole("button", { name: /open actions menu/i })
+        screen.getByRole("button", { name: /open skill actions/i })
       );
 
       await user.click(
