@@ -8,11 +8,11 @@ import {
 } from "react-icons/lu";
 import { Link, useOutletContext, useParams } from "react-router-dom";
 import { useSkillDetail } from "./hooks/useSkillDetail";
-import SkillFormModal from "../../shared/components/SkillFormModal/components/SkillFormModal";
+import SkillFormModal from "../../shared/components/SkillFormModal/SkillFormModal";
 import SkillActivities from "./components/SkillActivities/SkillActivities";
-import { useSkillModal } from "../../shared/components/SkillFormModal/hooks/useSkillModal/useSkillModal";
+import { useSkillModal } from "../../shared/components/SkillFormModal/hooks/useSkillModal";
 import PurgeActivitiesModal from "./components/PurgeActivitiesModal/PurgeActivitiesModal";
-import { usePurgeActivities } from "./components/PurgeActivitiesModal/usePurgeActivities";
+import { usePurgeActivities } from "./components/PurgeActivitiesModal/hooks/usePurgeActivities";
 import { useActivitiesQuery } from "../../shared/hooks/useActivitiesQuery/useActivitiesQuery";
 import SkillSkeleton from "./components/SkillSkeleton";
 

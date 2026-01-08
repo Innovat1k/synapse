@@ -1,10 +1,10 @@
 import { LuX, LuPlus } from "react-icons/lu";
-import { useSkillForm } from "../hooks/useSkillForm/useSkillForm";
-import ButtonSpinner from "../../ButtonSpinner";
+import { useSkillForm } from "./hooks/useSkillForm";
+import ButtonSpinner from "../ButtonSpinner";
 import { useRef } from "react";
-import { useFocusTrap } from "../../../hooks/useFocusTrap/useFocusTrap";
-import { useInitialFocus } from "../../../hooks/useInitialFocus/useInitialFocus";
-import { useKeyboardDismiss } from "../../../hooks/useKeyboardDismiss/useKeyboardDismiss";
+import { useFocusTrap } from "../../hooks/useFocusTrap/useFocusTrap";
+import { useInitialFocus } from "../../hooks/useInitialFocus/useInitialFocus";
+import { useKeyboardDismiss } from "../../hooks/useKeyboardDismiss/useKeyboardDismiss";
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";

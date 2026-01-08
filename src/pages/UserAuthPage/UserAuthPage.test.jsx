@@ -4,7 +4,7 @@ import UserAuthPage from "./UserAuthPage";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { createStore, Provider } from "jotai";
-import { formDataAtom, isLoginAtom } from "../../../atoms/formDataAtom";
+import { formDataAtom, isLoginAtom } from "../../atoms/formDataAtom";
 
 const mockSignIn = vi.fn();
 const mockSignUp = vi.fn();
@@ -13,8 +13,8 @@ const mockHandleChange = vi.fn();
 const mockHandleBlur = vi.fn();
 const mockHandleToggleAuth = vi.fn();
 
-vi.mock("../hooks/useAuth/useAuth", async () => {
-  const actual = await vi.importActual("../hooks/useAuth/useAuth");
+vi.mock("./hooks/useAuth", async () => {
+  const actual = await vi.importActual("./hooks/useAuth");
   return {
     ...actual,
     useAuth: () => {

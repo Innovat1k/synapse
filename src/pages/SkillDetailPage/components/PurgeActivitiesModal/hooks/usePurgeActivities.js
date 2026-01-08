@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { purgeActivitiesBySkill } from "../../../../services/activityService";
+import { purgeActivitiesBySkill } from "../../../../../services/activityService";
 import { useQueryClient } from "@tanstack/react-query";
 
 export const usePurgeActivities = (skillId, skillName = "") => {

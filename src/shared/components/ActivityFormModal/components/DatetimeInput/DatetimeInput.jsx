@@ -1,6 +1,6 @@
 // shared/components/DatetimeInput/DatetimeInput.jsx
 import { forwardRef } from "react";
-import { useDatetimeInput } from "./useDatetimeInput";
+import { useDatetimeInput } from "./hooks/useDatetimeInput";
 
 const DatetimeInput = forwardRef(
   ({ value, onChange, id, disabled = false, className = "" }, ref) => {

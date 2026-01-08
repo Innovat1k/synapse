@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect } from "vitest";
-import { useSkillForm } from "../useSkillForm/useSkillForm";
+import { useSkillForm } from "./useSkillForm";
 
 describe("useSkillForm", () => {
   it("synchronizes skillFormData with initialData when in edit mode", () => {

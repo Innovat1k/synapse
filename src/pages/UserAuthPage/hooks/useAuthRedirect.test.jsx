@@ -12,12 +12,12 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-vi.mock("../useAuth/useAuth", () => ({
+vi.mock("./useAuth", () => ({
   useAuth: vi.fn(),
 }));
 
 import * as routerDom from "react-router-dom";
-import * as useAuthModule from "../useAuth/useAuth";
+import * as useAuthModule from "./useAuth";
 
 describe("useAuthRedirect", () => {
   const mockNavigate = routerDom.useNavigate();

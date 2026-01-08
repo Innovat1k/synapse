@@ -1,7 +1,7 @@
 import { Toast } from "radix-ui";
-import { useToast } from "../hooks/useToast";
+import { useToast } from "./hooks/useToast";
 import { useAtomValue } from "jotai";
-import { notification_atom } from "../../../../atoms/atoms";
+import { notification_atom } from "../../../atoms/atoms";
 import { LuCircleCheck, LuCircleX, LuX } from "react-icons/lu";
 
 // eslint-disable-next-line no-unused-vars

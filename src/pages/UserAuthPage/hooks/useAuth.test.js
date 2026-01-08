@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, vi } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { useAuth } from "./useAuth";
+import { useFormData } from "./useFormData";
 
 const mockNavigate = vi.fn();
 vi.mock("react-router-dom", async () => {
@@ -26,7 +27,7 @@ const mockAuth = {
   signOut: vi.fn().mockResolvedValue({ error: null }),
 };
 
-vi.mock("../../../../services/supabase-client", () => ({
+vi.mock("../../../services/supabase-client", () => ({
   supabase: {
     get auth() {
       return mockAuth;
@@ -45,7 +46,7 @@ const mockUseFormData = {
   resetForm: vi.fn(),
 };
 
-vi.mock("../../../../shared/hooks/useFormData/useFormData", () => ({
+vi.mock("./useFormData", () => ({
   useFormData: () => mockUseFormData,
 }));
 
@@ -76,7 +77,6 @@ describe("useAuth", () => {
       expect(mockAuth.onAuthStateChange).toHaveBeenCalled();
       expect(result.current.loader.isInitialLoading).toBe(false);
     });
-
   });
 
   it("handleSignIn: navigates to /dashboard while success", async () => {

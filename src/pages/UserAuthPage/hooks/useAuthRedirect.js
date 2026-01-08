@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../useAuth/useAuth";
+import { useAuth } from "./useAuth";
 
 /**
  * Custom hook for managing authentication-related redirects.
@@ -33,4 +33,3 @@ export const useAuthRedirect = () => {
     }
   }, [userSession, loader.isInitialLoading, isAuthRoute, navigate]);
 };
-

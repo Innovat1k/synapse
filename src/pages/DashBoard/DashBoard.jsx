@@ -21,9 +21,11 @@ import WeeklyProgressChart from "./components/WeeklyProgressChart";
 import ActivityFormModal from "../../shared/components/ActivityFormModal/ActivityFormModal";
 import { useActivityModal } from "../../shared/components/ActivityFormModal/hooks/useActivityModal";
 import { useSkillsQuery } from "../../shared/hooks/useSkillsQuery/useSkillsQuery";
-import SkillFormModal from "../../shared/components/SkillFormModal/components/SkillFormModal";
-import { useSkillModal } from "../../shared/components/SkillFormModal/hooks/useSkillModal/useSkillModal";
+import SkillFormModal from "../../shared/components/SkillFormModal/SkillFormModal";
+import { useSkillModal } from "../../shared/components/SkillFormModal/hooks/useSkillModal";
 import { AnimatePresence } from "framer-motion";
+
+SkillFormModal;
 
 const Dashboard = () => {
   const goals = [

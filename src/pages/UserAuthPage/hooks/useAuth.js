@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../../../../services/supabase-client";
+import { supabase } from "../../../services/supabase-client";
 import { useAtom } from "jotai";
 import {
   notification_atom,
   session_atom,
   user_atom,
-} from "../../../../atoms/atoms";
+} from "../../../atoms/atoms";
 import { useNavigate } from "react-router-dom";
-import { useFormData } from "../../../../shared/hooks/useFormData/useFormData";
+import { useFormData } from "./useFormData";
 
 /**
  * Manages user authentication and session state with Supabase.
