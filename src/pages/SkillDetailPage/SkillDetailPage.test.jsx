@@ -109,7 +109,7 @@ describe("SkillDetailPage", () => {
       screen.getByRole("button", { name: /open skill actions/i })
     );
 
-    await user.click(screen.getByRole("button", { name: /edit java skill/i }));
+    await user.click(screen.getByRole("button", { name: /edit skill/i }));
 
     await waitFor(() => {
       expect(screen.getByTestId("modal-overlay")).toBeInTheDocument();
@@ -140,9 +140,7 @@ describe("SkillDetailPage", () => {
       screen.getByRole("button", { name: /open skill actions/i })
     );
 
-    await user.click(
-      screen.getByRole("button", { name: /delete java skill/i })
-    );
+    await user.click(screen.getByRole("button", { name: /delete skill/i }));
 
     await waitFor(() => {
       expect(screen.getByTestId("modal-overlay")).toBeInTheDocument();
@@ -235,6 +233,71 @@ describe("SkillDetailPage", () => {
     expect(
       screen.getByText(/You haven't logged any activity for this skill/i)
     ).toBeInTheDocument();
+  });
+
+  describe("SkillActionsMenu", () => {
+    const setup = () => {
+      vi.mocked(useOutletContext).mockReturnValue({ skills: mockSkills });
+      vi.mocked(useParams).mockReturnValue({
+        skillId: "550e8400-e29b-41d4-a716-446655440001",
+      });
+
+      vi.mocked(activityService.fetchActivitiesBySkill).mockResolvedValue(
+        mockActivities
+      );
+      
+
+      render(<SkillDetailPage />, { wrapper: Wrapper });
+    };
+
+    it("shows skill actions menu when the actions button is clicked", async () => {
+      setup();
+
+      await user.click(
+        screen.getByRole("button", { name: /open skill actions/i })
+      );
+
+      expect(
+        screen.getByRole("button", { name: /edit skill/i })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /delete skill/i })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /purge activities/i })
+      ).toBeInTheDocument();
+    });
+
+    it("hides skill actions menu when the close (X) button is clicked", async () => {
+      setup();
+
+      await user.click(
+        screen.getByRole("button", { name: /open skill actions/i })
+      );
+
+      expect(
+        screen.getByRole("button", { name: /edit skill/i })
+      ).toBeInTheDocument();
+
+      await user.click(
+        screen.getByRole("button", { name: /close actions menu/i })
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.queryByRole("button", { name: /edit skill/i })
+        ).not.toBeInTheDocument();
+        expect(
+          screen.queryByRole("button", { name: /delete skill/i })
+        ).not.toBeInTheDocument();
+        expect(
+          screen.queryByRole("button", { name: /purge activities/i })
+        ).not.toBeInTheDocument();
+      });
+      expect(
+        screen.getByRole("button", { name: /open skill actions/i })
+      ).toBeInTheDocument();
+    });
   });
 
   describe("PurgeActivitiesModal actions", () => {

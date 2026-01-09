@@ -1,11 +1,4 @@
-import {
-  LuArrowLeft,
-  LuEllipsis,
-  LuPencil,
-  LuTag,
-  LuTrash2,
-  LuX,
-} from "react-icons/lu";
+import { LuArrowLeft, LuTag } from "react-icons/lu";
 import { Link, useOutletContext, useParams } from "react-router-dom";
 import { useSkillDetail } from "./hooks/useSkillDetail";
 import SkillFormModal from "../../shared/components/SkillFormModal/SkillFormModal";
@@ -15,6 +8,7 @@ import PurgeActivitiesModal from "./components/PurgeActivitiesModal/PurgeActivit
 import { usePurgeActivities } from "./components/PurgeActivitiesModal/hooks/usePurgeActivities";
 import { useActivitiesQuery } from "../../shared/hooks/useActivitiesQuery/useActivitiesQuery";
 import SkillSkeleton from "./components/SkillSkeleton";
+import SkillActionsMenu from "./components/SkillActionsMenu/SkillActionsMenu";
 
 function SkillDetailPage() {
   const { skills } = useOutletContext();
@@ -71,68 +65,15 @@ function SkillDetailPage() {
               </Link>
             </div>
 
-            <div className="relative">
-              {!actionsMenu.isOpened ? (
-                <button
-                  type="button"
-                  aria-label="Open skill actions"
-                  className="p-2 rounded-full border border-slate-700/60 hover:border-teal-400/60 hover:text-teal-400 text-slate-400 transition-colors"
-                  onClick={actionsMenu.handleToggle}
-                >
-                  <LuEllipsis size={20} aria-hidden="true" />
-                </button>
-              ) : (
-                <div className="absolute right-0 mt-2 w-48 z-10 bg-slate-900/80 backdrop-blur-lg border border-slate-800/50 rounded-xl shadow-lg overflow-hidden">
-                  <div className="p-2 border-b border-slate-800/50">
-                    <button
-                      type="button"
-                      aria-label="Close actions menu"
-                      className="w-full text-right text-slate-400 hover:text-slate-200 transition-colors"
-                      onClick={actionsMenu.handleToggle}
-                    >
-                      <LuX size={18} />
-                    </button>
-                  </div>
-                  <div className="py-2">
-                    <button
-                      type="button"
-                      aria-label={`Edit ${skill?.name} skill`}
-                      className="w-full flex items-center gap-2 px-3 py-2.5 text-left text-slate-300 hover:bg-slate-800/50 hover:text-teal-400 transition-colors rounded-lg"
-                      onClick={() => methods.openEditModal(skill)}
-                    >
-                      <LuPencil size={18} aria-hidden="true" />
-                      <span>Edit skill</span>
-                    </button>
-                    <button
-                      type="button"
-                      aria-label={`Delete ${skill?.name} skill`}
-                      className="w-full flex items-center gap-2 px-3 py-2.5 text-left text-slate-300 hover:bg-slate-800/50 hover:text-red-400 transition-colors rounded-lg"
-                      onClick={() => methods.openDeleteModal(skill)}
-                    >
-                      <LuTrash2 size={18} aria-hidden="true" />
-                      <span>Delete skill</span>
-                    </button>
-
-                    <button
-                      className={`bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 ${
-                        activities.length === 0
-                          ? "opacity-50 cursor-not-allowed bg-red-600/50"
-                          : "cursor-pointer"
-                      }`}
-                      onClick={activityPurge.openPurgeModal}
-                      disabled={activities.length === 0}
-                      type="button"
-                    >
-                      <LuTrash2 size={16} />
-                      <span className="uppercase text-xs sm:text-sm">
-                        Purge Activities
-                      </span>
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+            <SkillActionsMenu
+              actionsMenu={actionsMenu}
+              openPurgeModal={activityPurge.openPurgeModal}
+              skill={skill}
+              activityCount={activities.length}
+              methods={methods}
+            />
           </div>
+
           <div className="bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-slate-800/50 p-4 sm:p-5 mb-6 md:mb-8">
             <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 md:mb-5">
               <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-teal-400/20 border border-teal-400/40 text-teal-400 rounded-full text-xs sm:text-sm font-medium">

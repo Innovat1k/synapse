@@ -307,7 +307,7 @@ describe("SkillsLayout", () => {
       );
 
       await user.click(
-        screen.getByRole("button", { name: /delete digital painting skill/i })
+        screen.getByRole("button", { name: /delete skill/i })
       );
 
       expect(
