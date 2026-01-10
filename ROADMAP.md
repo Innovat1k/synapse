@@ -29,7 +29,7 @@ The "Log Activity" feature (originally in Phase 5) is crucial for Synapse to sta
 
 ## **Phase 3.5 – Initial Tracking (NEW PHASE)**
 
-- [ ] **Implement "Log Activity" interface (modal)**:
+- [X] **Implement "Log Activity" interface (modal)**:
     - Allow users to record time/effort spent on a specific skill.
     - Accessible from Dashboard (for "Current Focus") and Skill Management Page (per skill).
     - Store activity data in `activities` table.
