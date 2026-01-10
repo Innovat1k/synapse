@@ -1,9 +1,6 @@
-import { Link, useOutletContext } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ButtonSpinner from "../../shared/components/ButtonSpinner";
 import { LuCircleAlert } from "react-icons/lu";
-
-// eslint-disable-next-line no-unused-vars
-import { AnimatePresence, motion } from "framer-motion";
 import { useAtomValue } from "jotai";
 import {
   formDataAtom,
@@ -12,6 +9,9 @@ import {
 } from "../../atoms/formDataAtom";
 import { useAuth } from "./hooks/useAuth";
 import { useFormValidation } from "./hooks/useFormValidation";
+
+// eslint-disable-next-line no-unused-vars
+import { AnimatePresence, motion } from "framer-motion";
 
 function UserAuthPage() {
   const formData = useAtomValue(formDataAtom);

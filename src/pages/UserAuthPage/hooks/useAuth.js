@@ -67,8 +67,7 @@ export const useAuth = () => {
           setIsInitialLoading(false);
           clearTimeout(timeoutId);
         }
-      } catch (error) {
-        console.warn("Auth check failed:", error);
+      } catch {
         if (isSubscribed) {
           setIsInitialLoading(false);
           clearTimeout(timeoutId);

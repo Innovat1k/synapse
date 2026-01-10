@@ -1,5 +1,7 @@
-import { AnimatePresence, motion } from "framer-motion";
 import { LuEllipsis, LuPencil, LuTrash2, LuX } from "react-icons/lu";
+
+// eslint-disable-next-line no-unused-vars
+import { AnimatePresence, motion } from "framer-motion";
 
 function SkillActionsMenu({
   actionsMenu,

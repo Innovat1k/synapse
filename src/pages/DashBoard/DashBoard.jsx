@@ -23,7 +23,6 @@ import { useActivityModal } from "../../shared/components/ActivityFormModal/hook
 import { useSkillsQuery } from "../../shared/hooks/useSkillsQuery/useSkillsQuery";
 import SkillFormModal from "../../shared/components/SkillFormModal/SkillFormModal";
 import { useSkillModal } from "../../shared/components/SkillFormModal/hooks/useSkillModal";
-import { AnimatePresence } from "framer-motion";
 
 SkillFormModal;
 
