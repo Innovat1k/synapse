@@ -9,6 +9,7 @@ import { usePurgeActivities } from "./components/PurgeActivitiesModal/hooks/useP
 import { useActivitiesQuery } from "../../shared/hooks/useActivitiesQuery/useActivitiesQuery";
 import SkillSkeleton from "./components/SkillSkeleton";
 import SkillActionsMenu from "./components/SkillActionsMenu/SkillActionsMenu";
+import { SkillLinksSection } from "./components/SkillLinks/SkillLinksSection";
 
 function SkillDetailPage() {
   const { skills } = useOutletContext();
@@ -111,6 +112,8 @@ function SkillDetailPage() {
             )}
           </div>
           <hr className="my-5 md:my-6 border-slate-800/50" />
+
+          <SkillLinksSection skillId={skillId} />
 
           {skill && <SkillActivities skill={skill} skills={skills} />}
         </div>
