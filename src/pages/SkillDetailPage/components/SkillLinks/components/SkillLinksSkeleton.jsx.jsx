@@ -1,28 +1,31 @@
-function SkillLinksSkeleton() {
+export default function SkillLinksSkeleton() {
   return (
-    <section className="mt-8" data-testid="skill-links-skeleton">
-      <h3 className="text-lg font-medium text-slate-200 mb-3 capitalize">
-        Synapse connections
+    <section className="my-8">
+      <h3 className="text-lg font-medium text-slate-200 mb-3">
+        Skill Connections
       </h3>
-
-      <div className="p-4 bg-slate-900/30 rounded-lg mb-6">
-        <h4 className="text-sm font-semibold text-amber-500 flex items-center gap-1 mb-2">
-          <div className="w-4 h-4 bg-slate-700 rounded animate-pulse"></div>
-          <div className="h-4 bg-slate-700 rounded animate-pulse w-1/4"></div>
-        </h4>
-        <div className="flex flex-wrap gap-2 p-2">
-          {[...Array(3)].map((_, i) => (
-            <div
-              key={i}
-              className="px-2 py-1 rounded-full bg-slate-800/50 text-slate-700 text-xs font-medium border border-slate-700/50 animate-pulse"
-            >
-              <span className="opacity-0">Loading…</span>
+      <div className="flex flex-col md:flex-row gap-6">
+        {/* Column 1 */}
+        <div className="flex-1 min-w-0">
+          <div className="p-4 bg-slate-900/30 rounded-xl border border-slate-800/30 animate-pulse">
+            <div className="h-4 bg-slate-700 rounded w-1/3 mb-2"></div>
+            <div className="flex flex-wrap gap-2">
+              <div className="h-6 w-20 bg-slate-800/50 rounded-full"></div>
+              <div className="h-6 w-24 bg-slate-800/50 rounded-full"></div>
             </div>
-          ))}
+          </div>
+        </div>
+
+        {/* Column 2 */}
+        <div className="flex-1 min-w-0">
+          <div className="p-4 bg-slate-900/30 rounded-xl border border-slate-800/30 animate-pulse">
+            <div className="h-4 bg-slate-700 rounded w-1/2 mb-2"></div>
+            <div className="flex flex-wrap gap-2">
+              <div className="h-6 w-28 bg-slate-800/50 rounded-full"></div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   );
 }
-
-export default SkillLinksSkeleton;

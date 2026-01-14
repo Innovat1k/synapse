@@ -53,3 +53,34 @@ export const useIncomingSkillLinks = (skillId) => {
     enabled: !!skillId,
   });
 };
+
+// OUTGOING links only (to this skill)
+export const useOutgoingSkillLinks = (skillId) => {
+  return useQuery({
+    queryKey: ["skill-links", "outgoing", skillId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("synapse_skill_links")
+        .select(
+          `
+          id,
+          source_skill_id,
+          target_skill_id,
+          type,
+          skill:target_skill_id!inner(name)
+        `
+        )
+        .eq("source_skill_id", skillId);
+
+      if (error) throw error;
+      return (data ?? []).map((link) => ({
+        id: link.id,
+        source_skill_id: link.source_skill_id,
+        target_skill_id: link.target_skill_id,
+        type: link.type,
+        skill_name: link.skill?.name || "Unknown skill",
+      }));
+    },
+    enabled: !!skillId,
+  });
+};
