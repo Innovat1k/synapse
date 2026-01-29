@@ -5,9 +5,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter, useOutletContext, useParams } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import * as activityService from "../../services/activityService";
+import { useSkillsQuery } from "../../shared/hooks/useSkillsQuery/useSkillsQuery";
 
 vi.mock("../../services/skillService");
 vi.mock("../../services/activityService");
+vi.mock("../../shared/hooks/useSkillsQuery/useSkillsQuery", () => ({
+  useSkillsQuery: vi.fn(),
+}));
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
   return { ...actual, useOutletContext: vi.fn(), useParams: vi.fn() };
@@ -76,6 +80,8 @@ describe("SkillDetailPage", () => {
     user = userEvent.setup();
   });
 
+  useSkillsQuery.mockReturnValue({ skills: mockSkills, isLoading: false });
+
   it("displays SkillDetailPage with correct skill details", async () => {
     vi.mocked(useOutletContext).mockReturnValue({ skills: mockSkills });
     vi.mocked(useParams).mockReturnValue({
@@ -84,17 +90,17 @@ describe("SkillDetailPage", () => {
     render(<SkillDetailPage />, { wrapper: Wrapper });
 
     expect(
-      screen.getByRole("heading", { name: /skill: project management/i })
+      screen.getByRole("heading", { name: /skill: project management/i }),
     ).toBeInTheDocument();
     expect(screen.getByText(/level 3/i)).toBeInTheDocument();
     expect(screen.getByText(/category: others/i)).toBeInTheDocument();
     expect(
-      screen.getByText(/Managing small agile projects and coordinating tasks/i)
+      screen.getByText(/Managing small agile projects and coordinating tasks/i),
     ).toBeInTheDocument();
     expect(
       within(screen.getByTestId("skill-tags-container")).getByText(
-        /organization/i
-      )
+        /organization/i,
+      ),
     ).toBeInTheDocument();
   });
 
@@ -106,7 +112,7 @@ describe("SkillDetailPage", () => {
     render(<SkillDetailPage />, { wrapper: Wrapper });
 
     await user.click(
-      screen.getByRole("button", { name: /open skill actions/i })
+      screen.getByRole("button", { name: /open skill actions/i }),
     );
 
     await user.click(screen.getByRole("button", { name: /edit skill/i }));
@@ -116,16 +122,16 @@ describe("SkillDetailPage", () => {
     });
 
     expect(
-      screen.getByRole("heading", { name: /edit skill/i })
+      screen.getByRole("heading", { name: /edit skill/i }),
     ).toBeInTheDocument();
     expect(screen.getByLabelText(/name/i).value).toMatch(/java/i);
     expect(screen.getByLabelText(/category/i).value).toMatch(/backend/i);
     expect(screen.getByLabelText(/level/i).value).toBe("1");
     expect(screen.getByLabelText(/description/i).value).toMatch(
-      /exploring the fundamentals of Java development/i
+      /exploring the fundamentals of Java development/i,
     );
     expect(
-      within(screen.getByTestId("skill-tags")).getByText(/programming/i)
+      within(screen.getByTestId("skill-tags")).getByText(/programming/i),
     ).toBeInTheDocument();
   });
 
@@ -137,7 +143,7 @@ describe("SkillDetailPage", () => {
     render(<SkillDetailPage />, { wrapper: Wrapper });
 
     await user.click(
-      screen.getByRole("button", { name: /open skill actions/i })
+      screen.getByRole("button", { name: /open skill actions/i }),
     );
 
     await user.click(screen.getByRole("button", { name: /delete skill/i }));
@@ -147,18 +153,18 @@ describe("SkillDetailPage", () => {
     });
 
     expect(
-      screen.getByRole("heading", { name: /confirm deletion/i })
+      screen.getByRole("heading", { name: /confirm deletion/i }),
     ).toBeInTheDocument();
 
     expect(screen.getByText(/are you sure/i)).toHaveTextContent(
-      /delete\s+"java"\s*\?/i
+      /delete\s+"java"\s*\?/i,
     );
 
     expect(
-      screen.getByRole("button", { name: /delete permanently/i })
+      screen.getByRole("button", { name: /delete permanently/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /keep it/i })
+      screen.getByRole("button", { name: /keep it/i }),
     ).toBeInTheDocument();
   });
 
@@ -177,15 +183,15 @@ describe("SkillDetailPage", () => {
     render(<SkillDetailPage />, { wrapper: Wrapper });
 
     expect(
-      screen.getByRole("heading", { level: 1, name: /skill: react js/i })
+      screen.getByRole("heading", { level: 1, name: /skill: react js/i }),
     ).toBeInTheDocument();
 
     const skillActivities = within(
-      await screen.findByTestId("list-layout-desktop")
+      await screen.findByTestId("list-layout-desktop"),
     );
 
     const activity = skillActivities.getByTestId(
-      "activity-row-8a1f2d3e-4c5b-4a9e-9c1a-111111111111"
+      "activity-row-8a1f2d3e-4c5b-4a9e-9c1a-111111111111",
     );
 
     expect(within(activity).getByText(/January 8, 2025/i)).toBeInTheDocument();
@@ -193,45 +199,45 @@ describe("SkillDetailPage", () => {
     expect(within(activity).getByText(/learning/i)).toBeInTheDocument();
     expect(
       within(activity).getByText(
-        /Completed a React JS module on hooks \(useState, useEffect\)/i
-      )
+        /Completed a React JS module on hooks \(useState, useEffect\)/i,
+      ),
     ).toBeInTheDocument();
 
     expect(screen.getByTestId("activity-count-badge")).toHaveTextContent("2");
 
     await user.click(
-      screen.getByRole("button", { name: /open skill actions/i })
+      screen.getByRole("button", { name: /open skill actions/i }),
     );
     await user.click(screen.getByRole("button", { name: /purge activities/i }));
 
     expect(
-      screen.getByRole("heading", { name: /irreversible purge confirmation/i })
+      screen.getByRole("heading", { name: /irreversible purge confirmation/i }),
     ).toBeInTheDocument();
 
     await user.click(
-      screen.getByRole("button", { name: /continue to purge/i })
+      screen.getByRole("button", { name: /continue to purge/i }),
     );
 
     expect(
-      screen.getByRole("heading", { name: /confirm skill name/i })
+      screen.getByRole("heading", { name: /confirm skill name/i }),
     ).toBeInTheDocument();
 
     await user.type(screen.getByLabelText(/enter skill name/i), "React JS");
     await user.click(
-      screen.getByRole("button", { name: /purge permanently/i })
+      screen.getByRole("button", { name: /purge permanently/i }),
     );
 
     await waitFor(() => {
       expect(
-        screen.queryByTestId("purge-modal-overlay")
+        screen.queryByTestId("purge-modal-overlay"),
       ).not.toBeInTheDocument();
     });
 
     expect(
-      screen.queryByTestId("activity-count-badge")
+      screen.queryByTestId("activity-count-badge"),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByText(/You haven't logged any activity for this skill/i)
+      screen.getByText(/You haven't logged any activity for this skill/i),
     ).toBeInTheDocument();
   });
 
@@ -243,9 +249,8 @@ describe("SkillDetailPage", () => {
       });
 
       vi.mocked(activityService.fetchActivitiesBySkill).mockResolvedValue(
-        mockActivities
+        mockActivities,
       );
-      
 
       render(<SkillDetailPage />, { wrapper: Wrapper });
     };
@@ -254,17 +259,17 @@ describe("SkillDetailPage", () => {
       setup();
 
       await user.click(
-        screen.getByRole("button", { name: /open skill actions/i })
+        screen.getByRole("button", { name: /open skill actions/i }),
       );
 
       expect(
-        screen.getByRole("button", { name: /edit skill/i })
+        screen.getByRole("button", { name: /edit skill/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: /delete skill/i })
+        screen.getByRole("button", { name: /delete skill/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: /purge activities/i })
+        screen.getByRole("button", { name: /purge activities/i }),
       ).toBeInTheDocument();
     });
 
@@ -272,30 +277,30 @@ describe("SkillDetailPage", () => {
       setup();
 
       await user.click(
-        screen.getByRole("button", { name: /open skill actions/i })
+        screen.getByRole("button", { name: /open skill actions/i }),
       );
 
       expect(
-        screen.getByRole("button", { name: /edit skill/i })
+        screen.getByRole("button", { name: /edit skill/i }),
       ).toBeInTheDocument();
 
       await user.click(
-        screen.getByRole("button", { name: /close actions menu/i })
+        screen.getByRole("button", { name: /close actions menu/i }),
       );
 
       await waitFor(() => {
         expect(
-          screen.queryByRole("button", { name: /edit skill/i })
+          screen.queryByRole("button", { name: /edit skill/i }),
         ).not.toBeInTheDocument();
         expect(
-          screen.queryByRole("button", { name: /delete skill/i })
+          screen.queryByRole("button", { name: /delete skill/i }),
         ).not.toBeInTheDocument();
         expect(
-          screen.queryByRole("button", { name: /purge activities/i })
+          screen.queryByRole("button", { name: /purge activities/i }),
         ).not.toBeInTheDocument();
       });
       expect(
-        screen.getByRole("button", { name: /open skill actions/i })
+        screen.getByRole("button", { name: /open skill actions/i }),
       ).toBeInTheDocument();
     });
   });
@@ -308,7 +313,7 @@ describe("SkillDetailPage", () => {
       });
 
       vi.mocked(activityService.fetchActivitiesBySkill).mockResolvedValue(
-        mockActivities
+        mockActivities,
       );
 
       render(<SkillDetailPage />, { wrapper: Wrapper });
@@ -316,39 +321,39 @@ describe("SkillDetailPage", () => {
       await waitFor(() => {
         expect(
           within(screen.getByTestId("list-layout-desktop")).getByTestId(
-            "activity-row-8a1f2d3e-4c5b-4a9e-9c1a-111111111111"
-          )
+            "activity-row-8a1f2d3e-4c5b-4a9e-9c1a-111111111111",
+          ),
         ).toBeInTheDocument();
       });
 
       await user.click(
-        screen.getByRole("button", { name: /open skill actions/i })
+        screen.getByRole("button", { name: /open skill actions/i }),
       );
       await user.click(
-        screen.getByRole("button", { name: /purge activities/i })
+        screen.getByRole("button", { name: /purge activities/i }),
       );
 
       expect(
         screen.getByRole("heading", {
           name: /irreversible purge confirmation/i,
-        })
+        }),
       ).toBeInTheDocument();
 
       await user.click(
-        screen.getByRole("button", { name: /continue to purge/i })
+        screen.getByRole("button", { name: /continue to purge/i }),
       );
 
       expect(
-        screen.getByRole("heading", { name: /confirm skill name/i })
+        screen.getByRole("heading", { name: /confirm skill name/i }),
       ).toBeInTheDocument();
 
       await user.type(screen.getByLabelText(/enter skill name/i), "Java");
       await user.click(
-        screen.getByRole("button", { name: /purge permanently/i })
+        screen.getByRole("button", { name: /purge permanently/i }),
       );
 
       expect(
-        screen.getByText(/The skill name does not match. Please try again/i)
+        screen.getByText(/The skill name does not match. Please try again/i),
       ).toBeInTheDocument();
     });
 
@@ -359,7 +364,7 @@ describe("SkillDetailPage", () => {
       });
 
       vi.mocked(activityService.fetchActivitiesBySkill).mockResolvedValue(
-        mockActivities
+        mockActivities,
       );
 
       render(<SkillDetailPage />, { wrapper: Wrapper });
@@ -367,39 +372,39 @@ describe("SkillDetailPage", () => {
       await waitFor(() => {
         expect(
           within(screen.getByTestId("list-layout-desktop")).getByTestId(
-            "activity-row-8a1f2d3e-4c5b-4a9e-9c1a-111111111111"
-          )
+            "activity-row-8a1f2d3e-4c5b-4a9e-9c1a-111111111111",
+          ),
         ).toBeInTheDocument();
       });
 
       await user.click(
-        screen.getByRole("button", { name: /open skill actions/i })
+        screen.getByRole("button", { name: /open skill actions/i }),
       );
       await user.click(
-        screen.getByRole("button", { name: /purge activities/i })
+        screen.getByRole("button", { name: /purge activities/i }),
       );
 
       expect(
         screen.getByRole("heading", {
           name: /irreversible purge confirmation/i,
-        })
+        }),
       ).toBeInTheDocument();
 
       await user.click(
-        screen.getByRole("button", { name: /continue to purge/i })
+        screen.getByRole("button", { name: /continue to purge/i }),
       );
 
       expect(
-        screen.getByRole("heading", { name: /confirm skill name/i })
+        screen.getByRole("heading", { name: /confirm skill name/i }),
       ).toBeInTheDocument();
 
       await user.clear(screen.getByLabelText(/enter skill name/i));
       await user.click(
-        screen.getByRole("button", { name: /purge permanently/i })
+        screen.getByRole("button", { name: /purge permanently/i }),
       );
 
       expect(
-        screen.getByText(/Please enter the skill name/i)
+        screen.getByText(/Please enter the skill name/i),
       ).toBeInTheDocument();
     });
 
@@ -409,16 +414,16 @@ describe("SkillDetailPage", () => {
         skillId: "550e8400-e29b-41d4-a716-446655440001",
       });
       vi.mocked(activityService.fetchActivitiesBySkill).mockResolvedValue(
-        mockActivities
+        mockActivities,
       );
 
       render(<SkillDetailPage />, { wrapper: Wrapper });
 
       await user.click(
-        screen.getByRole("button", { name: /open skill actions/i })
+        screen.getByRole("button", { name: /open skill actions/i }),
       );
       await user.click(
-        screen.getByRole("button", { name: /purge activities/i })
+        screen.getByRole("button", { name: /purge activities/i }),
       );
 
       expect(screen.getByTestId("purge-modal-overlay")).toBeInTheDocument();
@@ -427,7 +432,7 @@ describe("SkillDetailPage", () => {
 
       await waitFor(() => {
         expect(
-          screen.queryByTestId("purge-modal-overlay")
+          screen.queryByTestId("purge-modal-overlay"),
         ).not.toBeInTheDocument();
       });
     });

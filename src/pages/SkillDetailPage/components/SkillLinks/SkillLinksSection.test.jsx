@@ -4,32 +4,47 @@ import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SkillLinksSection } from "./SkillLinksSection";
 import * as useSkillLinksModule from "./hooks/useSkillLinks";
+import userEvent from "@testing-library/user-event";
 
 vi.mock("./hooks/useSkillLinks");
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-    },
-  },
-});
-
-const renderWithProviders = (ui) => {
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter>{ui}</MemoryRouter>
-    </QueryClientProvider>
-  );
-};
 
 const useHookFactory = (hook, { data, isLoading = false, isError = false }) => {
   hook.mockReturnValue({ data, isLoading, isError });
 };
 
+const mockSkill = { name: "React JS" };
+
 describe("SkillLinksSection", () => {
+  let client;
+  let QueryWrapper;
+
   beforeEach(() => {
-    vi.clearAllMocks();
+    client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
+    QueryWrapper = ({ children }) => (
+      <QueryClientProvider client={client}>
+        <MemoryRouter>{children}</MemoryRouter>
+      </QueryClientProvider>
+    );
+  });
+
+  const renderComponent = () => {
+    render(<SkillLinksSection skillId="skill-123" skill={mockSkill} />, {
+      wrapper: QueryWrapper,
+    });
+  };
+
+  useSkillLinksModule.useCreateSkillLink.mockReturnValue({
+    mutateAsync: vi.fn(),
+    isPending: false,
+    isSuccess: false,
+    isError: false,
+    error: null,
   });
 
   describe("Incoming Skill Links", () => {
@@ -43,9 +58,10 @@ describe("SkillLinksSection", () => {
         data: [],
       });
 
-      renderWithProviders(<SkillLinksSection skillId="skill-123" />);
+      renderComponent();
 
       expect(screen.getByTestId("skill-links-skeleton")).toBeInTheDocument();
+      0;
     });
 
     it("renders nothing when there is an error", () => {
@@ -55,7 +71,7 @@ describe("SkillLinksSection", () => {
       });
       useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, { data: [] });
 
-      renderWithProviders(<SkillLinksSection skillId="skill-123" />);
+      renderComponent();
 
       expect(screen.queryByText("Skill Connections")).not.toBeInTheDocument();
     });
@@ -64,7 +80,7 @@ describe("SkillLinksSection", () => {
       useHookFactory(useSkillLinksModule.useIncomingSkillLinks, { data: [] });
       useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, { data: [] });
 
-      renderWithProviders(<SkillLinksSection skillId="skill-123" />);
+      renderComponent();
 
       expect(screen.getByText(/no prerequisites defined/i)).toBeInTheDocument();
     });
@@ -87,20 +103,21 @@ describe("SkillLinksSection", () => {
 
       useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
         data: mockLinks,
+        isLoading: false,
       });
 
       useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, {
         data: undefined,
-        isLoading: true,
+        isLoading: false,
       });
 
-      renderWithProviders(<SkillLinksSection skillId="skill-123" />);
+      renderComponent();
 
       expect(
-        screen.getByRole("heading", { name: /Skill Connections/i })
+        screen.getByRole("heading", { name: /Skill Connections/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("heading", { name: /Required to Master/i })
+        screen.getByRole("heading", { name: /Required to Master/i }),
       ).toBeInTheDocument();
 
       const prerequisiteLink = screen.getByRole("link", {
@@ -116,6 +133,83 @@ describe("SkillLinksSection", () => {
       expect(prerequisiteLink).toHaveAttribute("href", "/skills/skill-a");
       expect(complementaryLink).toHaveAttribute("href", "/skills/skill-b");
     });
+
+    it("opens the creation modal for incoming links", async () => {
+      useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
+        data: [],
+        isLoading: false,
+      });
+
+      useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, {
+        data: [],
+        isLoading: false,
+      });
+      renderComponent();
+
+      expect(
+        screen.getByRole("heading", { name: /Required to Master/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(/No prerequisites defined yet/i),
+      ).toBeInTheDocument();
+
+      await userEvent.click(
+        screen.getByRole("button", { name: /add a prerequisite skill/i }),
+      );
+
+      expect(
+        screen.getByRole("heading", {
+          name: /add a prerequisite for react js/i,
+        }),
+      ).toBeInTheDocument();
+      expect(screen.getByLabelText(/search skills/i)).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /link as .../i }),
+      ).toBeInTheDocument();
+    });
+
+    it("closes the modal if X button is clicked", async () => {
+      useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
+        data: [],
+        isLoading: false,
+      });
+
+      useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, {
+        data: [],
+        isLoading: false,
+      });
+      renderComponent();
+
+      expect(
+        screen.getByRole("heading", { name: /Required to Master/i }),
+      ).toBeInTheDocument();
+
+      await userEvent.click(
+        screen.getByRole("button", { name: /add a prerequisite skill/i }),
+      );
+      expect(
+        screen.getByRole("heading", {
+          name: /add a prerequisite for react js/i,
+        }),
+      ).toBeInTheDocument();
+
+      await userEvent.click(
+        screen.getByRole("button", { name: /close modal/i }),
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.queryByRole("heading", {
+            name: /add a prerequisite for react js/i,
+          }),
+        ).not.toBeInTheDocument();
+        expect(
+          screen.queryByRole("button", {
+            name: /link as .../i,
+          }),
+        ).not.toBeInTheDocument();
+      });
+    });
   });
 
   describe("Outgoing Skill Links", () => {
@@ -130,7 +224,7 @@ describe("SkillLinksSection", () => {
         isError: true,
       });
 
-      renderWithProviders(<SkillLinksSection skillId="skill-123" />);
+      renderComponent();
 
       expect(screen.queryByText("Enables mastery of")).not.toBeInTheDocument();
     });
@@ -139,10 +233,10 @@ describe("SkillLinksSection", () => {
       useHookFactory(useSkillLinksModule.useIncomingSkillLinks, { data: [] });
       useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, { data: [] });
 
-      renderWithProviders(<SkillLinksSection skillId="skill-123" />);
+      renderComponent();
 
       expect(
-        screen.getByText(/this skill doesn't unlock anything/i)
+        screen.getByText(/this skill doesn't unlock anything/i),
       ).toBeInTheDocument();
     });
 
@@ -170,14 +264,14 @@ describe("SkillLinksSection", () => {
         data: mockLinks,
       });
 
-      renderWithProviders(<SkillLinksSection skillId="skill-123" />);
+      renderComponent();
 
       await waitFor(() => {
         expect(
-          screen.getByRole("heading", { name: /Skill Connections/i })
+          screen.getByRole("heading", { name: /Skill Connections/i }),
         ).toBeInTheDocument();
         expect(
-          screen.getByRole("heading", { name: /enables mastery of/i })
+          screen.getByRole("heading", { name: /enables mastery of/i }),
         ).toBeInTheDocument();
       });
 
@@ -193,6 +287,81 @@ describe("SkillLinksSection", () => {
       expect(complementaryLink).toBeInTheDocument();
       expect(prerequisiteLink).toHaveAttribute("href", "/skills/skill-a");
       expect(complementaryLink).toHaveAttribute("href", "/skills/skill-b");
+    });
+
+    it("opens the creation modal for outgoing links", async () => {
+      useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
+        data: [],
+        isLoading: false,
+      });
+
+      useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, {
+        data: [],
+        isLoading: false,
+      });
+      renderComponent();
+
+      expect(
+        screen.getByRole("heading", { name: /enables mastery of/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(/this skill doesn't unlock anything yet./i),
+      ).toBeInTheDocument();
+
+      await userEvent.click(
+        screen.getByRole("button", { name: /add a skill this unlocks/i }),
+      );
+
+      expect(
+        screen.getByRole("heading", {
+          name: /add a skill unlocked by react js/i,
+        }),
+      ).toBeInTheDocument();
+      expect(screen.getByLabelText(/search skills/i)).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /link as .../i }),
+      ).toBeInTheDocument();
+    });
+
+    it("closes the modal if 'Cancel' button is clicked", async () => {
+      useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
+        data: [],
+        isLoading: false,
+      });
+
+      useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, {
+        data: [],
+        isLoading: false,
+      });
+      renderComponent();
+
+      expect(
+        screen.getByRole("heading", { name: /enables mastery of/i }),
+      ).toBeInTheDocument();
+
+      await userEvent.click(
+        screen.getByRole("button", { name: /add a skill this unlocks/i }),
+      );
+      expect(
+        screen.getByRole("heading", {
+          name: /add a skill unlocked by react js/i,
+        }),
+      ).toBeInTheDocument();
+
+      await userEvent.click(screen.getByRole("button", { name: /cancel/i }));
+
+      await waitFor(() => {
+        expect(
+          screen.queryByRole("heading", {
+            name: /add a skill unlocked by react js/i,
+          }),
+        ).not.toBeInTheDocument();
+        expect(
+          screen.queryByRole("button", {
+            name: /link as .../i,
+          }),
+        ).not.toBeInTheDocument();
+      });
     });
   });
 });

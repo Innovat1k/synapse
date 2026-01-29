@@ -1,6 +1,6 @@
 export default function SkillLinksSkeleton() {
   return (
-    <section className="my-8">
+    <section className="my-8" data-testid="skill-links-skeleton">
       <h3 className="text-lg font-medium text-slate-200 mb-3">
         Skill Connections
       </h3>

@@ -61,3 +61,16 @@ export const formatDateShort = (dateString) => {
     day: "numeric",
   });
 };
+
+// Creates a Promise with externally accessible resolve/reject (for async coordination or testing)
+export const createDeferredPromise = () => {
+  let resolve;
+  let reject;
+
+  const promise = new Promise((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+
+  return { promise, resolve, reject };
+};

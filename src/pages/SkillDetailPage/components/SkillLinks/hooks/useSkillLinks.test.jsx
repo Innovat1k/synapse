@@ -1,43 +1,30 @@
 import { renderHook, waitFor } from "@testing-library/react";
-import { useIncomingSkillLinks, useOutgoingSkillLinks } from "./useSkillLinks";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import * as skillLinksService from "../../../../../services/skillLinksService";
+import {
+  useCreateSkillLink,
+  useIncomingSkillLinks,
+  useOutgoingSkillLinks,
+} from "./useSkillLinks";
 
-const mocks = vi.hoisted(() => ({
-  fromMock: vi.fn(),
-  selectMock: vi.fn(),
-  eqMock: vi.fn(),
-}));
+vi.mock("../../../../../services/skillLinksService");
 
-mocks.fromMock.mockReturnValue({ select: mocks.selectMock });
-mocks.selectMock.mockReturnValue({ eq: mocks.eqMock });
-
-vi.mock("../../../../../services/supabase-client", () => ({
-  supabase: {
-    from: mocks.fromMock,
-  },
-}));
-
-// === Utilities ===
 const wrapper = ({ children }) => {
-  const client = new QueryClient({
+  const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
-  return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
+  return (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
 };
-const renderIncoming = (skillId) =>
-  renderHook(() => useIncomingSkillLinks(skillId), { wrapper });
 
-const renderOutgoing = (skillId) =>
-  renderHook(() => useOutgoingSkillLinks(skillId), { wrapper });
-
-// === Test data ===
 const mockIncomingLink = {
   id: "link-1",
   source_skill_id: "skill-a",
   target_skill_id: "skill-b",
   type: "prerequisite",
-  skill: { name: "JavaScript" },
+  skill_name: "JavaScript",
 };
 
 const mockOutgoingLink = {
@@ -45,11 +32,18 @@ const mockOutgoingLink = {
   source_skill_id: "skill-b",
   target_skill_id: "skill-c",
   type: "related",
-  skill: { name: "TypeScript" },
+  skill_name: "TypeScript",
+};
+
+const mockCreatedLink = {
+  id: "new-link-1",
+  source_skill_id: "skill-a",
+  target_skill_id: "skill-b",
+  type: "prerequisite",
 };
 
 // ==================================================
-// INCOMING
+// INCOMING LINKS
 // ==================================================
 describe("useIncomingSkillLinks", () => {
   beforeEach(() => {
@@ -57,66 +51,45 @@ describe("useIncomingSkillLinks", () => {
   });
 
   it("should fetch and remap incoming skill links when skillId is valid", async () => {
-    const skillId = "skill-b";
-    mocks.eqMock.mockResolvedValueOnce({
-      data: [mockIncomingLink],
-      error: null,
-    });
-
-    const { result } = renderIncoming(skillId);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-
-    expect(result.current.data).toEqual([
-      {
-        id: "link-1",
-        source_skill_id: "skill-a",
-        target_skill_id: "skill-b",
-        type: "prerequisite",
-        skill_name: "JavaScript",
-      },
+    skillLinksService.fetchIncomingSkillLinks.mockResolvedValue([
+      mockIncomingLink,
     ]);
 
-    expect(mocks.fromMock).toHaveBeenCalledWith("synapse_skill_links");
+    const { result } = renderHook(() => useIncomingSkillLinks("skill-b"), {
+      wrapper,
+    });
 
-    const selectArg = mocks.selectMock.mock.calls[0][0];
-    expect(selectArg).toContain("id");
-    expect(selectArg).toContain("source_skill_id");
-    expect(selectArg).toContain("skill:source_skill_id!inner(name)");
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(mocks.eqMock).toHaveBeenCalledWith("target_skill_id", skillId);
+    expect(result.current.data).toEqual([mockIncomingLink]);
+    expect(skillLinksService.fetchIncomingSkillLinks).toHaveBeenCalledWith(
+      "skill-b",
+    );
   });
 
   it("should not run query when skillId is falsy", () => {
-    const { result } = renderIncoming(null);
+    const { result } = renderHook(() => useIncomingSkillLinks(null), {
+      wrapper,
+    });
     expect(result.current.fetchStatus).toBe("idle");
-    expect(mocks.fromMock).not.toHaveBeenCalled();
   });
 
-  it("should handle Supabase error correctly", async () => {
-    mocks.eqMock.mockResolvedValueOnce({
-      data: null,
-      error: { message: "Network error" },
+  it("should handle error from service", async () => {
+    skillLinksService.fetchIncomingSkillLinks.mockRejectedValue(
+      new Error("Network error"),
+    );
+
+    const { result } = renderHook(() => useIncomingSkillLinks("skill-x"), {
+      wrapper,
     });
 
-    const { result } = renderIncoming("skill-x");
     await waitFor(() => expect(result.current.isError).toBe(true));
-    expect(result.current.error).toBeDefined();
-  });
-
-  it("should map missing skill.name to 'Unknown skill'", async () => {
-    mocks.eqMock.mockResolvedValueOnce({
-      data: [{ ...mockIncomingLink, skill: null }],
-      error: null,
-    });
-
-    const { result } = renderIncoming("skill-b");
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data[0].skill_name).toBe("Unknown skill");
+    expect(result.current.error.message).toBe("Network error");
   });
 });
 
 // ==================================================
-// OUTGOING
+// OUTGOING LINKS
 // ==================================================
 describe("useOutgoingSkillLinks", () => {
   beforeEach(() => {
@@ -124,60 +97,126 @@ describe("useOutgoingSkillLinks", () => {
   });
 
   it("should fetch and remap outgoing skill links when skillId is valid", async () => {
-    const skillId = "skill-b";
-    mocks.eqMock.mockResolvedValueOnce({
-      data: [mockOutgoingLink],
-      error: null,
-    });
-
-    const { result } = renderOutgoing(skillId);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-
-    expect(result.current.data).toEqual([
-      {
-        id: "link-2",
-        source_skill_id: "skill-b",
-        target_skill_id: "skill-c",
-        type: "related",
-        skill_name: "TypeScript",
-      },
+    skillLinksService.fetchOutgoingSkillLinks.mockResolvedValue([
+      mockOutgoingLink,
     ]);
 
-    expect(mocks.fromMock).toHaveBeenCalledWith("synapse_skill_links");
+    const { result } = renderHook(() => useOutgoingSkillLinks("skill-b"), {
+      wrapper,
+    });
 
-    const selectArg = mocks.selectMock.mock.calls[0][0];
-    expect(selectArg).toContain("id");
-    expect(selectArg).toContain("target_skill_id");
-    expect(selectArg).toContain("skill:target_skill_id!inner(name)");
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(mocks.eqMock).toHaveBeenCalledWith("source_skill_id", skillId);
+    expect(result.current.data).toEqual([mockOutgoingLink]);
+    expect(skillLinksService.fetchOutgoingSkillLinks).toHaveBeenCalledWith(
+      "skill-b",
+    );
   });
 
   it("should not run query when skillId is falsy", () => {
-    const { result } = renderOutgoing(null);
+    const { result } = renderHook(() => useOutgoingSkillLinks(null), {
+      wrapper,
+    });
     expect(result.current.fetchStatus).toBe("idle");
-    expect(mocks.fromMock).not.toHaveBeenCalled();
   });
 
-  it("should handle Supabase error correctly", async () => {
-    mocks.eqMock.mockResolvedValueOnce({
-      data: null,
-      error: { message: "Network error" },
+  it("should handle error from service", async () => {
+    skillLinksService.fetchOutgoingSkillLinks.mockRejectedValue(
+      new Error("Database timeout"),
+    );
+
+    const { result } = renderHook(() => useOutgoingSkillLinks("skill-y"), {
+      wrapper,
     });
 
-    const { result } = renderOutgoing("skill-y");
     await waitFor(() => expect(result.current.isError).toBe(true));
-    expect(result.current.error).toBeDefined();
+    expect(result.current.error.message).toBe("Database timeout");
+  });
+});
+
+// ==================================================
+// CREATE LINK MUTATION
+// ==================================================
+describe("useCreateSkillLink", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it("should map missing skill.name to 'Unknown skill'", async () => {
-    mocks.eqMock.mockResolvedValueOnce({
-      data: [{ ...mockOutgoingLink, skill: null }],
-      error: null,
+  it("should create a new skill link successfully", async () => {
+    // ✅ Mock résout directement avec l'objet (pas { data, error })
+    skillLinksService.createSkillLink.mockResolvedValue(mockCreatedLink);
+
+    const { result } = renderHook(() => useCreateSkillLink(), { wrapper });
+
+    const variables = {
+      sourceSkillId: "skill-a",
+      targetSkillId: "skill-b",
+      type: "prerequisite",
+    };
+
+    await waitFor(async () => {
+      await result.current.mutateAsync(variables);
+      expect(result.current.isSuccess).toBe(true);
     });
 
-    const { result } = renderOutgoing("skill-b");
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data[0].skill_name).toBe("Unknown skill");
+    expect(result.current.data).toEqual(mockCreatedLink);
+    expect(skillLinksService.createSkillLink).toHaveBeenCalledWith({
+      source_skill_id: "skill-a",
+      target_skill_id: "skill-b",
+      type: "prerequisite",
+    });
+  });
+
+  it("should throw error when linking a skill to itself", async () => {
+    const { result } = renderHook(() => useCreateSkillLink(), { wrapper });
+
+    const variables = {
+      sourceSkillId: "same-skill",
+      targetSkillId: "same-skill",
+      type: "related",
+    };
+
+    let error;
+    await waitFor(async () => {
+      try {
+        await result.current.mutateAsync(variables);
+      } catch (err) {
+        error = err;
+        expect(result.current.isError).toBe(true);
+        expect(result.current.error?.message).toBe(
+          "Cannot link a skill to itself",
+        );
+      }
+    });
+
+    expect(error).toBeDefined();
+  });
+
+  it("should handle Supabase insertion error", async () => {
+    // ✅ Mock rejette une erreur (comme le ferait throw error)
+    skillLinksService.createSkillLink.mockRejectedValue(
+      new Error("Duplicate key violation"),
+    );
+
+    const { result } = renderHook(() => useCreateSkillLink(), { wrapper });
+
+    const variables = {
+      sourceSkillId: "skill-x",
+      targetSkillId: "skill-y",
+      type: "support",
+    };
+
+    let error;
+    await waitFor(async () => {
+      try {
+        await result.current.mutateAsync(variables);
+      } catch (err) {
+        error = err;
+        expect(result.current.isError).toBe(true);
+      }
+    });
+
+    expect(error).toBeDefined();
+    expect(error.message).toBe("Duplicate key violation");
   });
 });

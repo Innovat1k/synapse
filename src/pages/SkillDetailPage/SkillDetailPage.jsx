@@ -113,7 +113,7 @@ function SkillDetailPage() {
           </div>
           <hr className="my-5 md:my-6 border-slate-800/50" />
 
-          <SkillLinksSection skillId={skillId} />
+          <SkillLinksSection skillId={skillId} skill={skill} />
 
           {skill && <SkillActivities skill={skill} skills={skills} />}
         </div>
