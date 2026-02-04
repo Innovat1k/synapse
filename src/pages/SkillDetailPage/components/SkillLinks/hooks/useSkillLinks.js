@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createSkillLink,
+  deleteSkillLink,
   fetchIncomingSkillLinks,
   fetchOutgoingSkillLinks,
 } from "../../../../../services/skillLinksService";
@@ -85,6 +86,22 @@ export const useCreateSkillLink = () => {
         type,
       });
     },
+    onSuccess: (_, { sourceSkillId, targetSkillId }) => {
+      queryClient.invalidateQueries({
+        queryKey: ["skill-links", "incoming", targetSkillId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["skill-links", "outgoing", sourceSkillId],
+      });
+    },
+  });
+};
+
+export const useDeleteSkillLink = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ linkId }) => deleteSkillLink(linkId),
     onSuccess: (_, { sourceSkillId, targetSkillId }) => {
       queryClient.invalidateQueries({
         queryKey: ["skill-links", "incoming", targetSkillId],

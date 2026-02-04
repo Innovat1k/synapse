@@ -3,10 +3,16 @@ import SkillDetailPage from "../SkillDetailPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
 
+export const MOCK_SKILL_IDS = {
+  REACT: "skill-react",
+  JAVA: "skill-java",
+  PROJECT_MGMT: "skill-project-mgmt",
+};
+
 export const mockSkills = [
   {
     name: "React JS",
-    skill_id: "550e8400-e29b-41d4-a716-446655440001",
+    skill_id: MOCK_SKILL_IDS.REACT,
     category: "frontend",
     level: 4,
     description:
@@ -15,7 +21,7 @@ export const mockSkills = [
   },
   {
     name: "Java",
-    skill_id: "550e8400-e29b-41d4-a716-446655440002",
+    skill_id: MOCK_SKILL_IDS.JAVA,
     category: "backend",
     level: 1,
     description: "Exploring the fundamentals of Java development.",
@@ -23,7 +29,7 @@ export const mockSkills = [
   },
   {
     name: "Project Management",
-    skill_id: "123e4567-e89b-12d3-a456-426614174000",
+    skill_id: MOCK_SKILL_IDS.PROJECT_MGMT,
     category: "others",
     level: 3,
     description: "Managing small agile projects and coordinating tasks.",
@@ -31,14 +37,16 @@ export const mockSkills = [
   },
 ];
 
-export const renderSkillDetailPage = () => {
+export const renderSkillDetailPage = (skillId) => {
   let queryClient;
   let QueryWrapper;
 
   queryClient = new QueryClient();
   QueryWrapper = ({ children }) => (
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter>{children}</MemoryRouter>
+      <MemoryRouter initialEntries={[`/skills/${skillId}`]}>
+        {children}
+      </MemoryRouter>
     </QueryClientProvider>
   );
 

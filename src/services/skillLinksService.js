@@ -111,3 +111,23 @@ export const checkExistingLinks = async (sourceId, targetId) => {
     };
   }
 };
+
+/**
+ * Deletes a skill link by its ID.
+ * @param {string} linkId - The ID of the link to delete.
+ * @returns {Promise<void>}
+ */
+export const deleteSkillLink = async (linkId) => {
+  if (!linkId) {
+    throw new Error("Link ID is required");
+  }
+
+  const { error } = await supabase
+    .from("synapse_skill_links")
+    .delete()
+    .eq("id", linkId);
+
+  if (error) {
+    throw error;
+  }
+};

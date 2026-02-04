@@ -47,6 +47,8 @@ describe("SkillLinksSection", () => {
     error: null,
   });
 
+  useSkillLinksModule.useDeleteSkillLink.mockReturnValue({ isPending: false });
+
   describe("Incoming Skill Links", () => {
     it("renders skeleton while loading", () => {
       useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
@@ -168,7 +170,7 @@ describe("SkillLinksSection", () => {
       ).toBeInTheDocument();
     });
 
-    it("closes the modal if X button is clicked", async () => {
+    it("closes modal when 'Close' button is clicked", async () => {
       useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
         data: [],
         isLoading: false,
@@ -362,6 +364,121 @@ describe("SkillLinksSection", () => {
           }),
         ).not.toBeInTheDocument();
       });
+    });
+  });
+
+  describe("Editing skills links", () => {
+    let user;
+
+    beforeEach(() => {
+      user = userEvent.setup();
+    });
+
+    it("switches to editing mode if 'Edit' button is clicked", async () => {
+      useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
+        data: [],
+        isLoading: false,
+      });
+
+      useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, {
+        data: [
+          { id: "skill-a-1", type: "support", skill_name: "Digital painting" },
+        ],
+        isLoading: false,
+      });
+      renderComponent();
+
+      expect(
+        screen.getByRole("link", { name: /digital painting/i }),
+      ).toBeInTheDocument();
+
+      await user.click(screen.getByRole("button", { name: /edit/i }));
+
+      expect(
+        screen.getByRole("button", {
+          name: /Remove link to Digital painting/i,
+        }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", {
+          name: /remove link to digital painting/i,
+        }),
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByRole("button", {
+          name: /Exit edit mode to add prerequisite links/i,
+        }),
+      ).toBeDisabled();
+      expect(
+        screen.getByRole("button", {
+          name: /Exit edit mode to add outgoing skill links/i,
+        }),
+      ).toBeDisabled();
+    });
+
+    it("exits edit mode when 'Done' is clicked", async () => {
+      useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
+        data: [],
+        isLoading: false,
+      });
+
+      useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, {
+        data: [
+          { id: "skill-a-1", type: "support", skill_name: "Digital painting" },
+        ],
+        isLoading: false,
+      });
+      renderComponent();
+
+      expect(
+        screen.getByRole("link", { name: /digital painting/i }),
+      ).toBeInTheDocument();
+
+      await user.click(screen.getByRole("button", { name: /edit/i }));
+
+      expect(
+        screen.getByRole("button", {
+          name: /remove link to digital painting/i,
+        }),
+      ).toBeInTheDocument();
+
+      const doneEditingBtn = screen.getByRole("button", { name: /done/i });
+      expect(doneEditingBtn).toBeInTheDocument();
+
+      await user.click(doneEditingBtn);
+
+      expect(
+        screen.getByRole("link", { name: /digital painting/i }),
+      ).toBeInTheDocument();
+
+      expect(
+        screen.queryByRole("button", {
+          name: /done/i,
+        }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("disables 'Edit' button when no links are present", async () => {
+      useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
+        data: [],
+        isLoading: false,
+      });
+
+      useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, {
+        data: [],
+        isLoading: false,
+      });
+      renderComponent();
+
+      expect(
+        screen.getByText(/No prerequisites defined yet/i),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(/This skill doesn't unlock anything yet/i),
+      ).toBeInTheDocument();
+
+      expect(screen.getByRole("button", { name: /edit/i })).toBeDisabled();
     });
   });
 });

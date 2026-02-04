@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import {
   useIncomingSkillLinks,
   useOutgoingSkillLinks,
@@ -7,6 +6,10 @@ import SkillLinksSkeleton from "./components/SkillLinksSkeleton.jsx";
 import { LuCornerLeftUp, LuCornerRightUp, LuPlus } from "react-icons/lu";
 import { SkillLinkerModal } from "./components/SkillLinkerModal/SkillLinkerModal.jsx";
 import { useSkillLinkerModal } from "./components/SkillLinkerModal/hooks/useSkillLinkerModal.js";
+import { SkillLinkItem } from "./components/SkillLinkItem.jsx";
+import { UnlinkConfirmModal } from "./components/UnlinkConfirmModal/UnlinkConfirmModal.jsx";
+import { useSkillLinkEditor } from "./components/UnlinkConfirmModal/hooks/useSkillLinkEditor.js";
+import { AnimatePresence } from "framer-motion";
 
 export const SkillLinksSection = ({ skillId, skill }) => {
   const {
@@ -24,6 +27,8 @@ export const SkillLinksSection = ({ skillId, skill }) => {
   const { linkerModal, openLinkerModal, closeLinkerModal } =
     useSkillLinkerModal();
 
+  const { isEditing, isLoading, unlinkingLink, methods } = useSkillLinkEditor();
+
   const isLoadingAny = inLoading || outLoading;
 
   if (isLoadingAny) {
@@ -34,15 +39,51 @@ export const SkillLinksSection = ({ skillId, skill }) => {
     return null;
   }
 
+  const noLinks = incomingLinks.length === 0 && outgoingLinks.length === 0;
+
+  const containerBg = `p-4 rounded-2xl backdrop-blur-md transition-all duration-300 border
+  ${
+    isEditing
+      ? "bg-slate-800/40 border-slate-500/50 shadow-[0_0_15px_rgba(0,0,0,0.3)] scale-[1.01]"
+      : "bg-slate-900/60 border-slate-800/50 shadow-none scale-100"
+  }`;
+
   return (
     <section className="my-8">
-      <h3 className="text-lg font-medium text-slate-200 mb-3">
-        Skill Connections
-      </h3>
+      {/* Header + Edit button */}
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-medium text-slate-200">
+          Skill Connections
+        </h3>
 
-      <div className="flex flex-col md:flex-row gap-6">
+        <button
+          type="button"
+          title={noLinks ? "No connections to edit" : ""}
+          disabled={noLinks}
+          onClick={methods.toggleEditing}
+          className={`
+            text-xs font-bold px-4 py-1.5 rounded-full transition-all border flex items-center justify-center min-w-[65px]
+          ${
+            noLinks
+              ? "cursor-not-allowed opacity-30 grayscale-[0.5]"
+              : "cursor-pointer active:scale-95"
+          }
+        ${
+          isEditing
+            ? "bg-red-500/10 border-red-500/40 text-red-400 shadow-[0_0_10px_rgba(239,68,68,0.1)]"
+            : "bg-slate-800/40 border-slate-700/50 text-slate-400 hover:enabled:text-slate-200 hover:enabled:border-slate-600 hover:enabled:bg-slate-800"
+        }`}
+        >
+          {isEditing ? "Done" : "Edit"}
+        </button>
+      </div>
+
+      <div
+        className={`flex flex-col md:flex-row gap-6 transition-opacity duration-300 ${isLoading ? "opacity-50 pointer-events-none" : "opacity-100"}`}
+      >
+        {/* Section : Required to Master */}
         <div className="flex-1 min-w-0">
-          <div className="p-4 bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-slate-800/50">
+          <div className={containerBg}>
             <div className="flex justify-between items-center mb-3">
               <h4 className="text-sm font-semibold text-amber-500 flex items-center gap-1">
                 <LuCornerLeftUp size={16} />
@@ -50,9 +91,18 @@ export const SkillLinksSection = ({ skillId, skill }) => {
               </h4>
               <button
                 onClick={() => openLinkerModal("incoming")}
-                className="p-1.5 rounded-lg transition-colors hover:bg-amber-500/20 text-amber-500 bg-amber-500/10 cursor-pointer"
-                title="Add a prerequisite skill"
-                aria-label="Add a prerequisite skill"
+                disabled={isEditing}
+                className={`p-1.5 rounded-lg transition-colors cursor-pointer border
+                  ${
+                    isEditing
+                      ? "border-amber-500/20 bg-amber-500/5 text-amber-500/40 opacity-60"
+                      : "border-amber-500/30 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20"
+                  }`}
+                aria-label={
+                  isEditing
+                    ? "Exit edit mode to add prerequisite links"
+                    : "Add a prerequisite skill"
+                }
               >
                 <LuPlus size={16} />
               </button>
@@ -60,29 +110,16 @@ export const SkillLinksSection = ({ skillId, skill }) => {
 
             {incomingLinks.length > 0 ? (
               <div className="flex flex-wrap gap-2 p-2">
-                {incomingLinks.map((link) => {
-                  const isPrereq = link.type === "prerequisite";
-                  return (
-                    <Link
-                      key={link.id}
-                      to={`/skills/${link.source_skill_id}`}
-                      className="flex items-center gap-2 px-3 py-1.5 bg-white/80 dark:bg-slate-200/80 rounded-full hover:bg-white transition-colors backdrop-blur-sm border border-slate-300/30"
-                      aria-label={`${link.skill_name}, ${
-                        isPrereq ? "prerequisite" : "complementary"
-                      }`}
-                    >
-                      <span className="truncate max-w-35 text-slate-800 dark:text-slate-900 font-medium">
-                        {link.skill_name}
-                      </span>
-                      <span
-                        className={`w-2 h-2 rounded-full ${
-                          isPrereq ? "bg-amber-500" : "bg-cyan-500"
-                        }`}
-                        aria-hidden="true"
-                      />
-                    </Link>
-                  );
-                })}
+                {incomingLinks.map((link) => (
+                  <SkillLinkItem
+                    key={link.id}
+                    skillName={link.skill_name}
+                    linkType={link.type}
+                    isEditing={isEditing}
+                    to={`/skills/${link.source_skill_id}`}
+                    onUnlink={() => methods.removeLink(link)}
+                  />
+                ))}
               </div>
             ) : (
               <p className="text-slate-500 text-sm italic">
@@ -92,8 +129,9 @@ export const SkillLinksSection = ({ skillId, skill }) => {
           </div>
         </div>
 
+        {/* Section : Enables mastery of */}
         <div className="flex-1 min-w-0">
-          <div className="p-4 bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-slate-800/50">
+          <div className={containerBg}>
             <div className="flex justify-between items-center mb-3">
               <h4 className="text-sm font-semibold text-cyan-400 flex items-center gap-1">
                 <LuCornerRightUp size={16} />
@@ -101,9 +139,18 @@ export const SkillLinksSection = ({ skillId, skill }) => {
               </h4>
               <button
                 onClick={() => openLinkerModal("outgoing")}
-                className="p-1.5 rounded-lg transition-colors hover:bg-cyan-400/20 text-cyan-400 bg-cyan-400/10 cursor-pointer"
-                title="Add a skill this unlocks"
-                aria-label="Add a skill this unlocks"
+                disabled={isEditing}
+                className={`p-1.5 rounded-lg transition-colors cursor-pointer border
+                  ${
+                    isEditing
+                      ? "border-cyan-400/20 bg-cyan-400/5 text-cyan-400/40 opacity-60"
+                      : "border-cyan-400/30 bg-cyan-400/10 text-cyan-400 hover:bg-cyan-400/20"
+                  }`}
+                aria-label={
+                  isEditing
+                    ? "Exit edit mode to add outgoing skill links"
+                    : "Add a skill this unlocks"
+                }
               >
                 <LuPlus size={16} />
               </button>
@@ -111,29 +158,16 @@ export const SkillLinksSection = ({ skillId, skill }) => {
 
             {outgoingLinks.length > 0 ? (
               <div className="flex flex-wrap gap-2 p-2">
-                {outgoingLinks.map((link) => {
-                  const isPrereq = link.type === "prerequisite";
-                  return (
-                    <Link
-                      key={link.id}
-                      to={`/skills/${link.target_skill_id}`}
-                      className="flex items-center gap-2 px-3 py-1.5 bg-white/80 dark:bg-slate-200/80 rounded-full hover:bg-white transition-colors backdrop-blur-sm border border-slate-300/30"
-                      aria-label={`${link.skill_name}, ${
-                        isPrereq ? "prerequisite" : "complementary"
-                      }`}
-                    >
-                      <span className="truncate max-w-full sm:max-w-35 text-slate-800 dark:text-slate-900 font-medium">
-                        {link.skill_name}
-                      </span>
-                      <span
-                        className={`w-2 h-2 rounded-full ${
-                          isPrereq ? "bg-amber-500" : "bg-cyan-500"
-                        }`}
-                        aria-hidden="true"
-                      />
-                    </Link>
-                  );
-                })}
+                {outgoingLinks.map((link) => (
+                  <SkillLinkItem
+                    key={link.id}
+                    skillName={link.skill_name}
+                    linkType={link.type}
+                    isEditing={isEditing}
+                    to={`/skills/${link.target_skill_id}`}
+                    onUnlink={() => methods.removeLink(link)}
+                  />
+                ))}
               </div>
             ) : (
               <p className="text-slate-500 text-sm italic">
@@ -144,6 +178,7 @@ export const SkillLinksSection = ({ skillId, skill }) => {
         </div>
       </div>
 
+      {/* Modals */}
       <SkillLinkerModal
         isOpened={linkerModal.isOpen}
         mode={linkerModal.mode}
@@ -153,6 +188,22 @@ export const SkillLinksSection = ({ skillId, skill }) => {
         existingOutgoingLinks={outgoingLinks}
         onClose={closeLinkerModal}
       />
+
+      {
+        <AnimatePresence>
+          {unlinkingLink && (
+            <UnlinkConfirmModal
+              key="unlink-modal"
+              isOpened={!!unlinkingLink}
+              isLoading={isLoading}
+              link={unlinkingLink}
+              skill={skill}
+              onConfirm={methods.confirmRemoval}
+              onClose={methods.cancelRemoval}
+            />
+          )}
+        </AnimatePresence>
+      }
     </section>
   );
 };
