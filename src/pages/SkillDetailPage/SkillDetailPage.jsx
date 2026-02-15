@@ -1,4 +1,4 @@
-import { LuArrowLeft, LuTag } from "react-icons/lu";
+import { LuArrowLeft, LuBrainCircuit, LuTag } from "react-icons/lu";
 import { Link, useOutletContext, useParams } from "react-router-dom";
 import { useSkillDetail } from "./hooks/useSkillDetail";
 import SkillFormModal from "../../shared/components/SkillFormModal/SkillFormModal";
@@ -10,6 +10,12 @@ import { useActivitiesQuery } from "../../shared/hooks/useActivitiesQuery/useAct
 import SkillSkeleton from "./components/SkillSkeleton";
 import SkillActionsMenu from "./components/SkillActionsMenu/SkillActionsMenu";
 import { SkillLinksSection } from "./components/SkillLinks/SkillLinksSection";
+import { useGraphModal } from "./components/GraphModal/hooks/useGraphModal";
+import { GraphModal } from "./components/GraphModal/GraphModal";
+import { useSubgraph } from "./components/GraphModal/hooks/useSubgraph";
+import { AnimatePresence } from "framer-motion";
+import { GraphView } from "./components/GraphModal/GraphView";
+import ButtonSpinner from "../../shared/components/ButtonSpinner";
 
 function SkillDetailPage() {
   const { skills } = useOutletContext();
@@ -18,6 +24,10 @@ function SkillDetailPage() {
   const { modal, isSubmitting, methods } = useSkillModal();
   const activityPurge = usePurgeActivities(skillId, skill?.name);
   const { activities } = useActivitiesQuery(skillId);
+  const { isGraphModalOpen, openGraphModal, closeGraphModal } = useGraphModal();
+
+  const { data: subgraphData, isLoading: isGraphLoading } =
+    useSubgraph(skillId);
 
   // Show the skeleton if skill is not ready
   if (!skill) {
@@ -66,15 +76,29 @@ function SkillDetailPage() {
               </Link>
             </div>
 
-            <SkillActionsMenu
-              actionsMenu={actionsMenu}
-              openPurgeModal={activityPurge.openPurgeModal}
-              skill={skill}
-              activityCount={activities.length}
-              methods={methods}
-            />
-          </div>
+            <div className="flex gap-4">
+              <button
+                type="button"
+                onClick={openGraphModal}
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer
+               bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50
+               text-slate-400 hover:text-teal-400 transition-colors text-sm"
+                aria-label={`View knowledge graph for ${skill?.name}`}
+              >
+                <LuBrainCircuit size={18} className="text-teal-400" />
+                <span>Graph</span>
+              </button>
 
+              <SkillActionsMenu
+                actionsMenu={actionsMenu}
+                openPurgeModal={activityPurge.openPurgeModal}
+                openGraphModal={openGraphModal}
+                skill={skill}
+                activityCount={activities.length}
+                methods={methods}
+              />
+            </div>
+          </div>
           <div className="bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-slate-800/50 p-4 sm:p-5 mb-6 md:mb-8">
             <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 md:mb-5">
               <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-teal-400/20 border border-teal-400/40 text-teal-400 rounded-full text-xs sm:text-sm font-medium">
@@ -111,11 +135,42 @@ function SkillDetailPage() {
               </div>
             )}
           </div>
+
           <hr className="my-5 md:my-6 border-slate-800/50" />
 
           <SkillLinksSection skillId={skillId} skill={skill} />
 
           {skill && <SkillActivities skill={skill} skills={skills} />}
+
+          <AnimatePresence>
+            {isGraphModalOpen && (
+              <GraphModal
+                isOpened={true}
+                onClose={closeGraphModal}
+                skillName={skill?.name || "this skill"}
+              >
+                {isGraphLoading ? (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <ButtonSpinner
+                      color="text-teal-500"
+                      label="Loading knowledge graph..."
+                      labelColor="text-slate-400"
+                    />
+                  </div>
+                ) : subgraphData ? (
+                  <GraphView
+                    centerSkillId={skillId}
+                    nodes={subgraphData.nodes}
+                    links={subgraphData.links}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="text-slate-400">No connections found.</div>
+                  </div>
+                )}
+              </GraphModal>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </>

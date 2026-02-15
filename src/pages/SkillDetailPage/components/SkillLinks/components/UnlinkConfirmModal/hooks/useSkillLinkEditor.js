@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useDeleteSkillLink } from "../../../hooks/useSkillLinks";
 
-export const useSkillLinkEditor = () => {
-  const deleteLinkMutation = useDeleteSkillLink();
+export const useSkillLinkEditor = (skillId) => {
+  const deleteLinkMutation = useDeleteSkillLink(skillId);
 
   const [isEditing, setIsEditing] = useState(false);
   const [unlinkingLink, setUnlinkingLink] = useState(null);

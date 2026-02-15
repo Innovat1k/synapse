@@ -27,7 +27,7 @@ export const SkillLinksSection = ({ skillId, skill }) => {
   const { linkerModal, openLinkerModal, closeLinkerModal } =
     useSkillLinkerModal();
 
-  const { isEditing, isLoading, unlinkingLink, methods } = useSkillLinkEditor();
+  const { isEditing, isLoading, unlinkingLink, methods } = useSkillLinkEditor(skillId);
 
   const isLoadingAny = inLoading || outLoading;
 

@@ -72,7 +72,7 @@ export const useOutgoingSkillLinks = (skillId) => {
  *   { sourceSkillId: string; targetSkillId: string; type: string }
  * >} React Query mutation object for creating a skill link.
  */
-export const useCreateSkillLink = () => {
+export const useCreateSkillLink = (centerSkillId) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -93,11 +93,14 @@ export const useCreateSkillLink = () => {
       queryClient.invalidateQueries({
         queryKey: ["skill-links", "outgoing", sourceSkillId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["subgraph", centerSkillId],
+      });
     },
   });
 };
 
-export const useDeleteSkillLink = () => {
+export const useDeleteSkillLink = (centerSkillId) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -108,6 +111,9 @@ export const useDeleteSkillLink = () => {
       });
       queryClient.invalidateQueries({
         queryKey: ["skill-links", "outgoing", sourceSkillId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["subgraph", centerSkillId],
       });
     },
   });

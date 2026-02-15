@@ -1,4 +1,10 @@
-import { LuEllipsis, LuPencil, LuTrash2, LuX } from "react-icons/lu";
+import {
+  LuBrainCircuit,
+  LuEllipsis,
+  LuPencil,
+  LuTrash2,
+  LuX,
+} from "react-icons/lu";
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
@@ -9,6 +15,7 @@ function SkillActionsMenu({
   skill,
   activityCount,
   methods,
+  openGraphModal,
 }) {
   return (
     <div className="relative">
@@ -44,7 +51,19 @@ function SkillActionsMenu({
             </div>
 
             <div className="py-2">
-              {/* Principal Skill Actions (Edit - Delete) */}
+              {/* Principal Skill Actions (View Graph - Edit - Delete - Purge) */}
+              <button
+                type="button"
+                onClick={() => {
+                  openGraphModal();
+                  actionsMenu.handleToggle();
+                }}
+                className="w-full md:hidden flex items-center gap-2 px-3 py-2.5 capitalize text-left text-slate-300 hover:bg-slate-800/50 hover:text-teal-400 transition-colors rounded-lg cursor-pointer"
+              >
+                <LuBrainCircuit size={18} />
+                <span>View graph</span>
+              </button>
+
               <button
                 type="button"
                 className="w-full flex items-center gap-2 px-3 py-2.5 text-left text-slate-300 hover:bg-slate-800/50 hover:text-teal-400 transition-colors rounded-lg cursor-pointer"

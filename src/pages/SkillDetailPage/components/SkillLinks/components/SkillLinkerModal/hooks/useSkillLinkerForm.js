@@ -50,7 +50,7 @@ export const useSkillLinkerForm = ({ currentSkillId, mode }) => {
   const [hasReverseLink, setHasReverseLink] = useState(false);
 
   const { skills } = useSkillsQuery();
-  const createLinkMutation = useCreateSkillLink();
+  const createLinkMutation = useCreateSkillLink(currentSkillId);
 
   // Filter searchTerm
   const filteredSkills = (skills ?? []).filter(

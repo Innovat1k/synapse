@@ -74,3 +74,13 @@ export const createDeferredPromise = () => {
 
   return { promise, resolve, reject };
 };
+
+// Mocks window.innerWidth and triggers a resize event (useful for testing responsive UI)
+export const setWindowWidth = (width) => {
+  Object.defineProperty(window, "innerWidth", {
+    writable: true,
+    configurable: true,
+    value: width,
+  });
+  window.dispatchEvent(new Event("resize"));
+};
