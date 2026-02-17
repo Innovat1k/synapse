@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useTooltipPosition } from "./hooks/useTooltipPosition";
-import { GraphTooltip } from "./GraphTooltip";
+import { GraphTooltip } from "./components/GraphTooltip";
 import { useGraphLayout } from "./hooks/useGraphLayout";
 import { getLinkCurvature } from "./utils/graphUtils";
+import { useSkillProgress } from "./hooks/useSkillProgress";
 
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,21 +19,36 @@ export const GraphView = ({ centerSkillId, nodes = [], links = [] }) => {
   const [hoveredNodeId, setHoveredNodeId] = useState(null);
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 
-  const { nodePositions, mutualSkills, incoming, config } =
-    useGraphLayout({
-      centerSkillId,
-      nodes,
-      links,
-      isMobile,
-    });
+  const { nodePositions, mutualSkills, incoming, config } = useGraphLayout({
+    centerSkillId,
+    nodes,
+    links,
+    isMobile,
+  });
 
   const { visible } = useTooltipPosition(hoveredNodeId);
-  const hoveredNode = nodes.find((n) => n.id === hoveredNodeId);
+
+  const storageKey = `skill-progress-${centerSkillId}`;
+  const { nodesWithStatus, completeSkill } = useSkillProgress(
+    nodes,
+    links,
+    storageKey,
+  );
+
+  const hoveredNode = nodesWithStatus.find((n) => n.id === hoveredNodeId);
 
   const handleNodeInteraction = (nodeId, isCenter) => {
     if (isCenter) return;
     if (isMobile) {
       setHoveredNodeId((prev) => (prev === nodeId ? null : nodeId));
+    } else {
+      setHoveredNodeId(nodeId);
+    }
+  };
+
+  const handleNodeClick = (nodeId, status) => {
+    if (!isMobile && status === "available") {
+      completeSkill(nodeId);
     }
   };
 
@@ -131,39 +147,63 @@ export const GraphView = ({ centerSkillId, nodes = [], links = [] }) => {
           const t = nodePositions.get(link.target);
           if (!s || !t) return null;
 
+          const sourceNode = nodesWithStatus.find((n) => n.id === link.source);
+          const isSourceCompleted = sourceNode?.status === "completed";
+
           const isPrereq = link.target === centerSkillId;
           const isActive =
             hoveredNodeId === link.source || hoveredNodeId === link.target;
+
           const dr =
             Math.sqrt(Math.pow(t.x - s.x, 2) + Math.pow(t.y - s.y, 2)) *
             getLinkCurvature(link.source, link.target);
 
+          const color = isPrereq ? "#f59e0b" : "#22d3ee";
+
           return (
-            <motion.path
-              key={`link-${link.source}-${link.target}`}
-              d={`M${s.x},${s.y} A${dr},${dr} 0 0,1 ${t.x},${t.y}`}
-              stroke={isPrereq ? "#f59e0b" : "#22d3ee"}
-              strokeWidth={
-                isActive ? (isMobile ? "3" : "2.5") : isMobile ? "1.5" : "1.2"
-              }
-              fill="none"
-              strokeLinecap="round"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: isActive ? 0.9 : 0.15 }}
-              markerEnd={`url(#arrow-${isPrereq ? "amber" : "cyan"})`}
-              className="transition-all duration-300"
-            />
+            <g key={`link-group-${link.source}-${link.target}`}>
+              {/* Background path */}
+              <path
+                d={`M${s.x},${s.y} A${dr},${dr} 0 0,1 ${t.x},${t.y}`}
+                stroke={color}
+                strokeWidth={isMobile ? "1" : "0.8"}
+                fill="none"
+                opacity={0.2}
+              />
+
+              <motion.path
+                d={`M${s.x},${s.y} A${dr},${dr} 0 0,1 ${t.x},${t.y}`}
+                stroke={color}
+                strokeWidth={
+                  isActive ? (isMobile ? "3" : "2.5") : isMobile ? "1.5" : "1.2"
+                }
+                fill="none"
+                strokeLinecap="round"
+                filter={isSourceCompleted || isActive ? "url(#glow)" : ""}
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{
+                  pathLength: 1,
+                  opacity: isSourceCompleted || isActive ? 0.8 : 0.15,
+                }}
+                transition={{
+                  opacity: { duration: 0.5 },
+                }}
+                markerEnd={`url(#arrow-${isPrereq ? "amber" : "cyan"})`}
+                className="transition-all"
+              />
+            </g>
           );
         })}
 
         {/* Skill nodes */}
-        {nodes.map((node) => {
+        {nodesWithStatus.map((node) => {
           const pos = nodePositions.get(node.id);
           if (!pos) return null;
 
           const isCenter = node.id === centerSkillId;
           const isHovered = hoveredNodeId === node.id;
           const size = isCenter ? config.centerSize : config.nodeSize;
+
           let ringColor = isCenter
             ? "#2dd4bf"
             : mutualSkills.has(node.id)
@@ -172,6 +212,9 @@ export const GraphView = ({ centerSkillId, nodes = [], links = [] }) => {
                 ? "#f59e0b"
                 : "#22d3ee";
 
+          const opacity = node.status === "locked" ? 0.65 : 1;
+          const isCompleted = node.status === "completed";
+
           return (
             <motion.g
               key={`node-${node.id}`}
@@ -179,7 +222,7 @@ export const GraphView = ({ centerSkillId, nodes = [], links = [] }) => {
               initial={{ scale: 0, opacity: 0 }}
               animate={{
                 scale: 1,
-                opacity: node.status === "locked" ? 0.5 : 1,
+                opacity,
                 x: pos.x,
                 y: pos.y,
               }}
@@ -190,9 +233,14 @@ export const GraphView = ({ centerSkillId, nodes = [], links = [] }) => {
                 !isMobile ? () => setHoveredNodeId(node.id) : undefined
               }
               onHoverEnd={!isMobile ? () => setHoveredNodeId(null) : undefined}
-              onClick={() => handleNodeInteraction(node.id, isCenter)}
+              onClick={() => {
+                if (isMobile) {
+                  handleNodeInteraction(node.id, isCenter);
+                } else {
+                  handleNodeClick(node.id, node.status);
+                }
+              }}
             >
-              {/* Invisible touch target */}
               <circle r={size * (isMobile ? 1.3 : 1.1)} fill="transparent" />
 
               <circle
@@ -205,7 +253,7 @@ export const GraphView = ({ centerSkillId, nodes = [], links = [] }) => {
                 className="transition-all"
               />
 
-              {node.status === "completed" && (
+              {isCompleted && (
                 <path
                   d="M-5 0 L-1 4 L6 -4"
                   fill="none"
@@ -222,8 +270,8 @@ export const GraphView = ({ centerSkillId, nodes = [], links = [] }) => {
                   isCenter || isHovered
                     ? "#f8fafc"
                     : node.status === "locked"
-                      ? "#334155"
-                      : "#64748b"
+                      ? "#475569"
+                      : "#94a3b8"
                 }
                 className="font-bold select-none pointer-events-none"
                 fontSize={config.fontSize}
@@ -247,6 +295,7 @@ export const GraphView = ({ centerSkillId, nodes = [], links = [] }) => {
             mutualSkills={mutualSkills}
             incoming={incoming}
             config={config}
+            onComplete={isMobile ? completeSkill : undefined}
           />
         )}
       </AnimatePresence>

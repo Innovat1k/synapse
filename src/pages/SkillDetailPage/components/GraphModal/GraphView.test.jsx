@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { GraphView } from "./GraphView";
 import { setWindowWidth } from "../../../../shared/utils/utils";
+import { beforeEach, describe } from "vitest";
 
 const mockCenterSkillId = "skill-react";
 const mockNodes = [
@@ -17,146 +18,181 @@ const mockLinks = [
   { source: "skill-react", target: "skill-pm" },
 ];
 
+const renderGraphView = ({
+  nodes = mockNodes,
+  centerSkillId = mockCenterSkillId,
+  links = mockLinks,
+} = {}) => {
+  return render(
+    <GraphView centerSkillId={centerSkillId} nodes={nodes} links={links} />,
+  );
+};
+
 describe("GraphView", () => {
+  let user;
+
   beforeEach(() => {
-    setWindowWidth(1200);
+    localStorage.clear();
+    user = userEvent.setup();
   });
 
-  it("renders without crashing", () => {
-    render(
-      <GraphView
-        centerSkillId={mockCenterSkillId}
-        nodes={mockNodes}
-        links={mockLinks}
-      />,
-    );
-    expect(screen.getByTestId("graph-container")).toBeInTheDocument();
+  describe("Rendering", () => {
+    describe("Desktop", () => {
+      beforeEach(() => {
+        setWindowWidth(1200);
+      });
+
+      it("renders without crashing", () => {
+        renderGraphView();
+        expect(screen.getByTestId("graph-container")).toBeInTheDocument();
+      });
+
+      it("renders center node with teal color", () => {
+        const { container } = renderGraphView();
+
+        const centerNode = container.querySelector('circle[stroke="#2dd4bf"]');
+        expect(centerNode).toBeInTheDocument();
+      });
+
+      it("renders prerequisite node with amber color", () => {
+        const { container } = renderGraphView();
+
+        const amberNode = container.querySelector('circle[stroke="#f59e0b"]');
+        expect(amberNode).toBeInTheDocument();
+      });
+
+      it("renders unlock node with cyan color", () => {
+        const { container } = renderGraphView();
+
+        const unlockNode = container.querySelector('circle[stroke="#22d3ee"]');
+        expect(unlockNode).toBeInTheDocument();
+      });
+
+      it("renders mutual dependency node with indigo color", () => {
+        const { container } = renderGraphView();
+
+        const indigoNodes = container.querySelectorAll(
+          'circle[stroke="#6366f1"]',
+        );
+        expect(indigoNodes.length).toBe(1);
+      });
+
+      it("renders single node when center skill has no connections", () => {
+        const singleNode = [
+          { id: "skill-solo", label: "Solo Skill", status: "available" },
+        ];
+        renderGraphView({
+          centerSkillId: "skill-solo",
+          nodes: singleNode,
+          links: [],
+        });
+
+        expect(screen.getByTestId("graph-node-skill-solo")).toBeInTheDocument();
+      });
+
+      it("renders all legend items", () => {
+        renderGraphView();
+
+        expect(screen.getByTestId("legend-amber")).toBeInTheDocument();
+        expect(screen.getByTestId("legend-indigo")).toBeInTheDocument();
+        expect(screen.getByTestId("legend-cyan")).toBeInTheDocument();
+      });
+    });
+
+    describe("Mobile", () => {
+      beforeEach(() => {
+        setWindowWidth(375);
+      });
+
+      it("shows legend in column layout on mobile", () => {
+        renderGraphView();
+
+        const legend = screen.getByTestId("graph-legend");
+        expect(legend).toHaveClass("flex-col");
+        setWindowWidth(1200);
+      });
+    });
   });
 
-  it("renders center node with teal color", () => {
-    const { container } = render(
-      <GraphView
-        centerSkillId={mockCenterSkillId}
-        nodes={mockNodes}
-        links={mockLinks}
-      />,
-    );
-    const centerNode = container.querySelector('circle[stroke="#2dd4bf"]');
-    expect(centerNode).toBeInTheDocument();
-  });
+  describe("Interactions", () => {
+    describe("Desktop", () => {
+      beforeEach(() => {
+        setWindowWidth(1200);
+      });
 
-  it("renders prerequisite node with amber color", () => {
-    const { container } = render(
-      <GraphView
-        centerSkillId={mockCenterSkillId}
-        nodes={mockNodes}
-        links={mockLinks}
-      />,
-    );
-    const amberNode = container.querySelector('circle[stroke="#f59e0b"]');
-    expect(amberNode).toBeInTheDocument();
-  });
+      it("shows tooltip on hover", async () => {
+        renderGraphView();
 
-  it("renders unlock node with cyan color", () => {
-    const { container } = render(
-      <GraphView
-        centerSkillId={mockCenterSkillId}
-        nodes={mockNodes}
-        links={mockLinks}
-      />,
-    );
-    const unlockNode = container.querySelector('circle[stroke="#22d3ee"]');
-    expect(unlockNode).toBeInTheDocument();
-  });
+        const jsNode = screen.getByTestId("graph-node-skill-js");
+        await user.hover(jsNode);
 
-  it("renders mutual dependency node with indigo color", () => {
-    const { container } = render(
-      <GraphView
-        centerSkillId={mockCenterSkillId}
-        nodes={mockNodes}
-        links={mockLinks}
-      />,
-    );
-    const indigoNodes = container.querySelectorAll('circle[stroke="#6366f1"]');
-    expect(indigoNodes.length).toBe(1);
-  });
+        const tooltip = await screen.findByTestId("graph-tooltip");
+        expect(tooltip).toBeInTheDocument();
+        expect(tooltip).toHaveTextContent("JavaScript");
+        expect(tooltip).toHaveTextContent("Mutual dependency with core");
+      });
 
-  it("shows tooltip on hover (desktop)", async () => {
-    const user = userEvent.setup();
-    render(
-      <GraphView
-        centerSkillId={mockCenterSkillId}
-        nodes={mockNodes}
-        links={mockLinks}
-      />,
-    );
+      it("allows completing an available skill on desktop click", async () => {
+        const testNodes = [
+          { id: "skill-react", label: "React", status: "completed" },
+          { id: "skill-js", label: "JavaScript", status: "completed" },
+          { id: "skill-html", label: "HTML", status: "available" },
+          { id: "skill-pm", label: "Project Management", status: "locked" },
+        ];
+        renderGraphView({ centerSkillId: "skill-react", nodes: testNodes });
 
-    const jsNode = screen.getByTestId("graph-node-skill-js");
-    await user.hover(jsNode);
+        const htmlNode = screen.getByTestId("graph-node-skill-html");
+        await user.click(htmlNode);
 
-    const tooltip = await screen.findByTestId("graph-tooltip");
-    expect(tooltip).toBeInTheDocument();
-    expect(tooltip).toHaveTextContent("JavaScript");
-    expect(tooltip).toHaveTextContent("Mutual dependency with core");
-  });
+        expect(htmlNode.querySelector("path")).toBeInTheDocument();
+      });
+    });
 
-  it("shows tooltip on tap (mobile)", async () => {
-    setWindowWidth(375);
-    const user = userEvent.setup();
+    describe("Mobile", () => {
+      beforeEach(() => {
+        setWindowWidth(375);
+      });
 
-    render(
-      <GraphView
-        centerSkillId={mockCenterSkillId}
-        nodes={mockNodes}
-        links={mockLinks}
-      />,
-    );
+      it("shows tooltip on tap", async () => {
+        renderGraphView();
 
-    const htmlNode = screen.getByTestId("graph-node-skill-html");
-    await user.click(htmlNode);
+        const htmlNode = screen.getByTestId("graph-node-skill-html");
+        await user.click(htmlNode);
 
-    const tooltip = screen.getByTestId("graph-tooltip");
-    expect(tooltip).toBeInTheDocument();
-    expect(tooltip).toHaveTextContent("HTML");
-    expect(tooltip).toHaveTextContent("Required to reach core skill");
+        expect(await screen.findByTestId("graph-tooltip")).toBeInTheDocument();
+      });
 
-    setWindowWidth(1200);
-  });
+      it("completes skill via mobile tooltip button", async () => {
+        renderGraphView();
 
-  it("shows legend in column layout on mobile", () => {
-    setWindowWidth(375);
-    render(
-      <GraphView
-        centerSkillId={mockCenterSkillId}
-        nodes={mockNodes}
-        links={mockLinks}
-      />,
-    );
-    const legend = screen.getByTestId("graph-legend");
-    expect(legend).toHaveClass("flex-col");
-    setWindowWidth(1200);
-  });
+        const htmlNode = screen.getByTestId("graph-node-skill-html");
+        await user.click(htmlNode);
 
-  it("renders single node when center skill has no connections", () => {
-    const singleNode = [
-      { id: "skill-solo", label: "Solo Skill", status: "available" },
-    ];
-    render(
-      <GraphView centerSkillId="skill-solo" nodes={singleNode} links={[]} />,
-    );
-    expect(screen.getByTestId("graph-node-skill-solo")).toBeInTheDocument();
-  });
+        const tooltip = await screen.findByTestId("graph-tooltip");
+        expect(tooltip).toHaveTextContent("HTML");
 
-  it("renders all legend items", () => {
-    render(
-      <GraphView
-        centerSkillId={mockCenterSkillId}
-        nodes={mockNodes}
-        links={mockLinks}
-      />,
-    );
-    expect(screen.getByTestId("legend-amber")).toBeInTheDocument();
-    expect(screen.getByTestId("legend-indigo")).toBeInTheDocument();
-    expect(screen.getByTestId("legend-cyan")).toBeInTheDocument();
+        const completeBtn = screen.getByRole("button", {
+          name: /mark as completed/i,
+        });
+        expect(completeBtn).toBeInTheDocument();
+
+        await user.click(completeBtn);
+
+        expect(htmlNode.querySelector("path")).toBeInTheDocument();
+      });
+
+      it("completes skill via mobile tooltip button", async () => {
+        renderGraphView();
+
+        await user.click(screen.getByTestId("graph-node-skill-html"));
+        await user.click(
+          screen.getByRole("button", { name: /mark as completed/i }),
+        );
+
+        expect(
+          screen.getByTestId("graph-node-skill-html").querySelector("path"),
+        ).toBeInTheDocument();
+      });
+    });
   });
 });

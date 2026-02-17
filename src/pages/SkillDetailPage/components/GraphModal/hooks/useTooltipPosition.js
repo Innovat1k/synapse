@@ -1,10 +1,6 @@
-// hooks/useTooltipPosition.js
 import { useState, useEffect } from "react";
 
-/**
- * Simple hook to manage tooltip visibility based on hovered node ID.
- * Returns { visible: boolean }
- */
+// Derives tooltip visibility from a hovered node ID (visible when ID is truthy)
 export const useTooltipPosition = (hoveredNodeId) => {
   const [visible, setVisible] = useState(false);
 

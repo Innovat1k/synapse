@@ -62,4 +62,20 @@ describe("GraphTooltip", () => {
       "Mutual dependency with core",
     );
   });
+
+  it("shows complete button on mobile for available skills", () => {
+    render(
+      <GraphTooltip
+        node={{ id: "test", label: "Test", status: "available" }}
+        isMobile={true}
+        mutualSkills={new Set()}
+        incoming={new Set()}
+        config={{}}
+        onComplete={() => {}}
+      />,
+    );
+    expect(
+      screen.getByRole("button", { name: /mark as completed/i }),
+    ).toBeInTheDocument();
+  });
 });
