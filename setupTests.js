@@ -14,3 +14,10 @@ beforeEach(() => {
     writable: true,
   });
 });
+
+global.ResizeObserver = class {
+  constructor() {}
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};

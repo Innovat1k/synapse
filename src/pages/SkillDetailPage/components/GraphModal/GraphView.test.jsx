@@ -97,6 +97,19 @@ describe("GraphView", () => {
         expect(screen.getByTestId("legend-indigo")).toBeInTheDocument();
         expect(screen.getByTestId("legend-cyan")).toBeInTheDocument();
       });
+
+      it("shows navigation controls on desktop", () => {
+        renderGraphView();
+        expect(
+          screen.getByRole("button", { name: /Zoom in/i }),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: /Zoom out/i }),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: /Reset view/i }),
+        ).toBeInTheDocument();
+      });
     });
 
     describe("Mobile", () => {
@@ -109,7 +122,19 @@ describe("GraphView", () => {
 
         const legend = screen.getByTestId("graph-legend");
         expect(legend).toHaveClass("flex-col");
-        setWindowWidth(1200);
+      });
+
+      it("shows navigation controls on mobile", () => {
+        renderGraphView();
+        expect(
+          screen.getByRole("button", { name: /Zoom in/i }),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: /Zoom out/i }),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: /Reset view/i }),
+        ).toBeInTheDocument();
       });
     });
   });
