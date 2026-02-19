@@ -1,8 +1,8 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { GraphView } from "./GraphView";
 import { setWindowWidth } from "../../../../shared/utils/utils";
-import { beforeEach, describe } from "vitest";
+import { beforeEach, describe, expect } from "vitest";
 
 const mockCenterSkillId = "skill-react";
 const mockNodes = [
@@ -217,6 +217,40 @@ describe("GraphView", () => {
         expect(
           screen.getByTestId("graph-node-skill-html").querySelector("path"),
         ).toBeInTheDocument();
+      });
+
+      it("closes tooltip on node tap", async () => {
+        renderGraphView();
+
+        const skillNode = screen.getByTestId("graph-node-skill-html");
+
+        await user.click(skillNode);
+        expect(screen.getByTestId("graph-tooltip")).toBeInTheDocument();
+        expect(
+          within(screen.getByTestId("graph-tooltip")).getByText(/html/i),
+        ).toBeInTheDocument();
+
+        await user.click(skillNode);
+
+        await waitFor(() => {
+          expect(screen.queryByTestId("graph-tooltip")).not.toBeInTheDocument();
+        });
+      });
+
+      it("closes tooltip when tapping on graph background", async () => {
+        renderGraphView();
+
+        await user.click(screen.getByTestId("graph-node-skill-html"));
+        expect(screen.getByTestId("graph-tooltip")).toBeInTheDocument();
+        expect(
+          within(screen.getByTestId("graph-tooltip")).getByText(/html/i),
+        ).toBeInTheDocument();
+
+        await user.click(screen.getByTestId("graph-container"));
+
+        await waitFor(() => {
+          expect(screen.queryByTestId("graph-tooltip")).not.toBeInTheDocument();
+        });
       });
     });
   });

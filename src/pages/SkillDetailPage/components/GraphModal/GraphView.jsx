@@ -40,6 +40,7 @@ export const GraphView = ({ centerSkillId, nodes = [], links = [] }) => {
       data-testid="graph-container"
       className="relative w-full h-full bg-slate-950 flex items-center justify-center overflow-hidden rounded-xl border border-slate-800 shadow-inner"
       onMouseMove={methods.handleMouseMove}
+      onClick={() => isMobile && methods.setHoveredNode(null)}
     >
       {/* Legend */}
       <div
@@ -235,7 +236,8 @@ export const GraphView = ({ centerSkillId, nodes = [], links = [] }) => {
                   onHoverEnd={
                     !isMobile ? () => methods.setHoveredNode(null) : undefined
                   }
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     if (isMobile) {
                       methods.handleNodeInteraction(node.id, isCenter);
                     } else {
