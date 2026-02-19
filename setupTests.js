@@ -15,7 +15,7 @@ beforeEach(() => {
   });
 });
 
-global.ResizeObserver = class {
+window.ResizeObserver = class {
   constructor() {}
   observe() {}
   unobserve() {}

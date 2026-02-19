@@ -1,10 +1,9 @@
-import { useState } from "react";
 import { useTooltipPosition } from "./hooks/useTooltipPosition";
 import { GraphTooltip } from "./components/GraphTooltip";
 import { useGraphLayout } from "./hooks/useGraphLayout";
 import { getLinkCurvature } from "./utils/graphUtils";
-import { useSkillProgress } from "./hooks/useSkillProgress";
 import { GraphNavigator } from "./components/GraphNavigator/GraphNavigator";
+import { useGraphInteraction } from "./hooks/useGraphInteraction";
 
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,8 +16,11 @@ import { motion, AnimatePresence } from "framer-motion";
  * - Indigo: mutual dependency with center
  */
 export const GraphView = ({ centerSkillId, nodes = [], links = [] }) => {
-  const [hoveredNodeId, setHoveredNodeId] = useState(null);
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  const { isMobile, state, methods } = useGraphInteraction({
+    centerSkillId,
+    nodes,
+    links,
+  });
 
   // Compute node positions and relationships
   const { nodePositions, mutualSkills, incoming, config } = useGraphLayout({
@@ -29,34 +31,7 @@ export const GraphView = ({ centerSkillId, nodes = [], links = [] }) => {
   });
 
   // Tooltip visibility for hovered node
-  const { visible } = useTooltipPosition(hoveredNodeId);
-
-  // Track skill progress
-  const storageKey = `skill-progress-${centerSkillId}`;
-  const { nodesWithStatus, completeSkill } = useSkillProgress(
-    nodes,
-    links,
-    storageKey,
-  );
-
-  const hoveredNode = nodesWithStatus.find((n) => n.id === hoveredNodeId);
-
-  // Handle hover / tap interaction
-  const handleNodeInteraction = (nodeId, isCenter) => {
-    if (isCenter) return;
-    if (isMobile) {
-      setHoveredNodeId((prev) => (prev === nodeId ? null : nodeId));
-    } else {
-      setHoveredNodeId(nodeId);
-    }
-  };
-
-  // Handle click for non-mobile devices
-  const handleNodeClick = (nodeId, status) => {
-    if (!isMobile && status === "available") {
-      completeSkill(nodeId);
-    }
-  };
+  const { visible } = useTooltipPosition(state.hoveredNodeId);
 
   if (!nodePositions) return null;
 
@@ -64,6 +39,7 @@ export const GraphView = ({ centerSkillId, nodes = [], links = [] }) => {
     <div
       data-testid="graph-container"
       className="relative w-full h-full bg-slate-950 flex items-center justify-center overflow-hidden rounded-xl border border-slate-800 shadow-inner"
+      onMouseMove={methods.handleMouseMove}
     >
       {/* Legend */}
       <div
@@ -164,13 +140,14 @@ export const GraphView = ({ centerSkillId, nodes = [], links = [] }) => {
               const t = nodePositions.get(link.target);
               if (!s || !t) return null;
 
-              const sourceNode = nodesWithStatus.find(
+              const sourceNode = state.nodesWithStatus.find(
                 (n) => n.id === link.source,
               );
               const isSourceCompleted = sourceNode?.status === "completed";
               const isPrereq = link.target === centerSkillId;
               const isActive =
-                hoveredNodeId === link.source || hoveredNodeId === link.target;
+                state.hoveredNodeId === link.source ||
+                state.hoveredNodeId === link.target;
 
               const dr =
                 Math.sqrt(Math.pow(t.x - s.x, 2) + Math.pow(t.y - s.y, 2)) *
@@ -217,12 +194,12 @@ export const GraphView = ({ centerSkillId, nodes = [], links = [] }) => {
             })}
 
             {/* Skill nodes */}
-            {nodesWithStatus.map((node) => {
+            {state.nodesWithStatus.map((node) => {
               const pos = nodePositions.get(node.id);
               if (!pos) return null;
 
               const isCenter = node.id === centerSkillId;
-              const isHovered = hoveredNodeId === node.id;
+              const isHovered = state.hoveredNodeId === node.id;
               const size = isCenter ? config.centerSize : config.nodeSize;
 
               let ringColor = isCenter
@@ -251,16 +228,18 @@ export const GraphView = ({ centerSkillId, nodes = [], links = [] }) => {
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   className="cursor-pointer"
                   onHoverStart={
-                    !isMobile ? () => setHoveredNodeId(node.id) : undefined
+                    !isMobile
+                      ? () => methods.setHoveredNode(node.id)
+                      : undefined
                   }
                   onHoverEnd={
-                    !isMobile ? () => setHoveredNodeId(null) : undefined
+                    !isMobile ? () => methods.setHoveredNode(null) : undefined
                   }
                   onClick={() => {
                     if (isMobile) {
-                      handleNodeInteraction(node.id, isCenter);
+                      methods.handleNodeInteraction(node.id, isCenter);
                     } else {
-                      handleNodeClick(node.id, node.status);
+                      methods.handleNodeClick(node.id, node.status);
                     }
                   }}
                 >
@@ -313,15 +292,16 @@ export const GraphView = ({ centerSkillId, nodes = [], links = [] }) => {
 
       {/* Tooltip */}
       <AnimatePresence>
-        {visible && hoveredNode && (
+        {visible && state.hoveredNode && (
           <GraphTooltip
             key="skill-tooltip"
-            node={hoveredNode}
+            node={state.hoveredNode}
             isMobile={isMobile}
             mutualSkills={mutualSkills}
             incoming={incoming}
             config={config}
-            onComplete={isMobile ? completeSkill : undefined}
+            onComplete={isMobile ? methods.completeSkill : undefined}
+            mousePos={state.mousePos}
           />
         )}
       </AnimatePresence>

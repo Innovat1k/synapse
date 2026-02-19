@@ -7,13 +7,15 @@ const ControlButton = ({
   children,
   "aria-label": ariaLabel,
 }) => {
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`
-        w-10 h-10 rounded-xl flex items-center justify-center 
+      className={`${isMobile ? "w-9 h-9" : "w-10 h-10"}
+        rounded-xl flex items-center justify-center 
         transition-all duration-300 cursor-pointer active:scale-90 select-none
         border backdrop-blur-md shadow-2xl
         ${
@@ -52,7 +54,7 @@ export const GraphControls = ({
     <div
       className={`absolute z-30 flex ${
         isMobile
-          ? "right-6 bottom-8 flex-row gap-4"
+          ? "right-3 bottom-6 flex-col gap-2 scale-90"
           : "right-8 top-6 flex-col gap-3"
       }`}
       role="group"

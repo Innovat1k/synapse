@@ -1,25 +1,41 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 
-// Tracks skill completion progress with prerequisite validation and localStorage persistence.
-// Skills are "available" only when all dependencies are completed; status updates auto-save to storage.
+// Tracks skill completion with prerequisite validation and localStorage persistence.
+// A skill becomes "available" only when all its dependencies are completed.
 
-export const useSkillProgress = (initialNodes, links, storageKey) => {
-  // Local state with persistence
+export const useSkillProgress = (initialNodes = [], links = [], storageKey) => {
+  // Ensure inputs are always valid arrays
+  const safeNodes = useMemo(
+    () => (Array.isArray(initialNodes) ? initialNodes : []),
+    [initialNodes],
+  );
+
+  const safeLinks = useMemo(() => (Array.isArray(links) ? links : []), [links]);
+
+  // Validate storage key before using localStorage
+  const hasStorage = typeof storageKey === "string" && storageKey.length > 0;
+
   const [progress, setProgress] = useState(() => {
-    const saved = localStorage.getItem(storageKey);
-    return saved ? JSON.parse(saved) : {};
+    if (!hasStorage) return {};
+
+    try {
+      const saved = localStorage.getItem(storageKey);
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
   });
 
-  // Compute dynamic status for each node
-  const nodesWithStatus = initialNodes.map((node) => {
+  // Compute dynamic status for each node (always returns a valid array)
+  const nodesWithStatus = safeNodes.map((node) => {
     const savedStatus = progress[node.id];
 
     if (savedStatus === "completed") {
       return { ...node, status: "completed" };
     }
 
-    // Get all prerequisites (incoming links)
-    const prerequisites = links
+    // Get prerequisite skill IDs (incoming links)
+    const prerequisites = safeLinks
       .filter((link) => link.target === node.id)
       .map((link) => link.source);
 
@@ -27,7 +43,6 @@ export const useSkillProgress = (initialNodes, links, storageKey) => {
       return { ...node, status: "available" };
     }
 
-    // Check if all prerequisites are completed
     const allPrereqsCompleted = prerequisites.every(
       (prereqId) => progress[prereqId] === "completed",
     );
@@ -38,18 +53,24 @@ export const useSkillProgress = (initialNodes, links, storageKey) => {
     };
   });
 
-  // Persist progress in localStorage
+  // Persist progress changes to localStorage
   useEffect(() => {
-    localStorage.setItem(storageKey, JSON.stringify(progress));
-  }, [progress, storageKey]);
+    if (!hasStorage) return;
 
-  // Toggle skill completion status
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(progress));
+    } catch {
+      return;
+    }
+  }, [progress, storageKey, hasStorage]);
+
+  // Mark a skill as completed if all prerequisites are satisfied
   const completeSkill = useCallback(
     (skillId) => {
       setProgress((prev) => {
         if (prev[skillId] === "completed") return prev;
 
-        const prerequisites = links
+        const prerequisites = safeLinks
           .filter((link) => link.target === skillId)
           .map((link) => link.source);
 
@@ -65,8 +86,11 @@ export const useSkillProgress = (initialNodes, links, storageKey) => {
         };
       });
     },
-    [links],
+    [safeLinks],
   );
 
-  return { nodesWithStatus, completeSkill };
+  return {
+    nodesWithStatus,
+    completeSkill,
+  };
 };
