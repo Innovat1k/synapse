@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, vi } from "vitest";
-import * as activityService from "../../../services/activityService";
+import * as activityService from "@services/activityService";
 import { renderHook, waitFor } from "@testing-library/react";
 import { useActivitiesQuery } from "./useActivitiesQuery";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

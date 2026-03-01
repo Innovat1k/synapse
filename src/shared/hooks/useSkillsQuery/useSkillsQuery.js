@@ -1,4 +1,4 @@
-import { fetchSkills } from "../../../services/skillService";
+import { fetchSkills } from "@services/skillService";
 import { useQuery } from "@tanstack/react-query";
 
 /**

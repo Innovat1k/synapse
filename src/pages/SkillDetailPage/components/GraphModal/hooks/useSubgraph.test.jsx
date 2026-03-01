@@ -2,9 +2,9 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useSubgraph } from "./useSubgraph";
-import { fetchSubgraph } from "../../../../../services/subgraphService";
+import { fetchSubgraph } from "@services/subgraphService";
 
-vi.mock("../../../../../services/subgraphService");
+vi.mock("@services/subgraphService");
 
 const wrapper = ({ children }) => {
   const queryClient = new QueryClient({

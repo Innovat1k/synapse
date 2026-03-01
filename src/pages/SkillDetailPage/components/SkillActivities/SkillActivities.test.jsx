@@ -3,10 +3,10 @@ import { beforeEach, describe, expect } from "vitest";
 import SkillActivities from "./SkillActivities";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import userEvent from "@testing-library/user-event";
-import * as activityService from "../../../../services/activityService";
-import { formatDateUTC } from "../../../../shared/utils/utils";
+import * as activityService from "@services/activityService";
+import { formatDateUTC } from "@shared/utils/utils";
 
-vi.mock("../../../../services/activityService");
+vi.mock("@services/activityService");
 
 const mockSkills = [
   {

@@ -1,7 +1,7 @@
 import { ResourceForm } from "../../components/ResourceForm/ResourceForm";
 import { TrackList } from "./components/TrackList";
 import { LuPlus, LuX, LuLayers, LuCircleAlert } from "react-icons/lu";
-import ButtonSpinner from "../../../../shared/components/ButtonSpinner";
+import ButtonSpinner from "@shared/components/ButtonSpinner";
 import { useTracksPage } from "./hooks/useTracks";
 import { useResourceForm } from "../../components/ResourceForm/hooks/useResourceForm";
 

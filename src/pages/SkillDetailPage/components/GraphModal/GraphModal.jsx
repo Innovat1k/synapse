@@ -1,9 +1,9 @@
 import { createPortal } from "react-dom";
 import { useRef } from "react";
 import { LuX, LuBrainCircuit } from "react-icons/lu";
-import { useInitialFocus } from "../../../../shared/hooks/useInitialFocus/useInitialFocus";
-import { useFocusTrap } from "../../../../shared/hooks/useFocusTrap/useFocusTrap";
-import { useKeyboardDismiss } from "../../../../shared/hooks/useKeyboardDismiss/useKeyboardDismiss";
+import { useInitialFocus } from "@/shared/hooks/useInitialFocus/useInitialFocus";
+import { useFocusTrap } from "@shared/hooks/useFocusTrap/useFocusTrap";
+import { useKeyboardDismiss } from "@shared/hooks/useKeyboardDismiss/useKeyboardDismiss";
 
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";

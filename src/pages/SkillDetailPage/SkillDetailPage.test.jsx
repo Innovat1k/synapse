@@ -4,12 +4,12 @@ import SkillDetailPage from "./SkillDetailPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter, useOutletContext, useParams } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
-import * as activityService from "../../services/activityService";
-import { useSkillsQuery } from "../../shared/hooks/useSkillsQuery/useSkillsQuery";
+import * as activityService from "@services/activityService";
+import { useSkillsQuery } from "@shared/hooks/useSkillsQuery/useSkillsQuery";
 
-vi.mock("../../services/skillService");
-vi.mock("../../services/activityService");
-vi.mock("../../shared/hooks/useSkillsQuery/useSkillsQuery", () => ({
+vi.mock("@services/skillService");
+vi.mock("@services/activityService");
+vi.mock("@shared/hooks/useSkillsQuery/useSkillsQuery", () => ({
   useSkillsQuery: vi.fn(),
 }));
 vi.mock("react-router-dom", async () => {

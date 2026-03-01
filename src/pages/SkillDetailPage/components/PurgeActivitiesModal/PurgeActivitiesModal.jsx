@@ -1,9 +1,9 @@
 import { LuX } from "react-icons/lu";
-import { useKeyboardDismiss } from "../../../../shared/hooks/useKeyboardDismiss/useKeyboardDismiss";
-import { useFocusTrap } from "../../../../shared/hooks/useFocusTrap/useFocusTrap";
-import { useInitialFocus } from "../../../../shared/hooks/useInitialFocus/useInitialFocus";
+import { useKeyboardDismiss } from "@shared/hooks/useKeyboardDismiss/useKeyboardDismiss";
+import { useFocusTrap } from "@shared/hooks/useFocusTrap/useFocusTrap";
+import { useInitialFocus } from "@shared/hooks/useInitialFocus/useInitialFocus";
 import { useRef } from "react";
-import ButtonSpinner from "../../../../shared/components/ButtonSpinner";
+import ButtonSpinner from "@shared/components/ButtonSpinner";
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";

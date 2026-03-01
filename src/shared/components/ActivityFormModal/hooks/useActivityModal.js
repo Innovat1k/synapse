@@ -4,7 +4,7 @@ import {
   createActivity,
   deleteActivity,
   updateActivity,
-} from "../../../../services/activityService";
+} from "@services/activityService";
 
 /**
  * Custom hook that encapsulates modal state and CRUD operations for activity management.

@@ -1,10 +1,10 @@
 import { createPortal } from "react-dom";
 import { LuZapOff } from "react-icons/lu";
 import { useRef } from "react";
-import { useInitialFocus } from "../../../../../../shared/hooks/useInitialFocus/useInitialFocus";
-import { useFocusTrap } from "../../../../../../shared/hooks/useFocusTrap/useFocusTrap";
-import { useKeyboardDismiss } from "../../../../../../shared/hooks/useKeyboardDismiss/useKeyboardDismiss";
-import ButtonSpinner from "../../../../../../shared/components/ButtonSpinner";
+import { useInitialFocus } from "@shared/hooks/useInitialFocus/useInitialFocus";
+import { useFocusTrap } from "@shared/hooks/useFocusTrap/useFocusTrap";
+import { useKeyboardDismiss } from "@shared/hooks/useKeyboardDismiss/useKeyboardDismiss";
+import ButtonSpinner from "@shared/components/ButtonSpinner";
 
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";

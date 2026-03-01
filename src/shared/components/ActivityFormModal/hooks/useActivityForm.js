@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { formatMinutes } from "../../../utils/utils";
+import { formatMinutes } from "@utils/utils";
 import { useActivityValidation } from "./useActivityValidation";
 
 /**

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import ButtonSpinner from "../../shared/components/ButtonSpinner";
+import ButtonSpinner from "@shared/components/ButtonSpinner";
 import { LuCircleAlert } from "react-icons/lu";
 import { useAtomValue } from "jotai";
 import {

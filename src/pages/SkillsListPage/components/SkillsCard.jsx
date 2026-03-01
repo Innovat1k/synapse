@@ -1,6 +1,6 @@
 import { LuPencil, LuTrash2 } from "react-icons/lu";
 import { Link } from "react-router-dom";
-import { formatDate } from "../../../shared/utils/utils";
+import { formatDate } from "@shared/utils/utils";
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";

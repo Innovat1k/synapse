@@ -1,14 +1,14 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import * as skillLinksService from "../../../../../services/skillLinksService";
+import * as skillLinksService from "@services/skillLinksService";
 import {
   useCreateSkillLink,
   useIncomingSkillLinks,
   useOutgoingSkillLinks,
 } from "./useSkillLinks";
 
-vi.mock("../../../../../services/skillLinksService");
+vi.mock("@services/skillLinksService");
 
 const wrapper = ({ children }) => {
   const queryClient = new QueryClient({

@@ -2,9 +2,9 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { useTracksPage } from "./useTracks";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { server } from "../../../../../mocks/server";
+import { server } from "@mocks/server";
 import { http, HttpResponse } from "msw";
-import { SUPABASE_URL } from "../../../../../services/supabase-client";
+import { SUPABASE_URL } from "@services/supabase-client";
 
 describe("useTracks", () => {
   let client;

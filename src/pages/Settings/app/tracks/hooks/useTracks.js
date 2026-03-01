@@ -3,8 +3,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   createTrack,
   fetchTracks,
-} from "../../../../../services/tracksService";
-import { useToast } from "../../../../../shared/components/Toast/hooks/useToast";
+} from "@services/tracksService";
+import { useToast } from "@shared/components/Toast/hooks/useToast";
 
 // Manages tracks list data, creation flow, and UI state (form open/close, loading, errors).
 // Includes caching, toast feedback, and optional pagination prefetching.

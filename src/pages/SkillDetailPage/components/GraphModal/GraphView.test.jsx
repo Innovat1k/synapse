@@ -1,7 +1,7 @@
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { GraphView } from "./GraphView";
-import { setWindowWidth } from "../../../../shared/utils/utils";
+import { setWindowWidth } from "@shared/utils/utils";
 import { beforeEach, describe, expect } from "vitest";
 
 const mockCenterSkillId = "skill-react";

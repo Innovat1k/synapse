@@ -6,14 +6,14 @@ import {
   LuPencil,
   LuTrash2,
 } from "react-icons/lu";
-import { useActivityModal } from "../../../../shared/components/ActivityFormModal/hooks/useActivityModal";
-import ActivityFormModal from "../../../../shared/components/ActivityFormModal/ActivityFormModal";
-import { useActivitiesQuery } from "../../../../shared/hooks/useActivitiesQuery/useActivitiesQuery";
+import { useActivityModal } from "@shared/components/ActivityFormModal/hooks/useActivityModal";
+import ActivityFormModal from "@shared/components/ActivityFormModal/ActivityFormModal";
+import { useActivitiesQuery } from "@shared/hooks/useActivitiesQuery/useActivitiesQuery";
 import {
   formatDateShort,
   formatDuration,
-} from "../../../../shared/utils/utils";
-import ButtonSpinner from "../../../../shared/components/ButtonSpinner";
+} from "@shared/utils/utils";
+import ButtonSpinner from "@shared/components/ButtonSpinner";
 
 function SkillActivities({ skill, skills }) {
   const { activities, isLoading } = useActivitiesQuery(skill.skill_id);

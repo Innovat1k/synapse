@@ -6,9 +6,9 @@ import {
   renderSkillDetailPage,
 } from "./test-utils";
 import { screen } from "@testing-library/react";
-import { fetchSubgraph } from "../../../services/subgraphService";
-import * as skillLinksService from "../../../services/skillLinksService";
-import { setWindowWidth } from "../../../shared/utils/utils";
+import { fetchSubgraph } from "@services/subgraphService";
+import * as skillLinksService from "@services/skillLinksService";
+import { setWindowWidth } from "@shared/utils/utils";
 
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");

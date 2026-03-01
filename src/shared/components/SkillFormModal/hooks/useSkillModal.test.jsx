@@ -2,10 +2,10 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, vi } from "vitest";
 import { useSkillModal } from "./useSkillModal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import * as skillService from "../../../../services/skillService";
+import * as skillService from "@services/skillService";
 import { MemoryRouter } from "react-router-dom";
 
-vi.mock("../../../../services/skillService");
+vi.mock("@services/skillService");
 
 describe("useSkillModal", () => {
   const mockSkill = {

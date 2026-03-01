@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { useSkillsQuery } from "../shared/hooks/useSkillsQuery/useSkillsQuery";
+import { useSkillsQuery } from "@shared/hooks/useSkillsQuery/useSkillsQuery";
 
 function SkillsLayout() {
   const { skills, isLoading } = useSkillsQuery();

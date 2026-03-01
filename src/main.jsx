@@ -8,18 +8,18 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
-import FallbackComponent from "./shared/components/FallBackComponent.jsx";
-import DashBoard from "./pages/DashBoard/DashBoard.jsx";
-import UserAuthPage from "./pages/UserAuthPage/UserAuthPage.jsx";
-import CheckEmailPage from "./pages/CheckEmailPage/CheckEmailPage.jsx";
-import SkillsLayout from "./layouts/SkillsLayout.jsx";
-import SkillsListPage from "./pages/SkillsListPage/SkillsListPage.jsx";
-import SkillDetailPage from "./pages/SkillDetailPage/SkillDetailPage.jsx";
+import FallbackComponent from "@shared/components/FallBackComponent.jsx";
+import DashBoard from "@pages/DashBoard/DashBoard.jsx";
+import UserAuthPage from "@pages/UserAuthPage/UserAuthPage.jsx";
+import CheckEmailPage from "@pages/CheckEmailPage/CheckEmailPage.jsx";
+import SkillsLayout from "@layouts/SkillsLayout.jsx";
+import SkillsListPage from "@pages/SkillsListPage/SkillsListPage.jsx";
+import SkillDetailPage from "@pages/SkillDetailPage/SkillDetailPage.jsx";
 import { Toast } from "radix-ui";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { SettingsLayout } from "./pages/Settings/layout/SettingsLayout.jsx";
-import { AppSettingsPage } from "./pages/Settings/App/AppSettingsPage.jsx";
-import { TracksPage } from "./pages/Settings/app/tracks/TracksPage.jsx";
+import { SettingsLayout } from "@pages/Settings/layout/SettingsLayout.jsx";
+import { AppSettingsPage } from "@pages/Settings/App/AppSettingsPage.jsx";
+import { TracksPage } from "@pages/Settings/app/tracks/TracksPage.jsx";
 
 const route = createBrowserRouter([
   {

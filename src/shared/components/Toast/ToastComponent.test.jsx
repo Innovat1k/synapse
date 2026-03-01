@@ -3,7 +3,7 @@ import { beforeEach, describe, expect } from "vitest";
 import ToastComponent from "./ToastComponent";
 import { Toast } from "radix-ui";
 import { createStore, Provider } from "jotai";
-import { notification_atom } from "../../../atoms/atoms";
+import { notification_atom } from "@atoms/atoms";
 
 describe("ToastComponent", () => {
   let store;

@@ -7,9 +7,9 @@ import {
   renderSkillDetailPage,
 } from "./test-utils";
 
-import * as skillService from "../../../services/skillService";
-import * as skillLinksService from "../../../services/skillLinksService";
-import * as activityService from "../../../services/activityService";
+import * as skillService from "@services/skillService";
+import * as skillLinksService from "@services/skillLinksService";
+import * as activityService from "@services/activityService";
 
 // Mocks
 vi.mock("../../../services/skillService");

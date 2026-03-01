@@ -4,7 +4,7 @@ import UserAuthPage from "./UserAuthPage";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { createStore, Provider } from "jotai";
-import { formDataAtom, isLoginAtom } from "../../atoms/formDataAtom";
+import { formDataAtom, isLoginAtom } from "@atoms/formDataAtom";
 
 const mockSignIn = vi.fn();
 const mockSignUp = vi.fn();

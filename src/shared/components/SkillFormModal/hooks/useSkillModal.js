@@ -4,7 +4,7 @@ import {
   createSkill,
   deleteSkill,
   updateSkill,
-} from "../../../../services/skillService";
+} from "@services/skillService";
 import { useNavigate } from "react-router-dom";
 
 /**

@@ -3,7 +3,7 @@ import {
   isLoginAtom,
   resetFormAtom,
   touchedAtom,
-} from "../../../atoms/formDataAtom";
+} from "@atoms/formDataAtom";
 import { useAtom, useSetAtom } from "jotai";
 
 /**

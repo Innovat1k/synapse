@@ -2,7 +2,7 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, vi } from "vitest";
 import { useActivityModal } from "./useActivityModal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import * as activityService from "../../../../services/activityService";
+import * as activityService from "@services/activityService";
 
 const mockActivity = {
   id: "4f6c2b9d-1e3a-47c1-9f89-cc12e47a5b10",

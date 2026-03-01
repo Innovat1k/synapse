@@ -1,5 +1,5 @@
 import { useAtom } from "jotai";
-import { notification_atom } from "../../../../atoms/atoms";
+import { notification_atom } from "@atoms/atoms";
 // import { notification_atom } from "@/atoms/atoms";
 
 export const useToast = () => {

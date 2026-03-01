@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
-import { useAuth } from "./pages/UserAuthPage/hooks/useAuth";
-import { useAuthRedirect } from "./pages/UserAuthPage/hooks/useAuthRedirect";
-import Loader from "./shared/components/Loader";
-import Header from "./shared/components/Header/Header";
-import NavBar from "./shared/components/NavBar/NavBar";
-import ToastComponent from "./shared/components/Toast/ToastComponent";
+import { useAuth } from "@pages/UserAuthPage/hooks/useAuth";
+import { useAuthRedirect } from "@pages/UserAuthPage/hooks/useAuthRedirect";
+import Loader from "@shared/components/Loader";
+import Header from "@shared/components/Header/Header";
+import NavBar from "@shared/components/NavBar/NavBar";
+import ToastComponent from "@shared/components/Toast/ToastComponent";
 
 function App() {
   const { loader, methods, user } = useAuth();

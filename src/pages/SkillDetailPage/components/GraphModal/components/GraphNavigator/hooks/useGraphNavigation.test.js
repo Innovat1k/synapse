@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react";
 import { useGraphNavigation } from "./useGraphNavigation";
-import { setWindowWidth } from "../../../../../../../shared/utils/utils";
+import { setWindowWidth } from "@shared/utils/utils";
 
 describe("useGraphNavigation", () => {
   beforeEach(() => {

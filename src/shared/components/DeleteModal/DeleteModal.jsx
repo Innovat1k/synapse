@@ -1,6 +1,6 @@
 import { LuX } from "react-icons/lu";
 import ButtonSpinner from "../ButtonSpinner";
-import { formatDateShort } from "../../utils/utils";
+import { formatDateShort } from "@utils/utils";
 
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";

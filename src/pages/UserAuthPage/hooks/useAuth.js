@@ -5,7 +5,7 @@ import {
   notification_atom,
   session_atom,
   user_atom,
-} from "../../../atoms/atoms";
+} from "@atoms/atoms";
 import { useNavigate } from "react-router-dom";
 import { useFormData } from "./useFormData";
 

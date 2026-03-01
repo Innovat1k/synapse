@@ -1,12 +1,12 @@
 import { LuArrowLeft, LuBrainCircuit, LuTag } from "react-icons/lu";
 import { Link, useOutletContext, useParams } from "react-router-dom";
 import { useSkillDetail } from "./hooks/useSkillDetail";
-import SkillFormModal from "../../shared/components/SkillFormModal/SkillFormModal";
+import SkillFormModal from "@shared/components/SkillFormModal/SkillFormModal";
 import SkillActivities from "./components/SkillActivities/SkillActivities";
-import { useSkillModal } from "../../shared/components/SkillFormModal/hooks/useSkillModal";
+import { useSkillModal } from "@shared/components/SkillFormModal/hooks/useSkillModal";
 import PurgeActivitiesModal from "./components/PurgeActivitiesModal/PurgeActivitiesModal";
 import { usePurgeActivities } from "./components/PurgeActivitiesModal/hooks/usePurgeActivities";
-import { useActivitiesQuery } from "../../shared/hooks/useActivitiesQuery/useActivitiesQuery";
+import { useActivitiesQuery } from "@shared/hooks/useActivitiesQuery/useActivitiesQuery";
 import SkillSkeleton from "./components/SkillSkeleton";
 import SkillActionsMenu from "./components/SkillActionsMenu/SkillActionsMenu";
 import { SkillLinksSection } from "./components/SkillLinks/SkillLinksSection";
@@ -15,7 +15,7 @@ import { GraphModal } from "./components/GraphModal/GraphModal";
 import { useSubgraph } from "./components/GraphModal/hooks/useSubgraph";
 import { AnimatePresence } from "framer-motion";
 import { GraphView } from "./components/GraphModal/GraphView";
-import ButtonSpinner from "../../shared/components/ButtonSpinner";
+import ButtonSpinner from "@shared/components/ButtonSpinner";
 
 function SkillDetailPage() {
   const { skills } = useOutletContext();

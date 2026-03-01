@@ -4,7 +4,7 @@ import {
   deleteSkillLink,
   fetchIncomingSkillLinks,
   fetchOutgoingSkillLinks,
-} from "../../../../../services/skillLinksService";
+} from "@services/skillLinksService";
 
 /**
  * Fetches incoming skill-to-skill links for a given target skill.

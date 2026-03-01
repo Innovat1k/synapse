@@ -8,8 +8,8 @@ import {
 import { beforeEach, describe, expect } from "vitest";
 import Dashboard from "./DashBoard";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import * as skillService from "../../services/skillService";
-import * as activityService from "../../services/activityService";
+import * as skillService from "@services/skillService";
+import * as activityService from "@services/activityService";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 
@@ -56,17 +56,17 @@ describe("DashBoard", () => {
     render(<Dashboard />, { wrapper: Wrapper });
 
     await user.click(
-      await screen.findByRole("button", { name: /log activity/i })
+      await screen.findByRole("button", { name: /log activity/i }),
     );
 
     expect(screen.getByText(/cannot log activity/i)).toBeInTheDocument();
     expect(
       screen.getByText(
-        /you must have at least one skill to record an activity/i
-      )
+        /you must have at least one skill to record an activity/i,
+      ),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /create my first skill/i })
+      screen.getByRole("button", { name: /create my first skill/i }),
     ).toBeInTheDocument();
   });
 
@@ -87,24 +87,24 @@ describe("DashBoard", () => {
     render(<Dashboard />, { wrapper: Wrapper });
 
     await user.click(
-      await screen.findByRole("button", { name: /log activity/i })
+      await screen.findByRole("button", { name: /log activity/i }),
     );
     expect(screen.getByText(/cannot log activity/i)).toBeInTheDocument();
 
     await user.click(
-      screen.getByRole("button", { name: /create my first skill/i })
+      screen.getByRole("button", { name: /create my first skill/i }),
     );
 
     await waitFor(() => {
       expect(
-        screen.queryByRole("heading", { name: /log activity/i })
+        screen.queryByRole("heading", { name: /log activity/i }),
       ).not.toBeInTheDocument();
     });
 
     const create_skill_modal = within(screen.getByTestId("modal-overlay"));
 
     expect(
-      create_skill_modal.getByRole("heading", { name: /add new skill/i })
+      create_skill_modal.getByRole("heading", { name: /add new skill/i }),
     ).toBeInTheDocument();
 
     await user.type(create_skill_modal.getByLabelText(/name/i), "Node JS");
@@ -116,16 +116,16 @@ describe("DashBoard", () => {
 
     await user.type(
       create_skill_modal.getByLabelText(/description/i),
-      "Moving to a JS backend language."
+      "Moving to a JS backend language.",
     );
 
     await user.type(create_skill_modal.getByLabelText(/tags/i), "server");
     await user.click(
-      create_skill_modal.getByRole("button", { name: /add tag/i })
+      create_skill_modal.getByRole("button", { name: /add tag/i }),
     );
 
     await user.click(
-      create_skill_modal.getByRole("button", { name: /save skill/i })
+      create_skill_modal.getByRole("button", { name: /save skill/i }),
     );
 
     await waitFor(() => {
@@ -149,17 +149,17 @@ describe("DashBoard", () => {
       .mockResolvedValueOnce([mockNewActivity]);
 
     vi.mocked(activityService.createActivity).mockResolvedValue(
-      mockNewActivity
+      mockNewActivity,
     );
 
     render(<Dashboard />, { wrapper: Wrapper });
 
     await user.click(
-      await screen.findByRole("button", { name: /log activity/i })
+      await screen.findByRole("button", { name: /log activity/i }),
     );
 
     expect(
-      screen.getByRole("heading", { name: /log activity/i })
+      screen.getByRole("heading", { name: /log activity/i }),
     ).toBeInTheDocument();
 
     await user.type(screen.getByLabelText(/minutes/i), "43");
@@ -180,7 +180,7 @@ describe("DashBoard", () => {
 
     await waitFor(() => {
       expect(
-        screen.queryByRole("heading", { name: /log activity/i })
+        screen.queryByRole("heading", { name: /log activity/i }),
       ).not.toBeInTheDocument();
     });
 

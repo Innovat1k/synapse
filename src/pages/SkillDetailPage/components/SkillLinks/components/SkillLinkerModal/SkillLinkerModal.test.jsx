@@ -2,13 +2,13 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect } from "vitest";
 import { SkillLinkerModal } from "./SkillLinkerModal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import * as skillService from "../../../../../../services/skillService";
+import * as skillService from "@services/skillService";
 import userEvent from "@testing-library/user-event";
-import * as skillLinkService from "../../../../../../services/skillLinksService";
-import { createDeferredPromise } from "../../../../../../shared/utils/utils";
+import * as skillLinkService from "@services/skillLinksService";
+import { createDeferredPromise } from "@shared/utils/utils";
 
-vi.mock("../../../../../../services/skillService");
-vi.mock("../../../../../../services/skillLinksService");
+vi.mock("@services/skillService");
+vi.mock("@services/skillLinksService");
 
 const mockSkills = [
   { name: "javascript", skill_id: "skill-a" },

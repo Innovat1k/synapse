@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, vi } from "vitest";
-import * as skillService from "../../../services/skillService";
+import * as skillService from "@services/skillService";
 import { renderHook, waitFor } from "@testing-library/react";
 import { useSkillsQuery } from "./useSkillsQuery";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

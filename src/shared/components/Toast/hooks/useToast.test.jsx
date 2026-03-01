@@ -2,7 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import { describe, expect } from "vitest";
 import { useToast } from "./useToast";
 import { createStore, Provider } from "jotai";
-import { notification_atom } from "../../../../atoms/atoms";
+import { notification_atom } from "@atoms/atoms";
 
 describe("useToast", () => {
   it("changes notification visibility state", () => {

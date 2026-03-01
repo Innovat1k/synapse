@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useSkillsQuery } from "../../../../../../../shared/hooks/useSkillsQuery/useSkillsQuery";
+import { useSkillsQuery } from "@shared/hooks/useSkillsQuery/useSkillsQuery";
 import { useCreateSkillLink } from "../../../hooks/useSkillLinks";
-import { checkExistingLinks } from "../../../../../../../services/skillLinksService";
+import { checkExistingLinks } from "@services/skillLinksService";
 
 /**
  * Manages the form logic for creating a directional skill-to-skill link.

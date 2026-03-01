@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchSubgraph } from "../../../../../services/subgraphService";
+import { fetchSubgraph } from "@services/subgraphService";
 
 // Fetches a skill dependency subgraph centered on a given skill ID.
 // Caches for 5 minutes, skips refetch on focus, and retries only on 5xx server errors.

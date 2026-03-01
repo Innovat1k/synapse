@@ -14,15 +14,15 @@ import {
 } from "react-icons/lu";
 import CircularProgressChart from "../../shared/components/CircularProgressChart/CircularProgressChart";
 import Card from "../DashBoard/components/Card";
-import ActivityItem from "../DashBoard/components/ActivityItem";
-import MetricCard from "../DashBoard/components/MetricCard";
-import SkillBadge from "../DashBoard/components/SkillBadge";
+import ActivityItem from "@pages/DashBoard/components/ActivityItem";
+import MetricCard from "@pages/DashBoard/components/MetricCard";
+import SkillBadge from "@pages/DashBoard/components/SkillBadge";
 import WeeklyProgressChart from "./components/WeeklyProgressChart";
-import ActivityFormModal from "../../shared/components/ActivityFormModal/ActivityFormModal";
-import { useActivityModal } from "../../shared/components/ActivityFormModal/hooks/useActivityModal";
-import { useSkillsQuery } from "../../shared/hooks/useSkillsQuery/useSkillsQuery";
-import SkillFormModal from "../../shared/components/SkillFormModal/SkillFormModal";
-import { useSkillModal } from "../../shared/components/SkillFormModal/hooks/useSkillModal";
+import ActivityFormModal from "@shared/components/ActivityFormModal/ActivityFormModal";
+import { useActivityModal } from "@shared/components/ActivityFormModal/hooks/useActivityModal";
+import { useSkillsQuery } from "@shared/hooks/useSkillsQuery/useSkillsQuery";
+import SkillFormModal from "@shared/components/SkillFormModal/SkillFormModal";
+import { useSkillModal } from "@shared/components/SkillFormModal/hooks/useSkillModal";
 
 SkillFormModal;
 

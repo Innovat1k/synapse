@@ -7,11 +7,11 @@ import {
   LuSearch,
   LuCircleHelp,
 } from "react-icons/lu";
-import { useKeyboardDismiss } from "../../../../../../shared/hooks/useKeyboardDismiss/useKeyboardDismiss";
-import { useInitialFocus } from "../../../../../../shared/hooks/useInitialFocus/useInitialFocus";
-import { useFocusTrap } from "../../../../../../shared/hooks/useFocusTrap/useFocusTrap";
+import { useKeyboardDismiss } from "@shared/hooks/useKeyboardDismiss/useKeyboardDismiss";
+import { useInitialFocus } from "@shared/hooks/useInitialFocus/useInitialFocus";
+import { useFocusTrap } from "@shared/hooks/useFocusTrap/useFocusTrap";
 import { useSkillLinkerForm } from "./hooks/useSkillLinkerForm";
-import ButtonSpinner from "../../../../../../shared/components/ButtonSpinner";
+import ButtonSpinner from "@shared/components/ButtonSpinner";
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";

@@ -4,7 +4,7 @@ import { TracksSettingsPage } from "./TracksPage";
 import { MemoryRouter } from "react-router-dom";
 import { describe, it, expect, beforeEach } from "vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { server } from "../../../../mocks/server";
+import { server } from "@mocks/server";
 import { http, HttpResponse } from "msw";
 
 const SUPABASE_URL = "https://yuvgvsjlwwiobwpyaeff.supabase.co";
