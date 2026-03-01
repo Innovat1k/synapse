@@ -78,7 +78,7 @@ function ActivityFormModal({
           data-testid="modal-overlay"
           onClick={closeByOverlay}
         >
-          {mode == "delete" ? (
+          {mode === "delete" ? (
             <DeleteModal
               ref={modalRef}
               entity="activity"

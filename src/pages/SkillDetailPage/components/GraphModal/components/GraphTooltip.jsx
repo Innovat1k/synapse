@@ -16,8 +16,8 @@ export const GraphTooltip = ({
   mousePos,
 }) => {
   const getMessage = () => {
-    if (mutualSkills.has(node.id)) return "Mutual dependency with core";
-    if (incoming.has(node.id)) return "Required to reach core skill";
+    if (mutualSkills.has(node.id)) {return "Mutual dependency with core";}
+    if (incoming.has(node.id)) {return "Required to reach core skill";}
     return "Unlocked after mastering core";
   };
 

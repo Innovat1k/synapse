@@ -21,15 +21,15 @@ const getFocusableElements = (container) =>
 
 export const useFocusTrap = (isOpen, containerRef) => {
   useEffect(() => {
-    if (!isOpen || !containerRef?.current) return;
+    if (!isOpen || !containerRef?.current) {return;}
 
     const container = containerRef.current;
 
     const handleKeyDown = (e) => {
-      if (e.key !== "Tab") return;
+      if (e.key !== "Tab") {return;}
 
       const focusables = getFocusableElements(container);
-      if (focusables.length === 0) return;
+      if (focusables.length === 0) {return;}
 
       const first = focusables[0];
       const last = focusables[focusables.length - 1];

@@ -19,7 +19,7 @@ export const fetchSkills = async () => {
       .select("*")
       .order("created_at", { ascending: false }); // Latest skills first
 
-    if (error) throw error;
+    if (error) {throw error;}
     return data;
   } catch {
     // TODO: log to monitoring service (e.g., Sentry)
@@ -39,7 +39,7 @@ export const createSkill = async (skillData) => {
     .insert(skillData)
     .select();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data[0];
 };
 
@@ -56,7 +56,7 @@ export const updateSkill = async (id, updates) => {
     .eq("skill_id", id)
     .select();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data[0];
 };
 
@@ -71,6 +71,6 @@ export const deleteSkill = async (id) => {
     .delete()
     .eq("skill_id", id);
 
-  if (error) throw error;
+  if (error) {throw error;}
   return true;
 };

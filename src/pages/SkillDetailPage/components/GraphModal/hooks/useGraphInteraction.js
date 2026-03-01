@@ -47,7 +47,7 @@ export const useGraphInteraction = ({
 
   // Handle hover (desktop) or tap toggle (mobile)
   const handleNodeInteraction = (nodeId, isCenter) => {
-    if (isCenter) return;
+    if (isCenter) {return;}
 
     if (isMobile) {
       setHoveredNodeId((prev) => (prev === nodeId ? null : nodeId));

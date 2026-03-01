@@ -1,4 +1,3 @@
-// eslint.config.js
 import js from "@eslint/js";
 import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
@@ -7,7 +6,7 @@ import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
   globalIgnores(["dist"]),
-  // ---- Tous les fichiers JS/JSX (source + tests) ----
+  
   {
     files: ["**/*.{js,jsx}"],
     ignores: ["dist/**", "node_modules/**"],
@@ -21,7 +20,7 @@ export default defineConfig([
       },
       globals: {
         ...globals.browser,
-        // Vitest globals partout (c'est ok)
+        ...globals.node, // ← AJOUTÉ: pour config Vite/Node
         test: true,
         it: true,
         describe: true,
@@ -39,14 +38,39 @@ export default defineConfig([
     },
     rules: {
       ...js.configs.recommended.rules,
-      "no-console": "error",
-      "no-unused-vars": ["error", { varsIgnorePattern: "^[A-Z_]" }],
+      
+      // ← MODIFIÉ: warn en dev, error en prod
+      "no-console": process.env.NODE_ENV === "production" ? "error" : "warn",
+      
+      // ← MODIFIÉ: plus permissif pour les vars inutilisées
+      "no-unused-vars": [
+        "warn", 
+        { 
+          varsIgnorePattern: "^[A-Z_]",
+          argsIgnorePattern: "^_", // ← AJOUTÉ: ignore _param
+          caughtErrorsIgnorePattern: "^_", // ← AJOUTÉ: ignore catch(_)
+        }
+      ],
+      
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
       "react-refresh/only-export-components": "warn",
+      
+      // ← AJOUTÉ: règles utiles pour ton projet
+      "eqeqeq": ["error", "always"], // === au lieu de ==
+      "curly": ["error", "all"], // {} obligatoires
+      "no-var": "error", // pas de var, let/const only
     },
     settings: {
       react: { version: "detect" },
+    },
+  },
+  
+  // ← AJOUTÉ: config spéciale pour les tests (moins strict)
+  {
+    files: ["**/*.test.{js,jsx}"],
+    rules: {
+      "no-console": "off", // console autorisé en test
     },
   },
 ]);

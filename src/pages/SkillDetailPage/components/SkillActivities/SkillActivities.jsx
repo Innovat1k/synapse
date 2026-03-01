@@ -22,7 +22,7 @@ function SkillActivities({ skill, skills }) {
   );
 
   // Prevent passing undefined skill
-  if (!skill) return null;
+  if (!skill) {return null;}
 
   return (
     <>

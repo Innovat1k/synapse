@@ -29,7 +29,7 @@ export const useResourceForm = ({ onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!title.trim()) return;
+    if (!title.trim()) {return;}
     onSubmit({
       title: title.trim(),
       track_id: generateIdFromTitle(title),

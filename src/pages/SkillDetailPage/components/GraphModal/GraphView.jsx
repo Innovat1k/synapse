@@ -33,7 +33,7 @@ export const GraphView = ({ centerSkillId, nodes = [], links = [] }) => {
   // Tooltip visibility for hovered node
   const { visible } = useTooltipPosition(state.hoveredNodeId);
 
-  if (!nodePositions) return null;
+  if (!nodePositions) {return null;}
 
   return (
     <div
@@ -139,7 +139,7 @@ export const GraphView = ({ centerSkillId, nodes = [], links = [] }) => {
             {links.map((link) => {
               const s = nodePositions.get(link.source);
               const t = nodePositions.get(link.target);
-              if (!s || !t) return null;
+              if (!s || !t) {return null;}
 
               const sourceNode = state.nodesWithStatus.find(
                 (n) => n.id === link.source,
@@ -197,7 +197,7 @@ export const GraphView = ({ centerSkillId, nodes = [], links = [] }) => {
             {/* Skill nodes */}
             {state.nodesWithStatus.map((node) => {
               const pos = nodePositions.get(node.id);
-              if (!pos) return null;
+              if (!pos) {return null;}
 
               const isCenter = node.id === centerSkillId;
               const isHovered = state.hoveredNodeId === node.id;

@@ -18,7 +18,7 @@ export const useAuthRedirect = () => {
   );
 
   useEffect(() => {
-    if (loader.isInitialLoading) return;
+    if (loader.isInitialLoading) {return;}
 
     // Redirect non authenticated user
     if (!userSession && !isAuthRoute) {

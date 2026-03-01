@@ -24,7 +24,7 @@ export const useDatetimeInput = (value, onChange) => {
 
   // Notify parent with a valid ISO string whenever date or time changes
   useEffect(() => {
-    if (!dateValue || !timeValue) return;
+    if (!dateValue || !timeValue) {return;}
 
     const combined = `${dateValue}T${timeValue}`;
     const newIso = new Date(combined).toISOString();

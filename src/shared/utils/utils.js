@@ -13,7 +13,7 @@ export const formatDate = (dateStr) => {
 
 // Convert total minutes to hours and minutes
 export const formatDuration = (duration = 0) => {
-  if (duration <= 0) return "0 mn";
+  if (duration <= 0) {return "0 mn";}
 
   const hours = Math.floor(duration / 60);
   const minutes = duration % 60;
@@ -39,10 +39,10 @@ export const formatDateLocal = (timestampzDate = new Date().toISOString()) => {
 };
 
 export const formatDateUTC = (timestampzDate) => {
-  if (!timestampzDate) return "";
+  if (!timestampzDate) {return "";}
 
   const date = new Date(timestampzDate);
-  if (isNaN(date.getTime())) return "";
+  if (isNaN(date.getTime())) {return "";}
 
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");

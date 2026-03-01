@@ -6,7 +6,7 @@ export const fetchTracks = async () => {
     .select("*")
     .order("title", { ascending: true });
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 };
 
@@ -17,6 +17,6 @@ export const createTrack = async (trackData) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data;
 };

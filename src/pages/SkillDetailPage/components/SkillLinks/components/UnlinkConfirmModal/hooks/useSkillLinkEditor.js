@@ -21,7 +21,7 @@ export const useSkillLinkEditor = (skillId) => {
   };
 
   const confirmRemoval = () => {
-    if (!unlinkingLink) return;
+    if (!unlinkingLink) {return;}
 
     deleteLinkMutation.mutate(
       {

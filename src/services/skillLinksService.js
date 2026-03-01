@@ -17,7 +17,7 @@ export const fetchIncomingSkillLinks = async (skillId) => {
     )
     .eq("target_skill_id", skillId);
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   return (data ?? []).map((link) => ({
     id: link.id,
@@ -45,7 +45,7 @@ export const fetchOutgoingSkillLinks = async (skillId) => {
     )
     .eq("source_skill_id", skillId);
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   return (data ?? []).map((link) => ({
     id: link.id,
@@ -70,7 +70,7 @@ export const createSkillLink = async ({
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   return data;
 };
@@ -87,7 +87,7 @@ export const checkExistingLinks = async (sourceId, targetId) => {
       .eq("target_skill_id", targetId)
       .limit(1);
 
-    if (directError) throw directError;
+    if (directError) {throw directError;}
 
     const { data: reverseData, error: reverseError } = await supabase
       .from("synapse_skill_links")
@@ -96,7 +96,7 @@ export const checkExistingLinks = async (sourceId, targetId) => {
       .eq("target_skill_id", sourceId)
       .limit(1);
 
-    if (reverseError) throw reverseError;
+    if (reverseError) {throw reverseError;}
 
     return {
       hasDirectLink: (directData?.length || 0) > 0,

@@ -86,7 +86,7 @@ describe("useKeyboardDismiss", () => {
     const Modal = ({ isOpen, onClose }) => {
       useKeyboardDismiss({ isOpen, onDismiss: onClose });
 
-      if (!isOpen) return null;
+      if (!isOpen) {return null;}
       return (
         <div role="dialog" data-testid="modal">
           <p>Modal content</p>

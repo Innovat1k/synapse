@@ -22,7 +22,7 @@ export const useInitialFocus = (
   initialFocusRef
 ) => {
   useEffect(() => {
-    if (!isOpen || !containerRef?.current) return;
+    if (!isOpen || !containerRef?.current) {return;}
 
     const rafId = requestAnimationFrame(() => {
       if (initialFocusRef?.current) {

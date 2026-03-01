@@ -111,7 +111,7 @@ export const useSkillLinkerForm = ({ currentSkillId, mode }) => {
   };
 
   const handleCreateLink = async ({ onClose }) => {
-    if (!selectedSkill) return;
+    if (!selectedSkill) {return;}
 
     const isPrerequisiteMode = mode === "incoming";
     const sourceId = isPrerequisiteMode ? selectedSkill.id : currentSkillId;

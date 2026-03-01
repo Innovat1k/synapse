@@ -32,13 +32,13 @@ export const useGraphLayout = ({
     const outgoingSet = new Set();
 
     links.forEach((link) => {
-      if (link.target === centerSkillId) incomingSet.add(link.source);
-      if (link.source === centerSkillId) outgoingSet.add(link.target);
+      if (link.target === centerSkillId) {incomingSet.add(link.source);}
+      if (link.source === centerSkillId) {outgoingSet.add(link.target);}
     });
 
     const mutual = new Set();
     incomingSet.forEach((id) => {
-      if (outgoingSet.has(id)) mutual.add(id);
+      if (outgoingSet.has(id)) {mutual.add(id);}
     });
 
     return {
@@ -82,7 +82,7 @@ export const useGraphLayout = ({
 
   // Calculate node positions
   const layout = useMemo(() => {
-    if (!centerNode) return null;
+    if (!centerNode) {return null;}
     const { centerX, centerY, radius } = config;
     const nodePositions = new Map();
 

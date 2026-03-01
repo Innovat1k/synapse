@@ -12,7 +12,7 @@ import { useEffect } from "react";
 
 export const useKeyboardDismiss = ({ isOpen, onDismiss }) => {
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {return;}
 
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {

@@ -80,7 +80,7 @@ const initialTouchedState = useMemo(() => ({
 
   // 2. Initialize data when modal get opened
   useEffect(() => {
-    if (!isOpened) return;
+    if (!isOpened) {return;}
 
     if (mode === "create") {
       setActivityData({
@@ -100,7 +100,7 @@ const initialTouchedState = useMemo(() => ({
       });
 
       // Duration
-      if (initialData.duration_minutes != null) {
+      if (initialData.duration_minutes !== null) {
         const hours = Math.floor(initialData.duration_minutes / 60);
         const minutes = initialData.duration_minutes % 60;
         setDurationData({ hours, minutes });
@@ -149,7 +149,7 @@ const initialTouchedState = useMemo(() => ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!isFormValid) return;
+    if (!isFormValid) {return;}
 
     onSubmit({
       ...(initialData?.id ? { id: initialData.id } : {}),

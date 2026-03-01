@@ -16,7 +16,7 @@ export const useSkillProgress = (initialNodes = [], links = [], storageKey) => {
   const hasStorage = typeof storageKey === "string" && storageKey.length > 0;
 
   const [progress, setProgress] = useState(() => {
-    if (!hasStorage) return {};
+    if (!hasStorage) {return {};}
 
     try {
       const saved = localStorage.getItem(storageKey);
@@ -55,7 +55,7 @@ export const useSkillProgress = (initialNodes = [], links = [], storageKey) => {
 
   // Persist progress changes to localStorage
   useEffect(() => {
-    if (!hasStorage) return;
+    if (!hasStorage) {return;}
 
     try {
       localStorage.setItem(storageKey, JSON.stringify(progress));
@@ -68,7 +68,7 @@ export const useSkillProgress = (initialNodes = [], links = [], storageKey) => {
   const completeSkill = useCallback(
     (skillId) => {
       setProgress((prev) => {
-        if (prev[skillId] === "completed") return prev;
+        if (prev[skillId] === "completed") {return prev;}
 
         const prerequisites = safeLinks
           .filter((link) => link.target === skillId)
@@ -78,7 +78,7 @@ export const useSkillProgress = (initialNodes = [], links = [], storageKey) => {
           (prereqId) => prev[prereqId] === "completed",
         );
 
-        if (!allPrereqsCompleted) return prev;
+        if (!allPrereqsCompleted) {return prev;}
 
         return {
           ...prev,

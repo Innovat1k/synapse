@@ -24,7 +24,7 @@ export const SelectInput = ({
       : { id: opt.value, name: opt.label }
   );
 
-  const hasSelection = value != null && value !== "";
+  const hasSelection = value !== null && value !== "";
   const selectedItem = items.find((item) => item.id === value);
   const displayText = selectedItem ? selectedItem.name : placeholder;
 
