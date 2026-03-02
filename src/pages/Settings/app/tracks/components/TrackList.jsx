@@ -94,11 +94,9 @@ export const TrackList = ({ tracks = [], onDelete }) => {
                   <button
                     type="button"
                     onClick={() => {
-                      if (window.confirm(`Delete track "${track.title}"?`)) {
-                        onDelete(track.track_id);
-                      }
+                      onDelete(track.track_id, track.title);
                     }}
-                    className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all"
+                    className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all cursor-pointer"
                     aria-label={`Delete track ${track.title}`}
                   >
                     <LuTrash2 size={18} />

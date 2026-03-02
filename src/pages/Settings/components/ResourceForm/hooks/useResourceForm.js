@@ -27,19 +27,25 @@ export const useResourceForm = ({ onSubmit }) => {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("other");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!title.trim()) {return;}
-    onSubmit({
-      title: title.trim(),
-      track_id: generateIdFromTitle(title),
-      category,
-    });
-  };
-
   const resetForm = () => {
     setTitle("");
     setCategory("other");
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!title.trim()) {
+      return;
+    }
+    try {
+      await onSubmit({
+        title: title.trim(),
+        track_id: generateIdFromTitle(title),
+        category,
+      });
+    } finally {
+      resetForm();
+    }
   };
 
   return {

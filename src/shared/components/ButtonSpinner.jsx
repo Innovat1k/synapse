@@ -12,7 +12,7 @@ const ButtonSpinner = ({
       `}
       role="status"
       aria-live="polite"
-      aria-label="Loading"
+      aria-label={label || "Loading"}
     >
       <div
         className={`

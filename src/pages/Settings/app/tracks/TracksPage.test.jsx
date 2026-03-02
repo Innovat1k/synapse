@@ -1,10 +1,10 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { TracksSettingsPage } from "./TracksPage";
+import { TracksPage } from "./TracksPage";
 import { MemoryRouter } from "react-router-dom";
 import { describe, it, expect, beforeEach } from "vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { server } from "@mocks/server";
+import { server } from "../../../../mocks/server";
 import { http, HttpResponse } from "msw";
 
 const SUPABASE_URL = "https://yuvgvsjlwwiobwpyaeff.supabase.co";
@@ -14,7 +14,7 @@ const waitForLoadingToFinish = () =>
     expect(screen.queryByLabelText(/Loading/i)).not.toBeInTheDocument();
   });
 
-describe("TracksSettingsPage avec MSW", () => {
+describe("TracksPage", () => {
   let user;
   let client;
 
@@ -31,7 +31,7 @@ describe("TracksSettingsPage avec MSW", () => {
     render(
       <MemoryRouter>
         <QueryClientProvider client={client}>
-          <TracksSettingsPage />
+          <TracksPage />
         </QueryClientProvider>
       </MemoryRouter>,
     );
@@ -123,6 +123,39 @@ describe("TracksSettingsPage avec MSW", () => {
         expect(screen.queryByLabelText(/Track Title/i)).not.toBeInTheDocument();
       });
     });
+
+    it("cancels deletion when clicking 'Cancel'", async () => {
+      let tracks = [
+        {
+          track_id: "react",
+          title: "React Architecture",
+          category: "frontend",
+          created_at: "2026-02-27T12:00:00.000Z",
+          updated_at: "2026-02-27T12:00:00.000Z",
+        },
+      ];
+
+      server.use(
+        http.get(`${SUPABASE_URL}/rest/v1/synapse_tracks`, () => {
+          return HttpResponse.json(tracks);
+        }),
+      );
+
+      renderPage();
+      await waitForLoadingToFinish();
+
+      await user.click(
+        screen.getByRole("button", {
+          name: /delete track React Architecture/i,
+        }),
+      );
+
+      await user.click(screen.getByRole("button", { name: /cancel/i }));
+
+      await waitFor(() => {
+        expect(screen.getByText(/React Architecture/i)).toBeInTheDocument();
+      });
+    });
   });
 
   describe("Actions", () => {
@@ -191,6 +224,56 @@ describe("TracksSettingsPage avec MSW", () => {
       await user.click(screen.getByRole("button", { name: /Create Track/i }));
 
       expect(screen.getByLabelText(/Track Title/i)).toBeInTheDocument();
+    });
+
+    it("deletes a track after confirmation", async () => {
+      let tracks = [
+        {
+          track_id: "react",
+          title: "React Architecture",
+          category: "frontend",
+          created_at: "2026-02-27T12:00:00.000Z",
+          updated_at: "2026-02-27T12:00:00.000Z",
+        },
+      ];
+
+      server.use(
+        http.get(`${SUPABASE_URL}/rest/v1/synapse_tracks`, () => {
+          return HttpResponse.json(tracks);
+        }),
+        http.delete(`${SUPABASE_URL}/rest/v1/synapse_tracks`, ({ request }) => {
+          const url = new URL(request.url);
+          const trackId = url.searchParams.get("track_id");
+          tracks = tracks.filter((t) => t.track_id !== trackId);
+          return new HttpResponse(null, { status: 204 });
+        }),
+      );
+
+      renderPage();
+      await waitForLoadingToFinish();
+
+      expect(
+        screen.getByText(/active infrastructure \(1\)/i),
+      ).toBeInTheDocument();
+
+      await user.click(
+        screen.getByRole("button", {
+          name: /delete track React Architecture/i,
+        }),
+      );
+      expect(screen.getByTestId("action-description")).toHaveTextContent(
+        /deleting "react Architecture"/i,
+      );
+
+      await user.click(
+        screen.getByRole("button", { name: /permanently delete/i }),
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.queryByText(/React Architecture/i),
+        ).not.toBeInTheDocument();
+      });
     });
   });
 });

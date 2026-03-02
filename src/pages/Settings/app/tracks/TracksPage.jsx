@@ -2,19 +2,21 @@ import { ResourceForm } from "../../components/ResourceForm/ResourceForm";
 import { TrackList } from "./components/TrackList";
 import { LuPlus, LuX, LuLayers, LuCircleAlert } from "react-icons/lu";
 import ButtonSpinner from "@shared/components/ButtonSpinner";
-import { useTracksPage } from "./hooks/useTracks";
+import { useTracks } from "./hooks/useTracks";
 import { useResourceForm } from "../../components/ResourceForm/hooks/useResourceForm";
+import { ConfirmDeleteTrack } from "./components/ConfirmDeleteTrack";
 
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 
 export const TracksPage = () => {
-  const { config, loader, form, handleCreate } = useTracksPage();
+  const { data, status, createForm, deleteModal, actions } = useTracks();
+
   const { state, methods, categories } = useResourceForm({
-    onSubmit: handleCreate,
+    onSubmit: actions.create,
   });
 
-  if (loader.isLoading) {
+  if (status.isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] px-6 text-center">
         <ButtonSpinner
@@ -27,13 +29,13 @@ export const TracksPage = () => {
     );
   }
 
-  if (config.isError) {
+  if (data.isError) {
     return (
       <div className="m-4 p-4 md:p-6 rounded-2xl bg-red-500/5 border border-red-500/20 flex flex-col sm:flex-row items-start sm:items-center gap-4 text-red-400">
         <LuCircleAlert className="shrink-0" size={24} />
         <div>
           <h3 className="font-bold text-white">Connection Error</h3>
-          <p className="text-sm opacity-80">{config.error.message}</p>
+          <p className="text-sm opacity-80">{data.error.message}</p>
         </div>
       </div>
     );
@@ -59,9 +61,9 @@ export const TracksPage = () => {
         </div>
 
         {/* Button : Pleine largeur sur mobile, auto sur desktop */}
-        {!form.isFormOpen && (
+        {!createForm.isOpen && (
           <button
-            onClick={form.openForm}
+            onClick={createForm.open}
             className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold rounded-xl transition-all active:scale-[0.97] shadow-lg shadow-teal-500/10 cursor-pointer"
             type="button"
           >
@@ -73,7 +75,7 @@ export const TracksPage = () => {
 
       {/* ZONE FORMULAIRE : Full screen-ish sur mobile */}
       <AnimatePresence>
-        {form.isFormOpen && (
+        {createForm.isOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
@@ -85,7 +87,7 @@ export const TracksPage = () => {
                 Configure New Track
               </h2>
               <button
-                onClick={form.closeForm}
+                onClick={createForm.close}
                 className="p-2 text-slate-500 hover:text-white bg-slate-800/40 rounded-lg transition-colors cursor-pointer"
                 aria-label="Close track form"
               >
@@ -101,7 +103,7 @@ export const TracksPage = () => {
                 onTitleChange={methods.setTitle}
                 onCategoryChange={methods.setCategory}
                 onSubmit={methods.handleSubmit}
-                isSubmitting={loader.isCreating}
+                isSubmitting={status.isCreating}
               />
             </div>
           </motion.div>
@@ -110,7 +112,7 @@ export const TracksPage = () => {
 
       {/* LISTE OU EMPTY STATE */}
       <section>
-        {config.tracks.length === 0 ? (
+        {data.tracks.length === 0 ? (
           <div className="text-center py-12 md:py-20 bg-slate-900/20 border border-dashed border-slate-800 rounded-3xl px-6">
             <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-slate-900 text-slate-700 mb-4">
               <LuLayers size={28} />
@@ -123,7 +125,7 @@ export const TracksPage = () => {
               thematic track.
             </p>
             <button
-              onClick={form.openForm}
+              onClick={createForm.open}
               className="mt-6 text-teal-400 hover:text-teal-300 font-bold text-sm underline underline-offset-8 decoration-teal-500/30 transition-all cursor-pointer"
               type="button"
             >
@@ -133,12 +135,25 @@ export const TracksPage = () => {
         ) : (
           <div className="space-y-4">
             <div className="hidden sm:flex items-center justify-between px-4 text-[10px] uppercase font-bold tracking-widest text-slate-600">
-              <span>Active Infrastructure ({config.tracks.length})</span>
+              <span>Active Infrastructure ({data.tracks.length})</span>
               <span>Completion Status</span>
             </div>
-            <TrackList tracks={config.tracks} />
+            <TrackList tracks={data.tracks} onDelete={deleteModal.open} />
           </div>
         )}
+
+        <AnimatePresence>
+          {deleteModal.isOpen && (
+            <ConfirmDeleteTrack
+              isOpen={deleteModal.isOpen}
+              onClose={deleteModal.close}
+              onConfirm={actions.delete}
+              trackTitle={deleteModal.context.trackTitle}
+              isLoading={status.isDeleting}
+              confirmLabel="Delete Track"
+            />
+          )}
+        </AnimatePresence>
       </section>
     </div>
   );

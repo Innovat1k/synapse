@@ -11,7 +11,6 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
       "@atoms": path.resolve(__dirname, "./src/atoms"),
       "@layouts": path.resolve(__dirname, "./src/layouts"),
-      "@shared": path.resolve(__dirname, "./src/shared"),
       "@services": path.resolve(__dirname, "./src/services"),
       "@pages": path.resolve(__dirname, "./src/pages"),
       "@settings": path.resolve(__dirname, "./src/pages/Settings"),
@@ -20,5 +19,16 @@ export default defineConfig({
       "@components": path.resolve(__dirname, "./src/shared/components"),
       "@utils": path.resolve(__dirname, "./src/shared/utils"),
     },
+  },
+  test: {
+    globals: true,
+    environment: "jsdom",
+    setupFiles: "./setupTests.js",
+    coverage: {
+      provider: "c8",
+      reporter: ["text", "json", "html"],
+      exclude: ["node_modules/", "dist/", "tests/"],
+    },
+    ui: true,
   },
 });
