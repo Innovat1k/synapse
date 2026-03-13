@@ -1,10 +1,14 @@
-import { LuX, LuPlus } from "react-icons/lu";
+import { LuX, LuPlus, LuTriangleAlert } from "react-icons/lu";
 import { useSkillForm } from "./hooks/useSkillForm";
 import ButtonSpinner from "../ButtonSpinner";
 import { useRef } from "react";
 import { useFocusTrap } from "../../hooks/useFocusTrap/useFocusTrap";
 import { useInitialFocus } from "../../hooks/useInitialFocus/useInitialFocus";
 import { useKeyboardDismiss } from "../../hooks/useKeyboardDismiss/useKeyboardDismiss";
+import { TrackFormModal } from "../TrackFormModal/TrackFormModal";
+import { useTracks } from "../../../pages/Settings/app/tracks/hooks/useTracks";
+import { useIsTopModal } from "../Modal/hooks/useIsTopModal";
+import SelectInput from "../ActivityFormModal/components/SelectInput";
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
@@ -18,33 +22,43 @@ const SkillFormModal = ({
   onDelete,
   onSubmit,
 }) => {
-  const { skillFormData, newTag, methods } = useSkillForm({
+  const {
+    skillFormData,
+    newTag,
+    tracks,
+    initialTrackId,
+    hasAssociatedData,
+    isLoadingTracks,
+    methods,
+  } = useSkillForm({
     initialData,
     mode,
     onClose,
-    onSubmit,
+    onSubmit, isOpened
   });
 
-  // Handle Escape key to close the modal (WCAG-compliant)
-  useKeyboardDismiss({
-    isOpen: isOpened,
-    onDismiss: onClose,
-  });
+  //Tracks: status and actions
+  const { status, createForm, actions } = useTracks();
 
-  // Manage focus for accessibility:
-  // - Initial focus goes to the skill name input
-  // - Tab navigation is trapped inside the modal
   const modalRef = useRef(null);
   const skillNameRef = useRef(null);
 
-  useInitialFocus(isOpened, modalRef, skillNameRef); // Focus first field on open
-  useFocusTrap(isOpened, modalRef); // Prevent focus from leaving modal
+  const isTopModal = useIsTopModal(isOpened, modalRef);
+
+  // Manage focus only for the top-most modal:
+  // - Initial focus is set to the skill name input
+  // - Focus is trapped within the modal while open
+  useInitialFocus(isOpened && isTopModal, modalRef, skillNameRef);
+  useFocusTrap(isOpened && isTopModal, modalRef);
+
+  // Handle Escape key to close the modal (WCAG-compliant)
+  useKeyboardDismiss({ isOpen: isTopModal, onDismiss: onClose });
 
   return (
     <AnimatePresence>
       {isOpened && (
         <motion.div
-          className="fixed inset-0 bg-gradient-to-br from-slate-950/60 via-slate-900/50 to-slate-950/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
+          className="fixed inset-0 bg-linear-to-br from-slate-950/60 via-slate-900/50 to-slate-950/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
           onClick={methods.handleOverlayClick}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -57,8 +71,9 @@ const SkillFormModal = ({
             <motion.div
               role="dialog"
               aria-modal="true"
+              data-modal="true"
               aria-labelledby="modal-title"
-              className="relative bg-gradient-to-br from-slate-900/60 to-slate-800/40 backdrop-blur-xl rounded-2xl border border-slate-800/50 w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-lg"
+              className="relative bg-linear-to-br from-slate-900/60 to-slate-800/40 backdrop-blur-xl rounded-2xl border border-slate-800/50 w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-lg"
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
@@ -67,8 +82,9 @@ const SkillFormModal = ({
               ref={modalRef}
               tabIndex={-1}
               key="create"
+              data-testid="skill-modal-content"
             >
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-transparent via-teal-400/5 to-transparent pointer-events-none opacity-30"></div>
+              <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-transparent via-teal-400/5 to-transparent pointer-events-none opacity-30"></div>
 
               <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800/50">
                 <div>
@@ -97,7 +113,7 @@ const SkillFormModal = ({
                 onSubmit={methods.handleSubmit}
                 className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6"
               >
-                {/* Colonne gauche */}
+                {/* Left column */}
                 <div className="space-y-5">
                   {/* Name */}
                   <div>
@@ -117,6 +133,83 @@ const SkillFormModal = ({
                       required
                       ref={skillNameRef}
                     />
+                  </div>
+
+                  {/* Learning Track Section */}
+                  <div className="flex flex-col">
+                    {isLoadingTracks ? (
+                      <div className="flex items-center gap-3 w-full px-4 py-2.5 bg-slate-800/30 border border-slate-700/50 rounded-lg animate-pulse">
+                        <div className="w-3.5 h-3.5 border-2 border-teal-500/30 border-t-teal-500 rounded-full animate-spin" />
+                        <span className="text-sm text-slate-500/60 italic">
+                          Loading tracks...
+                        </span>
+                      </div>
+                    ) : tracks.length === 0 ? (
+                      <>
+                        <span className="block text-sm font-medium text-slate-400 mb-1.5">
+                          Learning Track
+                        </span>
+                        <div className="flex items-center justify-between w-full px-4 py-2.5 bg-slate-800/40 border border-slate-700/50 rounded-lg group">
+                          <span className="text-sm text-slate-400">
+                            No tracks available
+                          </span>
+                          <button
+                            type="button"
+                            onClick={createForm.open}
+                            className="text-[10px] font-bold uppercase tracking-wider text-teal-400 hover:text-teal-300 transition-all flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <span className="bg-teal-500/10 px-1.5 py-0.5 rounded border border-teal-500/20 group-hover:border-teal-500/40">
+                              + Create
+                            </span>
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <SelectInput
+                          label="Learning Track"
+                          id="track_id"
+                          value={skillFormData.track_id}
+                          onChange={methods.handleChangeTrack}
+                          options={tracks.map((t) => ({
+                            value: t.track_id,
+                            label: t.title,
+                          }))}
+                          placeholder="Select a track..."
+                          disabled={isSubmitting}
+                        />
+
+                        <AnimatePresence mode="wait">
+                          {mode === "edit" &&
+                            hasAssociatedData &&
+                            skillFormData.track_id !== initialTrackId && (
+                              <motion.div
+                                className="mt-3 p-2.5 bg-slate-900/60 border-l-2 border-teal-500 rounded-r-md flex items-center gap-3 shadow-lg"
+                                initial={{ opacity: 0, height: 0, x: -10 }}
+                                animate={{ opacity: 1, height: "auto", x: 0 }}
+                                exit={{ opacity: 0, height: 0, x: -10 }}
+                                transition={{ duration: 0.2, ease: "easeOut" }}
+                              >
+                                <LuTriangleAlert
+                                  size={14}
+                                  className="text-teal-400 shrink-0"
+                                />
+                                <p className="text-[11px] text-slate-300 leading-tight">
+                                  <span className="font-bold text-teal-400 uppercase tracking-tight mr-1">
+                                    Structural Change:
+                                  </span>
+                                  This will re-map all associated activities and
+                                  links within the{" "}
+                                  <span className="text-teal-200/90 font-medium ml-1">
+                                    knowledge graph
+                                  </span>
+                                  .
+                                </p>
+                              </motion.div>
+                            )}
+                        </AnimatePresence>
+                      </>
+                    )}
                   </div>
 
                   {/* Category */}
@@ -164,7 +257,10 @@ const SkillFormModal = ({
                       <span className="text-xs text-slate-500">5</span>
                     </div>
                   </div>
+                </div>
 
+                {/* Right collumn */}
+                <div className="space-y-5">
                   {/* Tags */}
                   <div>
                     <label
@@ -217,10 +313,7 @@ const SkillFormModal = ({
                         ))}
                     </div>
                   </div>
-                </div>
 
-                {/* Left collumn */}
-                <div className="space-y-5">
                   {/* Description */}
                   <div>
                     <label
@@ -278,12 +371,12 @@ const SkillFormModal = ({
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative bg-gradient-to-br from-slate-900/60 to-slate-800/40 backdrop-blur-xl border border-red-500/40 rounded-2xl p-5 sm:p-6 max-w-md w-full mx-4 shadow-lg"
+              className="relative bg-linear-to-br from-slate-900/60 to-slate-800/40 backdrop-blur-xl border border-red-500/40 rounded-2xl p-5 sm:p-6 max-w-md w-full mx-4 shadow-lg"
               ref={modalRef}
               tabIndex={-1}
             >
               {/* Glow effect */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-transparent via-red-500/5 to-transparent pointer-events-none opacity-40"></div>
+              <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-transparent via-red-500/5 to-transparent pointer-events-none opacity-40"></div>
 
               <div className="flex items-start justify-between gap-2 mb-4">
                 <h2
@@ -295,7 +388,7 @@ const SkillFormModal = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="text-slate-400 hover:text-slate-200 flex-shrink-0 transition-colors"
+                  className="text-slate-400 hover:text-slate-200 shrink-0 transition-colors"
                   aria-label="Close modal"
                 >
                   <LuX size={20} />
@@ -304,7 +397,7 @@ const SkillFormModal = ({
 
               <p className="text-slate-300 mb-6 text-sm sm:text-base">
                 Are you sure you want to delete{" "}
-                <span className="font-semibold text-slate-100 capitalize break-words">
+                <span className="font-semibold text-slate-100 capitalize wrap-break-word">
                   "{initialData.name}"
                 </span>
                 ?
@@ -346,6 +439,17 @@ const SkillFormModal = ({
             </motion.div>
           )}
         </motion.div>
+      )}
+
+      {createForm.isOpen && (
+        <TrackFormModal
+          isOpened={true}
+          key="track"
+          mode="create"
+          onSubmit={actions.create}
+          onClose={createForm.close}
+          isLoading={status.isCreating}
+        />
       )}
     </AnimatePresence>
   );

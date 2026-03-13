@@ -18,6 +18,7 @@ export default defineConfig({
       "@hooks": path.resolve(__dirname, "./src/shared/hooks"),
       "@components": path.resolve(__dirname, "./src/shared/components"),
       "@utils": path.resolve(__dirname, "./src/shared/utils"),
+      "@mocks": path.resolve(__dirname, "./src/mocks"),
     },
   },
   test: {

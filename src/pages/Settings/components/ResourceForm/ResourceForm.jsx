@@ -2,14 +2,16 @@ import { LuCheck, LuLayoutGrid, LuTag, LuChevronDown } from "react-icons/lu";
 import ButtonSpinner from "@shared/components/ButtonSpinner";
 
 export const ResourceForm = ({
-  title,
+  title = "",
   category,
   generatedId,
-  categories,
+  categories = [],
   onTitleChange,
   onCategoryChange,
   onSubmit,
   isSubmitting = false,
+  children,
+  ref,
 }) => {
   const inputBaseStyles =
     "w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-slate-100 text-sm placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-teal-500/30 focus:border-teal-500/50 transition-all appearance-none group-hover:border-slate-700";
@@ -35,6 +37,7 @@ export const ResourceForm = ({
             autoFocus
             placeholder="React Architecture"
             className={inputBaseStyles}
+            ref={ref}
           />
         </div>
 
@@ -73,32 +76,36 @@ export const ResourceForm = ({
       </div>
 
       {/* Footer & Submit */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-900/50">
-        <div className="flex flex-col">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-4 border-t border-slate-900/50 mt-2">
+        <div className="flex flex-col items-center sm:items-start order-3 sm:order-1">
           <span className="text-[9px] text-slate-600 uppercase font-bold tracking-tight">
             Auto-generated ID
           </span>
-          <span className="text-[11px] text-teal-500/70 font-mono leading-none">
+          <span className="text-[11px] text-teal-500/70 font-mono">
             {generatedId || "no-title-yet"}
           </span>
         </div>
 
-        <button
-          type="submit"
-          disabled={isSubmitting || !title.trim()}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2 bg-teal-500 hover:bg-teal-400 disabled:bg-slate-800 text-slate-950 text-sm font-bold rounded-lg transition-all active:scale-[0.98] disabled:text-slate-500"
-        >
-          {isSubmitting ? (
-            <ButtonSpinner
-              color="border-slate-950"
-              label={null}
-              inline={true}
-            />
-          ) : (
-            <LuCheck size={16} />
-          )}
-          <span>{isSubmitting ? "Creating..." : "Create Track"}</span>
-        </button>
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto order-1 sm:order-2">
+          <button
+            type="submit"
+            disabled={isSubmitting || !title.trim()}
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-teal-500 hover:bg-teal-400 text-slate-950 text-sm font-bold rounded-lg transition-all active:scale-[0.98] disabled:bg-slate-800 disabled:text-slate-500 sm:order-2 cursor-pointer"
+          >
+            {isSubmitting ? (
+              <ButtonSpinner
+                color="border-slate-500"
+                label={null}
+                inline={true}
+              />
+            ) : (
+              <LuCheck size={16} />
+            )}
+            <span>{isSubmitting ? "Creating..." : "Create Track"}</span>
+          </button>
+
+          <div className="w-full sm:w-auto sm:order-1">{children}</div>
+        </div>
       </div>
     </form>
   );

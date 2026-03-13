@@ -1,48 +1,34 @@
+// Test utilities for SkillDetailPage: provider setup, route mocking, and context injection
+
+/* eslint-disable react-refresh/only-export-components */
 import { render } from "@testing-library/react";
-import SkillDetailPage from "../SkillDetailPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
+import * as routerDom from "react-router-dom";
+import SkillDetailPage from "@/pages/SkillDetailPage/SkillDetailPage";
+import { mockSkills } from "./mockData";
 
-export const MOCK_SKILL_IDS = {
-  REACT: "skill-react",
-  JAVA: "skill-java",
-  PROJECT_MGMT: "skill-project-mgmt",
+// Mocks useOutletContext from React Router for testing nested route contexts
+export const mockOutletContext = (contextValue) => {
+  routerDom.useOutletContext.mockImplementation(() => contextValue);
 };
 
-export const mockSkills = [
-  {
-    name: "React JS",
-    skill_id: MOCK_SKILL_IDS.REACT,
-    category: "frontend",
-    level: 4,
-    description:
-      "Completed an online React JS course leading to certification.",
-    tags: ["programming", "visual"],
-  },
-  {
-    name: "Java",
-    skill_id: MOCK_SKILL_IDS.JAVA,
-    category: "backend",
-    level: 1,
-    description: "Exploring the fundamentals of Java development.",
-    tags: ["programming"],
-  },
-  {
-    name: "Project Management",
-    skill_id: MOCK_SKILL_IDS.PROJECT_MGMT,
-    category: "others",
-    level: 3,
-    description: "Managing small agile projects and coordinating tasks.",
-    tags: ["organization"],
-  },
-];
+// Renders SkillDetailPage with React Query and routing providers preconfigured for tests.
+// Accepts optional skillId to simulate different route params.
+export const renderSkillDetailPage = (skillId = "skill-react") => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+      },
+    },
+  });
 
-export const renderSkillDetailPage = (skillId) => {
-  let queryClient;
-  let QueryWrapper;
+  mockOutletContext({ skills: mockSkills, isLoading: false });
 
-  queryClient = new QueryClient();
-  QueryWrapper = ({ children }) => (
+  const wrapper = ({ children }) => (
     <QueryClientProvider client={queryClient}>
       <MemoryRouter initialEntries={[`/skills/${skillId}`]}>
         {children}
@@ -50,5 +36,7 @@ export const renderSkillDetailPage = (skillId) => {
     </QueryClientProvider>
   );
 
-  return render(<SkillDetailPage />, { wrapper: QueryWrapper });
+  return render(<SkillDetailPage />, { wrapper });
 };
+
+export { MOCK_SKILL_IDS, mockSkills, mockActivities } from "./mockData";

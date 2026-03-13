@@ -21,18 +21,19 @@ export const SelectInput = ({
   const items = options.map((opt) =>
     typeof opt === "string"
       ? { id: opt, name: opt }
-      : { id: opt.value, name: opt.label }
+      : { id: opt.value, name: opt.label },
   );
 
-  const hasSelection = value !== null && value !== "";
+  const normalizedValue = value && value !== "" ? value : null;
+  const hasSelection = normalizedValue !== null;
   const selectedItem = items.find((item) => item.id === value);
   const displayText = selectedItem ? selectedItem.name : placeholder;
 
   return (
     <Select
       name={id}
-      selectedKey={value || undefined}
-      onSelectionChange={onChange}
+      selectedKey={normalizedValue}
+      onSelectionChange={(key) => onChange(key || "")}
       isDisabled={disabled}
       className="w-full"
       // domRef={inputRef}
@@ -95,7 +96,7 @@ export const SelectInput = ({
               id={item.id}
               className={`
                 px-3 py-2.5 text-slate-200 rounded-lg
-                outline-none cursor-default capitalize
+                outline-none cursor-pointer capitalize
                 transition-colors duration-100
                 data-[focused]:bg-slate-800/70
                 data-[selected]:bg-teal-900/40

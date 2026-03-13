@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createTrack, fetchTracks, deleteTrack } from "@services/tracksService";
 import { useToast } from "@shared/components/Toast/hooks/useToast";
@@ -7,7 +7,7 @@ import { useModal } from "@shared/components/Modal/hooks/useModal";
 // Manages tracks list data, creation flow, and UI state (form open/close, loading, errors).
 // Includes caching, toast feedback, and optional pagination prefetching.
 
-export const useTracks = () => {
+export const useTracks = (skill = {}) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [deleteContext, setDeleteContext] = useState({
     trackId: null,
@@ -53,6 +53,7 @@ export const useTracks = () => {
   const handleCreate = async (data) => {
     try {
       const newTrack = await createTrackAsync(data);
+
       setIsFormOpen(false);
       showNotif(`Track "${newTrack.title}" created successfully!`, "success");
     } catch (err) {
@@ -100,29 +101,36 @@ export const useTracks = () => {
     }
   };
 
+  // Filter tracks by skill
+  const skillTrack = useMemo(() => {
+    if (!skill?.track_id || !tracks.length) {return null;}
+    return tracks.find((track) => track.track_id === skill.track_id);
+  }, [skill, tracks]);
+
   return {
-    //🔹 Global data & status
+    // Global data & status
     data: {
       tracks,
       isError,
       error,
+      skillTrack,
     },
 
-    //🔹 Loading states (React Query + mutations)
+    // Loading states (React Query + mutations)
     status: {
       isLoading,
       isCreating,
       isDeleting,
     },
 
-    //🔹 UI -Creation form
+    // UI -Creation form
     createForm: {
       isOpen: isFormOpen,
       open: () => setIsFormOpen(true),
       close: () => setIsFormOpen(false),
     },
 
-    //🔹 UI -Modal de suppression
+    // UI -Modal de suppression
     deleteModal: {
       isOpen: confirmModal.isOpen,
       context: deleteContext, // { trackId, trackTitle }
@@ -130,13 +138,13 @@ export const useTracks = () => {
       close: confirmModal.closeModal,
     },
 
-    //🔹 Business actions
+    // Business actions
     actions: {
       create: handleCreate,
       delete: handleConfirmDelete,
     },
 
-    //🔹 Optimization (optional)
+    // Optimization (optional)
     utils: {
       prefetchNextPage,
     },

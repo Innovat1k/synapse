@@ -1,7 +1,6 @@
 import { render } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter, useOutletContext } from "react-router-dom";
-import { vi } from "vitest";
 
 export const mockSkills = [
   {
@@ -39,17 +38,24 @@ export const mockSkills = [
   },
 ];
 
+const sharedQueryClient = new QueryClient({
+  defaultOptions: { queries: { retry: false } },
+});
+
 export const renderComponent = (ui, { skills = [] } = {}) => {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
-  vi.mocked(useOutletContext).mockReturnValue({ skills });
+  useOutletContext.mockReturnValue({ skills });
 
-  return render(ui, {
-    wrapper: ({ children }) => (
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>{children}</MemoryRouter>
-      </QueryClientProvider>
-    ),
-  });
+  return {
+    ...render(ui, {
+      wrapper: ({ children }) => (
+        <QueryClientProvider client={queryClient}>
+          <MemoryRouter>{children}</MemoryRouter>
+        </QueryClientProvider>
+      ),
+    }),
+    queryClient: sharedQueryClient,
+  };
 };

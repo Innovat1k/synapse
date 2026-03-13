@@ -2,7 +2,7 @@ import { describe, expect } from "vitest";
 import { mockSkills, renderComponent } from "./test-utils";
 import userEvent from "@testing-library/user-event";
 import { screen, waitFor, within } from "@testing-library/react";
-import SkillsListPage from "./SkillsListPage";
+import SkillsListPage from "../SkillsListPage";
 
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");

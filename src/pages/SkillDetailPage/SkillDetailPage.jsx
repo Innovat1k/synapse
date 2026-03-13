@@ -16,6 +16,7 @@ import { useSubgraph } from "./components/GraphModal/hooks/useSubgraph";
 import { AnimatePresence } from "framer-motion";
 import { GraphView } from "./components/GraphModal/GraphView";
 import ButtonSpinner from "@shared/components/ButtonSpinner";
+import { useTracks } from "../Settings/app/tracks/hooks/useTracks";
 
 function SkillDetailPage() {
   const { skills } = useOutletContext();
@@ -28,6 +29,8 @@ function SkillDetailPage() {
 
   const { data: subgraphData, isLoading: isGraphLoading } =
     useSubgraph(skillId);
+
+  const { data: trackData } = useTracks(skill);
 
   // Show the skeleton if skill is not ready
   if (!skill) {
@@ -107,6 +110,16 @@ function SkillDetailPage() {
               <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-800/50 border border-slate-700/50 text-slate-200 rounded-full text-xs sm:text-sm font-medium capitalize">
                 Category: {skill?.category}
               </span>
+
+              {trackData.skillTrack ? (
+                <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-purple-400/20 border border-purple-400/40 text-purple-400 rounded-full text-xs sm:text-sm font-medium capitalize">
+                  Track: {trackData.skillTrack.title}
+                </span>
+              ) : (
+                <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-800/50 border border-slate-700/50 text-slate-500 rounded-full text-xs sm:text-sm font-medium italic">
+                  No track assigned
+                </span>
+              )}
             </div>
 
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">

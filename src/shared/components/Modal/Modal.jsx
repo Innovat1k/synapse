@@ -4,6 +4,9 @@ import { LuX } from "react-icons/lu";
 import { useInitialFocus } from "@shared/hooks/useInitialFocus/useInitialFocus";
 import { useFocusTrap } from "@shared/hooks/useFocusTrap/useFocusTrap";
 import { useKeyboardDismiss } from "@shared/hooks/useKeyboardDismiss/useKeyboardDismiss";
+import { useIsTopModal } from "./hooks/useIsTopModal";
+
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
 export const Modal = ({
@@ -14,16 +17,28 @@ export const Modal = ({
   icon: IconComponent,
   children,
   size = "md",
+  initialFocusRef,
+  dataTestId = "modal",
 }) => {
   const modalRef = useRef(null);
   const closeButtonRef = useRef(null);
 
   //Accessibility
-  useInitialFocus(isOpened, modalRef, closeButtonRef);
-  useFocusTrap(isOpened, modalRef);
+  const isTopModal = useIsTopModal(isOpened, modalRef);
+
+  // Focus initial uniquement si ce modal est actif
+  useInitialFocus(
+    isOpened && isTopModal,
+    modalRef,
+    initialFocusRef || closeButtonRef,
+  );
+  useFocusTrap(isOpened && isTopModal, modalRef);
+
+  // useInitialFocus(isOpened, modalRef, closeButtonRef);
+  // useFocusTrap(isOpened, modalRef);
   useKeyboardDismiss({ isOpen: isOpened, onDismiss: onClose });
 
-  if (!isOpened) return null;
+  if (!isOpened) {return null;}
 
   //Size mapping to keep control
   const sizeClasses = {
@@ -43,7 +58,7 @@ export const Modal = ({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        data-testid="modal-overlay"
+        data-testid={`${dataTestId}-overlay`}
       />
 
       {/* Modal Container */}
@@ -51,11 +66,13 @@ export const Modal = ({
         ref={modalRef}
         role="dialog"
         aria-modal="true"
+        data-modal="true"
         className={`relative w-full ${sizeClasses[size]} max-h-[90vh] bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden`}
         initial={{ scale: 0.98, opacity: 0, y: 10 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.98, opacity: 0, y: 10 }}
         transition={{ type: "spring", damping: 25, stiffness: 400 }}
+        data-testid={`${dataTestId}-content`}
       >
         {/* Header */}
         <div className="flex items-start justify-between p-4 md:p-5 border-b border-slate-800/50 bg-slate-900/50">

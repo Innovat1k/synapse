@@ -1,5 +1,6 @@
 import { supabase } from "./supabase-client";
 
+// Fetches all tracks from Supabase, ordered by title
 export const fetchTracks = async () => {
   const { data, error } = await supabase
     .from("synapse_tracks")
@@ -12,6 +13,7 @@ export const fetchTracks = async () => {
   return data;
 };
 
+// Creates a new track in Supabase and returns the inserted record
 export const createTrack = async (trackData) => {
   const { data, error } = await supabase
     .from("synapse_tracks")
@@ -25,11 +27,14 @@ export const createTrack = async (trackData) => {
   return data;
 };
 
+// Deletes a track from Supabase by its track_id
 export const deleteTrack = async (trackId) => {
   const { error } = await supabase
     .from("synapse_tracks")
     .delete()
     .eq("track_id", trackId);
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 };

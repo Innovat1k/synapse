@@ -1,6 +1,6 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect } from "vitest";
-import SkillsListPage from "./SkillsListPage";
+import SkillsListPage from "../SkillsListPage";
 import { mockSkills, renderComponent } from "./test-utils";
 import userEvent from "@testing-library/user-event";
 

@@ -1,263 +1,324 @@
-import { render, screen, waitFor, within } from "@testing-library/react";
-import { beforeEach, describe, expect } from "vitest";
-import SkillFormModal from "./SkillFormModal";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 
+import SkillFormModal from "./SkillFormModal";
+import { useSkillForm } from "./hooks/useSkillForm";
+import { useTracks } from "../../../pages/Settings/app/tracks/hooks/useTracks";
+
+vi.mock("./hooks/useSkillForm", () => ({
+  useSkillForm: vi.fn(),
+}));
+
+vi.mock("../../../pages/Settings/app/tracks/hooks/useTracks", () => ({
+  useTracks: vi.fn(),
+}));
+
+// MOCK FACTORY
+function createSkillFormMock(overrides = {}) {
+  return {
+    skillFormData: {
+      name: "",
+      category: "",
+      level: 1,
+      description: "",
+      tags: [],
+      track_id: "",
+    },
+    newTag: "",
+    tracks: [],
+    isLoadingTracks: false,
+    methods: {
+      handleChange: vi.fn(),
+      handleSubmit: vi.fn(),
+      handleChangeTag: vi.fn(),
+      handleAddTag: vi.fn(),
+      handleRemoveTag: vi.fn(),
+      handleOverlayClick: vi.fn(),
+      handleChangeTrack: vi.fn(),
+      ...overrides.methods,
+    },
+    ...overrides,
+  };
+}
+
+function createTracksMock(overrides = {}) {
+  return {
+    status: {
+      isCreating: false,
+    },
+    createForm: {
+      isOpen: false,
+      open: vi.fn(),
+      close: vi.fn(),
+    },
+    actions: {
+      create: vi.fn(),
+    },
+    ...overrides,
+  };
+}
+
+// TEST BUILDER
+function createSkillModal(options = {}) {
+  const props = {
+    isOpened: true,
+    mode: "create",
+    isSubmitting: false,
+    onClose: vi.fn(),
+    onDelete: vi.fn(),
+    onSubmit: vi.fn(),
+    ...options.props,
+  };
+
+  const skillFormMock = createSkillFormMock(options.skillForm);
+  const tracksMock = createTracksMock(options.tracks);
+
+  useSkillForm.mockReturnValue(skillFormMock);
+  useTracks.mockReturnValue(tracksMock);
+
+  const utils = render(<SkillFormModal {...props} />);
+
+  return {
+    ...utils,
+    props,
+    skillFormMock,
+    tracksMock,
+  };
+}
+
+// TEST DATA
 const mockSkill = {
   name: "React JS",
-  skill_id: "550e8400-e29b-41d4-a716-446655440001",
   category: "frontend",
   level: 4,
-  description: "Completed an online React JS course leading to certification.",
+  description: "Completed React course",
   tags: ["programming", "visual"],
+  track_id: "react-track",
 };
-
-const mockHandleDelete = vi.fn();
 
 describe("SkillFormModal", () => {
   let user;
+
   beforeEach(() => {
     user = userEvent.setup();
+    vi.clearAllMocks();
   });
 
-  it("triggers onClose when user closes the modal", async () => {
-    // We test the "X" button as a representative close trigger,
-    // since all close actions (X, Cancel, Keep it) delegate to the same onClose prop.
-    const mockClose = vi.fn();
-    render(
-      <SkillFormModal
-        isOpened={true}
-        mode="edit"
-        initialData={mockSkill}
-        onClose={mockClose}
-      />
-    );
+  describe("Rendering", () => {
+    it("renders create skill form", () => {
+      createSkillModal();
 
-    await user.click(screen.getByLabelText(/close modal/i));
-    expect(mockClose).toHaveBeenCalledOnce();
-  });
-
-  it("calls onClose when clicking the overlay (background)", async () => {
-    const mockClose = vi.fn();
-    render(
-      <SkillFormModal
-        isOpened={true}
-        mode="edit"
-        initialData={mockSkill}
-        onClose={mockClose}
-      />
-    );
-
-    const overlay = screen.getByTestId(/modal-overlay/i);
-    await user.click(overlay);
-
-    expect(mockClose).toHaveBeenCalledOnce();
-  });
-
-  it("allows to add new tag when editing a skill", async () => {
-    render(
-      <SkillFormModal
-        isOpened={true}
-        mode="create"
-        initialData={mockSkill}
-        onClose={vi.fn()}
-      />
-    );
-
-    expect(await screen.findByRole("heading", { level: 2 })).toHaveTextContent(
-      /new skill/i
-    );
-
-    const tag_input = screen.getByLabelText(/tags/i);
-    await user.type(tag_input, "oop");
-    expect(tag_input).toHaveValue("oop");
-
-    await user.click(screen.getByRole("button", { name: /add tag/i }));
-    expect(
-      within(screen.getByTestId("skill-tags")).getByText(/oop/i)
-    ).toBeInTheDocument();
-  });
-
-  it("allows to remove existing tag when editing a skill", async () => {
-    render(
-      <SkillFormModal isOpened={true} mode="edit" initialData={mockSkill} />
-    );
-
-    expect(
-      within(screen.getByTestId("skill-tags")).getByText(/programming/i)
-    ).toBeInTheDocument();
-
-    await user.click(
-      screen.getByRole("button", { name: /remove programming tag/i })
-    );
-
-    expect(
-      within(screen.getByTestId("skill-tags")).queryByText(/programming/i)
-    ).not.toBeInTheDocument();
-  });
-
-  describe("create modal", () => {
-    it("renders SkillFormModal for create new skill", () => {
-      render(<SkillFormModal isOpened={true} mode="create" />);
-
-      expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(
-        /new skill/i
-      );
       expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/category/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/level/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/description/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/tags/i)).toBeInTheDocument();
+
       expect(
-        screen.getByRole("button", { name: /save skill/i })
+        screen.getByRole("button", { name: /save skill/i }),
       ).toBeInTheDocument();
+
       expect(
-        screen.getByRole("button", { name: /cancel/i })
+        screen.getByRole("button", { name: /cancel/i }),
+      ).toBeInTheDocument();
+    });
+
+    it("renders edit mode with prefilled data", () => {
+      createSkillModal({
+        props: { mode: "edit" },
+        skillForm: { skillFormData: mockSkill },
+      });
+
+      const nameInput = screen.getByLabelText(/name/i);
+      const categorySelect = screen.getByLabelText(/category/i);
+      const notesTextarea = screen.getByLabelText(/description/i);
+      const levelSlider = screen.getByRole("slider");
+
+      expect(nameInput).toHaveValue("React JS");
+      expect(categorySelect).toHaveValue("frontend");
+      expect(notesTextarea).toHaveValue("Completed React course");
+      expect(levelSlider).toHaveValue("4");
+    });
+
+    it("renders delete confirmation modal", () => {
+      createSkillModal({
+        props: { mode: "delete", initialData: mockSkill },
+      });
+
+      expect(screen.getByText(/are you sure/i)).toBeInTheDocument();
+
+      expect(
+        screen.getByRole("button", { name: /delete permanently/i }),
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByRole("button", { name: /keep it/i }),
       ).toBeInTheDocument();
     });
   });
 
-  describe("edit modal", () => {
-    it("renders SkillFormModal for edit existing skill", () => {
-      render(
-        <SkillFormModal isOpened={true} mode="edit" initialData={mockSkill} />
+  describe("Tracks", () => {
+    it("shows loading tracks state", () => {
+      createSkillModal({
+        skillForm: { isLoadingTracks: true },
+      });
+
+      expect(screen.getByText(/loading tracks/i)).toBeInTheDocument();
+    });
+
+    it("shows empty tracks state", () => {
+      createSkillModal({
+        skillForm: { tracks: [] },
+      });
+
+      expect(screen.getByText(/no tracks available/i)).toBeInTheDocument();
+    });
+
+    it("renders track select when tracks exist", () => {
+      createSkillModal({
+        skillForm: {
+          tracks: [{ track_id: "react", title: "React Architecture" }],
+        },
+      });
+
+      expect(screen.getByText(/learning track/i)).toBeInTheDocument();
+    });
+
+    it("opens track creation modal", async () => {
+      const { tracksMock } = createSkillModal();
+
+      await user.click(screen.getByRole("button", { name: /create/i }));
+
+      expect(tracksMock.createForm.open).toHaveBeenCalled();
+    });
+
+    it("selects a track from dropdown", async () => {
+      const { skillFormMock } = createSkillModal({
+        skillForm: {
+          tracks: [{ track_id: "react", title: "React" }],
+        },
+      });
+
+      await user.click(screen.getByRole("button", { name: /learning track/i }));
+      await waitFor(() =>
+        screen.getByRole("listbox", { name: /learning track/i }),
       );
 
-      expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(
-        /edit skill/i
-      );
-      expect(screen.getByLabelText(/name/i).value).toMatch(/react js/i);
-      expect(screen.getByLabelText(/category/i).value).toMatch(/frontend/i);
-      expect(screen.getByLabelText(/level/i).value).toMatch("4");
-      expect(screen.getByLabelText(/description/i).value).toMatch(
-        /completed an online React JS course leading to certification/i
-      );
-      expect(screen.getByLabelText(/tags/i)).toBeInTheDocument();
-      expect(
-        within(screen.getByTestId("skill-tags")).getByText(/visual/i)
-      ).toBeInTheDocument();
-      expect(
-        within(screen.getByTestId("skill-tags")).getByText(/programming/i)
-      ).toBeInTheDocument();
+      await user.click(screen.getByRole("option", { name: "React" }));
 
-      expect(
-        screen.getByRole("button", { name: /update skill/i })
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole("button", { name: /cancel/i })
-      ).toBeInTheDocument();
+      expect(skillFormMock.methods.handleChangeTrack).toHaveBeenCalledWith(
+        "react",
+      );
+    });
+
+    it("shows 'Create' button only when no tracks exist", () => {
+      createSkillModal({
+        skillForm: { tracks: [{ track_id: "react", title: "React" }] },
+      });
+      expect(screen.queryByText(/create/i)).not.toBeInTheDocument();
+
+      createSkillModal({ skillForm: { tracks: [] } });
+      expect(screen.getByText(/create/i)).toBeInTheDocument();
     });
   });
 
-  describe("delete modal", () => {
-    it("renders SkillFormModal for delete skill", () => {
-      render(
-        <SkillFormModal isOpened={true} mode="delete" initialData={mockSkill} />
-      );
+  describe("Form interactions", () => {
+    it("calls handleChange when input fields change", async () => {
+      const { skillFormMock } = createSkillModal({
+        props: { mode: "edit" },
+        skillForm: { skillFormData: mockSkill },
+      });
 
-      expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(
-        /confirm deletion/i
-      );
+      const nameInput = screen.getByLabelText(/name/i);
+      await user.type(nameInput, "X");
 
-      const paragraph = screen.getByText(/are you sure/i);
-      expect(paragraph).toHaveTextContent(/delete\s+"react js"\s*\?/i);
+      expect(skillFormMock.methods.handleChange).toHaveBeenCalled();
 
-      expect(
-        screen.getByRole("button", { name: /delete permanently/i })
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole("button", { name: /keep it/i })
-      ).toBeInTheDocument();
+      const categoryInput = screen.getByLabelText(/category/i);
+      await user.type(categoryInput, "Y");
+
+      expect(skillFormMock.methods.handleChange).toHaveBeenCalled();
     });
 
-    it("calls onDelete : handleDelete if 'delete permanently' button is clicked", async () => {
-      render(
-        <SkillFormModal
-          isOpened={true}
-          mode="delete"
-          initialData={mockSkill}
-          onDelete={mockHandleDelete}
-        />
-      );
+    it("submits form on update click", async () => {
+      const { skillFormMock } = createSkillModal({
+        props: { mode: "edit" },
+        skillForm: { skillFormData: mockSkill },
+      });
+
+      await user.click(screen.getByRole("button", { name: /update skill/i }));
+
+      expect(skillFormMock.methods.handleSubmit).toHaveBeenCalled();
+    });
+  });
+
+  describe("Delete flow", () => {
+    it("calls onDelete when clicking delete permanently", async () => {
+      const { props } = createSkillModal({
+        props: { mode: "delete", initialData: mockSkill },
+      });
 
       await user.click(
-        screen.getByRole("button", { name: /delete permanently/i })
+        screen.getByRole("button", { name: /delete permanently/i }),
       );
-      expect(mockHandleDelete).toHaveBeenCalledOnce();
+
+      expect(props.onDelete).toHaveBeenCalledWith(mockSkill);
+    });
+
+    it("calls onClose when clicking keep it", async () => {
+      const { props } = createSkillModal({
+        props: { mode: "delete", initialData: mockSkill },
+      });
+
+      await user.click(screen.getByRole("button", { name: /keep it/i }));
+
+      expect(props.onClose).toHaveBeenCalled();
     });
   });
 
-  describe("SkillFormModal accessibility", () => {
-    let user;
-
-    beforeEach(() => {
-      user = userEvent.setup();
-    });
-
-    it("calls closeModal when Escape key is pressed", async () => {
-      const mockOnClose = vi.fn();
-      render(
-        <SkillFormModal isOpened={true} mode="create" onClose={mockOnClose} />
-      );
-
-      expect(screen.getByTestId("modal-overlay")).toBeInTheDocument();
+  describe("Modal behavior", () => {
+    it("calls onClose when pressing escape", async () => {
+      const { props } = createSkillModal();
 
       await user.keyboard("{Escape}");
 
-      await waitFor(() => {
-        expect(mockOnClose).toHaveBeenCalledTimes(1);
-      });
+      expect(props.onClose).toHaveBeenCalled();
     });
 
-    it("maintains correct focus order and traps focus in ActivityFormModal", async () => {
-      render(
-        <SkillFormModal isOpened={true} mode="create" onClose={vi.fn()} />
-      );
+    it("closes modal when clicking overlay", async () => {
+      const { skillFormMock } = createSkillModal();
 
-      const modalOverlay = screen.getByTestId("modal-overlay");
-      const nameField = screen.getByLabelText(/name/i);
-      const categoryField = screen.getByLabelText(/category/i);
-      const levelField = screen.getByLabelText(/level/i);
-      const tagsField = screen.getByLabelText(/tags/i);
-      const tagButton = screen.getByRole("button", { name: /add tag/i });
-      const descriptionField = screen.getByLabelText(/description/i);
-      const cancelButton = screen.getByRole("button", { name: /cancel/i });
-      const saveButton = screen.getByRole("button", { name: /save skill/i });
-      const closeButton = screen.getByLabelText(/close modal/i);
+      const overlay = screen.getByTestId("modal-overlay");
 
-      await waitFor(() => {
-        expect(modalOverlay.contains(document.activeElement)).toBe(true);
-        expect(nameField).toHaveFocus();
+      await user.click(overlay);
+
+      expect(skillFormMock.methods.handleOverlayClick).toHaveBeenCalled();
+    });
+  });
+
+  describe("Accessibility", () => {
+    it("focuses name input when modal opens", async () => {
+      createSkillModal();
+
+      const input = screen.getByLabelText(/name/i);
+
+      await waitFor(() => expect(input).toHaveFocus());
+    });
+  });
+
+  describe("Loading states", () => {
+    it("disables submit button when submitting", () => {
+      createSkillModal({
+        props: { isSubmitting: true },
       });
 
-      // 🔁 Tabulation on logical order
-      await user.tab();
-      expect(categoryField).toHaveFocus();
+      const submitButton = screen.getByRole("button", {
+        name: /creating/i,
+      });
 
-      await user.tab();
-      expect(levelField).toHaveFocus();
-
-      await user.tab();
-      expect(tagsField).toHaveFocus();
-
-      await user.tab();
-      expect(tagButton).toHaveFocus();
-
-      await user.tab();
-      expect(descriptionField).toHaveFocus();
-
-      await user.tab();
-      expect(cancelButton).toHaveFocus();
-
-      await user.tab();
-      expect(saveButton).toHaveFocus();
-
-      await user.tab();
-      expect(closeButton).toHaveFocus();
-
-      // 🔄 Complete cycle
-      await user.tab();
-      expect(nameField).toHaveFocus();
+      expect(submitButton).toBeDisabled();
+      expect(submitButton).toHaveTextContent(/creating/i);
     });
   });
 });

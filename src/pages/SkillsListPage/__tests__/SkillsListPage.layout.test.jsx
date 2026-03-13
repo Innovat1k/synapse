@@ -1,6 +1,6 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, vi } from "vitest";
-import SkillsListPage from "./SkillsListPage";
+import SkillsListPage from "../SkillsListPage";
 
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
