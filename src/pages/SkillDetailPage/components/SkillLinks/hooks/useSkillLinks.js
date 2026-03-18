@@ -96,6 +96,9 @@ export const useCreateSkillLink = (centerSkillId) => {
       queryClient.invalidateQueries({
         queryKey: ["subgraph", centerSkillId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["skill-links", "all"],
+      });
     },
   });
 };
@@ -114,6 +117,9 @@ export const useDeleteSkillLink = (centerSkillId) => {
       });
       queryClient.invalidateQueries({
         queryKey: ["subgraph", centerSkillId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["skill-links", "all"],
       });
     },
   });

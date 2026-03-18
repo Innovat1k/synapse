@@ -10,6 +10,7 @@ export const useSkillsQuery = () => {
   const { data: skills = [], isLoading } = useQuery({
     queryKey: ["skills"],
     queryFn: fetchSkills,
+    staleTime: 5 * 60 * 1000,
   });
 
   return { skills, isLoading };

@@ -21,6 +21,7 @@
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "@vitest/ui": "^4.0.18",
+    "@xyflow/react": "^12.10.1",
     "framer-motion": "^12.35.2",
     "jotai": "^2.18.1",
     "jsdom": "^28.1.0",
@@ -35,7 +36,7 @@
     "tailwindcss": "^4.2.1"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
+    "@eslint/js": "^9.39.4",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.4",

@@ -34,7 +34,8 @@ const SkillFormModal = ({
     initialData,
     mode,
     onClose,
-    onSubmit, isOpened
+    onSubmit,
+    isOpened,
   });
 
   //Tracks: status and actions

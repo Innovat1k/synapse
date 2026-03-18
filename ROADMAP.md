@@ -40,7 +40,7 @@ The "Log Activity" feature (originally in Phase 5) is crucial for Synapse to sta
 ## Phase 4 – Core Synapse (Linking)
 
 - [X] Implement skill linking logic (managing related skill IDs in the database).
-- [ ] Simple visualization of skill connections.
+- [X] Simple visualization of skill connections.
     - **Note:** This phase, while fundamental to Synapse's unique value, will now build upon the activity data generated in Phase 3.5.
 
 ---

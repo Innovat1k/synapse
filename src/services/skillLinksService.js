@@ -17,7 +17,9 @@ export const fetchIncomingSkillLinks = async (skillId) => {
     )
     .eq("target_skill_id", skillId);
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   return (data ?? []).map((link) => ({
     id: link.id,
@@ -45,7 +47,9 @@ export const fetchOutgoingSkillLinks = async (skillId) => {
     )
     .eq("source_skill_id", skillId);
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   return (data ?? []).map((link) => ({
     id: link.id,
@@ -70,7 +74,9 @@ export const createSkillLink = async ({
     .select()
     .single();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
 
   return data;
 };
@@ -87,7 +93,9 @@ export const checkExistingLinks = async (sourceId, targetId) => {
       .eq("target_skill_id", targetId)
       .limit(1);
 
-    if (directError) {throw directError;}
+    if (directError) {
+      throw directError;
+    }
 
     const { data: reverseData, error: reverseError } = await supabase
       .from("synapse_skill_links")
@@ -96,7 +104,9 @@ export const checkExistingLinks = async (sourceId, targetId) => {
       .eq("target_skill_id", sourceId)
       .limit(1);
 
-    if (reverseError) {throw reverseError;}
+    if (reverseError) {
+      throw reverseError;
+    }
 
     return {
       hasDirectLink: (directData?.length || 0) > 0,
@@ -130,4 +140,22 @@ export const deleteSkillLink = async (linkId) => {
   if (error) {
     throw error;
   }
+};
+
+/**
+ * Fetch ALL skill links (for the global graph view)
+ */
+export const fetchAllSkillLinks = async () => {
+  const { data, error } = await supabase.from("synapse_skill_links").select(`
+      id,
+      source_skill_id,
+      target_skill_id,
+      type
+    `);
+
+  if (error) {
+    throw error;
+  }
+
+  return data || [];
 };

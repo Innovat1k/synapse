@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, vi } from "vitest";
 import { Modal } from "./Modal";
 import { LuTriangleAlert } from "react-icons/lu";
+import { createRef } from "react";
 
 describe("Modal", () => {
   let user;
@@ -12,7 +13,7 @@ describe("Modal", () => {
 
   describe("Rendering", () => {
     it("renders with title, description, and children", () => {
-      const children = <span data-testid="modal-content">Custom Content</span>;
+      const children = <span>Custom Content</span>;
       render(
         <Modal
           isOpened={true}
@@ -43,7 +44,7 @@ describe("Modal", () => {
       expect(modalDialog).toHaveClass("max-w-2xl");
 
       rerender(<Modal isOpened={true} size="full" />);
-      expect(screen.getByRole("dialog")).toHaveClass("max-w-[95vw]");
+      expect(screen.getByRole("dialog")).toHaveClass("max-w-[98vw]");
     });
 
     it("sets initial focus on close button when opened", async () => {
@@ -58,6 +59,33 @@ describe("Modal", () => {
     it("does not render when isOpened is false", () => {
       const { container } = render(<Modal isOpened={false} />);
       expect(container.firstChild).toBeNull();
+    });
+
+    it("respects custom initialFocusRef", async () => {
+      const inputRef = createRef();
+      render(
+        <Modal isOpened={true} initialFocusRef={inputRef}>
+          <input ref={inputRef} data-testid="custom-focus-input" />
+        </Modal>,
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId("custom-focus-input")).toHaveFocus();
+      });
+    });
+
+    it("hides description in full mode", () => {
+      render(
+        <Modal
+          isOpened={true}
+          title="Full Modal"
+          description="This should be hidden"
+          size="full"
+        />,
+      );
+      expect(
+        screen.queryByText(/This should be hidden/i),
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -90,7 +118,7 @@ describe("Modal", () => {
       const onCloseMock = vi.fn();
       render(<Modal isOpened={true} onClose={onCloseMock} />);
 
-      await user.click(screen.getByRole("dialog"));
+      await user.click(screen.getByTestId("modal-content"));
       expect(onCloseMock).not.toHaveBeenCalled();
     });
   });
