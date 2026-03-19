@@ -1,8 +1,19 @@
 import { act, renderHook } from "@testing-library/react";
-import { describe, expect } from "vitest";
+import { beforeEach, describe, expect } from "vitest";
 import { useSkillForm } from "./useSkillForm";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 describe("useSkillForm", () => {
+  let client;
+  let QueryWrapper;
+
+  beforeEach(() => {
+    client = new QueryClient();
+    QueryWrapper = ({ children }) => (
+      <QueryClientProvider client={client}>{children}</QueryClientProvider>
+    );
+  });
+
   it("synchronizes skillFormData with initialData when in edit mode", () => {
     const initialData = {
       id: 10,
@@ -11,9 +22,11 @@ describe("useSkillForm", () => {
       level: 4,
       description: "Library",
       tags: ["js", "ui"],
+      track_id: "react-architecture",
     };
     const { result, rerender } = renderHook((props) => useSkillForm(props), {
       initialProps: { mode: "edit", initialData: null },
+      wrapper: QueryWrapper,
     });
 
     rerender({ mode: "edit", initialData });
@@ -31,6 +44,7 @@ describe("useSkillForm", () => {
     };
     const { result, rerender } = renderHook((props) => useSkillForm(props), {
       initialProps: { mode: "edit", initialData },
+      wrapper: QueryWrapper,
     });
 
     rerender({ mode: "create", initialData: null });
@@ -40,6 +54,7 @@ describe("useSkillForm", () => {
       level: 1,
       description: "",
       tags: [],
+      track_id: "",
     });
   });
 
@@ -47,7 +62,9 @@ describe("useSkillForm", () => {
     const mockNameInput = { target: { id: "name", value: "javascript" } };
     const mockCategoryInput = { target: { id: "category", value: "frontend" } };
     const mockLevelInput = { target: { id: "level", value: 3 } };
-    const { result } = renderHook(() => useSkillForm({ mode: "edit" }));
+    const { result } = renderHook(() => useSkillForm({ mode: "edit" }), {
+      wrapper: QueryWrapper,
+    });
 
     act(() => {
       result.current.methods.handleChange(mockNameInput);
@@ -65,12 +82,15 @@ describe("useSkillForm", () => {
       level: 3,
       description: "",
       tags: [],
+      track_id: "",
     });
   });
 
   it("changes current tag value", () => {
     const mockTagInput = { target: { value: "programing" } };
-    const { result } = renderHook(() => useSkillForm({ mode: "edit" }));
+    const { result } = renderHook(() => useSkillForm({ mode: "edit" }), {
+      wrapper: QueryWrapper,
+    });
 
     act(() => {
       result.current.methods.handleChangeTag(mockTagInput);
@@ -81,7 +101,9 @@ describe("useSkillForm", () => {
 
   it("adds new tag to skillFormData", () => {
     const mockTagInput = { target: { value: "ux" } };
-    const { result } = renderHook(() => useSkillForm({ mode: "edit" }));
+    const { result } = renderHook(() => useSkillForm({ mode: "edit" }), {
+      wrapper: QueryWrapper,
+    });
 
     act(() => {
       result.current.methods.handleChangeTag(mockTagInput);
@@ -99,7 +121,9 @@ describe("useSkillForm", () => {
 
   it("doesn't add an existing tag", () => {
     const mockTagInput = { target: { value: "visual" } };
-    const { result } = renderHook(() => useSkillForm({ mode: "edit" }));
+    const { result } = renderHook(() => useSkillForm({ mode: "edit" }), {
+      wrapper: QueryWrapper,
+    });
 
     act(() => {
       result.current.methods.handleChangeTag(mockTagInput);
@@ -124,7 +148,9 @@ describe("useSkillForm", () => {
   it("removes selected tag from skillFormData", () => {
     const mockTagInput1 = { target: { value: "styling" } };
     const mockTagInput2 = { target: { value: "css" } };
-    const { result } = renderHook(() => useSkillForm({ mode: "edit" }));
+    const { result } = renderHook(() => useSkillForm({ mode: "edit" }), {
+      wrapper: QueryWrapper,
+    });
 
     act(() => {
       result.current.methods.handleChangeTag(mockTagInput1);
@@ -146,24 +172,6 @@ describe("useSkillForm", () => {
     expect(result.current.skillFormData.tags).toEqual(["css"]);
   });
 
-  it("calls onClose when clicking on the overlay itself", () => {
-    const onClose = vi.fn();
-    const { result } = renderHook(() =>
-      useSkillForm({ mode: "edit", onClose })
-    );
-
-    const mockEvent = {
-      target: "overlay",
-      currentTarget: "overlay",
-    };
-
-    act(() => {
-      result.current.methods.handleOverlayClick(mockEvent);
-    });
-
-    expect(onClose).toHaveBeenCalledTimes(1);
-  });
-
   it("calls onSubmit with correct data", () => {
     const onSubmit = vi.fn();
     const initialData = {
@@ -171,11 +179,13 @@ describe("useSkillForm", () => {
       name: "Angular",
       category: "frontend",
       level: 5,
-      description: "",
+      description: "Framework",
       tags: [],
+      track_id: "frontend-lib",
     };
-    const { result } = renderHook(() =>
-      useSkillForm({ mode: "edit", initialData, onSubmit })
+    const { result } = renderHook(
+      () => useSkillForm({ mode: "edit", initialData, onSubmit }),
+      { wrapper: QueryWrapper },
     );
 
     act(() => {

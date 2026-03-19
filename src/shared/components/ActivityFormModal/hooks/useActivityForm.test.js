@@ -10,6 +10,7 @@ const mockActivity = {
   notes:
     "Practiced advanced JavaScript concepts including async patterns and performance optimization.",
   duration_minutes: 147,
+  track_id: "frontend-architecture"
 };
 
 describe("useActivityForm", () => {

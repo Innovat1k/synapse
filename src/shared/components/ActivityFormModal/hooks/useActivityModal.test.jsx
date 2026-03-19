@@ -14,6 +14,7 @@ const mockActivity = {
   duration_minutes: 98,
   created_at: "2025-04-12T14:12:00Z",
   updated_at: "2025-04-12T15:48:00Z",
+  track_id: "frontend-architecture",
 };
 
 describe("useActivityModal", () => {
@@ -124,7 +125,7 @@ describe("useActivityModal", () => {
     await waitFor(() => {
       expect(updateActivitySpy).toHaveBeenCalledWith(
         mockActivity.id,
-        mockActivity
+        mockActivity,
       );
     });
   });

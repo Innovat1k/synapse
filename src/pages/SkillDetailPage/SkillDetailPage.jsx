@@ -39,16 +39,6 @@ function SkillDetailPage() {
 
   return (
     <>
-      <SkillFormModal
-        isOpened={modal.isModalOpen}
-        initialData={skill}
-        isSubmitting={isSubmitting}
-        mode={modal.modalMode}
-        onClose={methods.closeModal}
-        onDelete={methods.handleDelete}
-        onSubmit={methods.handleSaveSkill}
-      />
-
       <PurgeActivitiesModal
         isOpened={activityPurge.modal.isOpened}
         context={activityPurge.modal.context}
@@ -156,6 +146,18 @@ function SkillDetailPage() {
           {skill && <SkillActivities skill={skill} skills={skills} />}
 
           <AnimatePresence>
+            {modal.isModalOpen && (
+              <SkillFormModal
+                isOpened={true}
+                initialData={skill}
+                isSubmitting={isSubmitting}
+                mode={modal.modalMode}
+                onClose={methods.closeModal}
+                onDelete={methods.handleDelete}
+                onSubmit={methods.handleSaveSkill}
+              />
+            )}
+
             {isGraphModalOpen && (
               <GraphModal
                 isOpened={true}

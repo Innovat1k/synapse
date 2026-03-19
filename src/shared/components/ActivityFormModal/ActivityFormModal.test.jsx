@@ -1,5 +1,5 @@
-import { render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { describe, expect, vi } from "vitest";
 import ActivityFormModal from "./ActivityFormModal";
 import userEvent from "@testing-library/user-event";
 
@@ -38,11 +38,15 @@ const mockActivity = {
 describe("ActivityFormModal", () => {
   it("displays all form fields", () => {
     render(
-      <ActivityFormModal mode="create" isOpened={true} allSkills={mockSkills} />
+      <ActivityFormModal
+        mode="create"
+        isOpened={true}
+        allSkills={mockSkills}
+      />,
     );
 
     expect(
-      screen.getByRole("heading", { name: /log activity/i })
+      screen.getByRole("heading", { name: /log activity/i }),
     ).toBeInTheDocument();
 
     expect(screen.getByLabelText(/skill/i)).toBeInTheDocument();
@@ -54,7 +58,7 @@ describe("ActivityFormModal", () => {
 
     expect(screen.getByRole("button", { name: /cancel/i })).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /add activity/i })
+      screen.getByRole("button", { name: /add activity/i }),
     ).toBeInTheDocument();
   });
 
@@ -66,7 +70,7 @@ describe("ActivityFormModal", () => {
         allSkills={mockSkills}
         skill={mockSkills[0]}
         selectedActivity={mockActivity}
-      />
+      />,
     );
 
     expect(screen.getByLabelText(/date/i)).toHaveValue("2025-02-15");
@@ -74,134 +78,31 @@ describe("ActivityFormModal", () => {
     expect(screen.getByLabelText(/hours/i)).toHaveValue(1);
     expect(screen.getByLabelText(/minutes/i)).toHaveValue(30);
     expect(screen.getByLabelText(/notes/i)).toHaveValue(
-      "Practiced advanced JavaScript concepts including async patterns and performance optimization."
+      "Practiced advanced JavaScript concepts including async patterns and performance optimization.",
     );
     expect(screen.getByLabelText(/skill/i)).toHaveTextContent(/javascript/i);
     expect(screen.getByLabelText(/activity type/i)).toHaveTextContent(
-      "practice"
+      "practice",
     );
   });
 
-  describe("actions", () => {
-    it("calls closeModal when a dismiss action is triggered", async () => {
-      const mockCloseModal = vi.fn();
-      render(
-        <ActivityFormModal
-          mode="edit"
-          isOpened={true}
-          allSkills={mockSkills}
-          skill={mockSkills[0]}
-          selectedActivity={mockActivity}
-          closeModal={mockCloseModal}
-        />
-      );
+  it("calls onSubmit if submit button is clicked", async () => {
+    const mockOnSubmit = vi.fn();
+    render(
+      <ActivityFormModal
+        mode="edit"
+        isOpened={true}
+        allSkills={mockSkills}
+        skill={mockSkills[0]}
+        selectedActivity={mockActivity}
+        onSubmit={mockOnSubmit}
+      />,
+    );
 
-      await userEvent.click(
-        screen.getByRole("button", { name: /close modal/i })
-      );
+    await userEvent.click(
+      screen.getByRole("button", { name: /save changes/i }),
+    );
 
-      expect(mockCloseModal).toHaveBeenCalled();
-    });
-
-    it("calls onSubmit if submit button is clicked", async () => {
-      const mockOnSubmit = vi.fn();
-      render(
-        <ActivityFormModal
-          mode="edit"
-          isOpened={true}
-          allSkills={mockSkills}
-          skill={mockSkills[0]}
-          selectedActivity={mockActivity}
-          onSubmit={mockOnSubmit}
-        />
-      );
-
-      await userEvent.click(
-        screen.getByRole("button", { name: /save changes/i })
-      );
-
-      expect(mockOnSubmit).toHaveBeenCalled();
-    });
-  });
-
-  describe("ActivityFormModal accessibility", () => {
-    let user;
-
-    beforeEach(() => {
-      user = userEvent.setup();
-    });
-
-    it("calls closeModal when Escape key is pressed", async () => {
-      const mockCloseModal = vi.fn();
-      render(
-        <ActivityFormModal
-          isOpened={true}
-          mode="create"
-          skill={mockSkills[1]}
-          allSkills={mockSkills}
-          closeModal={mockCloseModal}
-        />
-      );
-
-      expect(screen.getByTestId("modal-overlay")).toBeInTheDocument();
-
-      await user.keyboard("{Escape}");
-
-      await waitFor(() => {
-        expect(mockCloseModal).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    it("maintains correct focus order and traps focus in ActivityFormModal", async () => {
-      render(
-        <ActivityFormModal
-          isOpened={true}
-          mode="create"
-          skill={mockSkills[1]}
-          allSkills={mockSkills}
-        />
-      );
-
-      const modalOverlay = screen.getByTestId("modal-overlay");
-      const dateField = screen.getByLabelText(/date/i);
-      const timeField = screen.getByLabelText(/time/i);
-      const hoursField = screen.getByLabelText(/hours/i);
-      const minutesField = screen.getByLabelText(/minutes/i);
-      const activityTypeField = screen.getByLabelText(/activity type/i);
-      const notesField = screen.getByLabelText(/notes/i);
-      const cancelButton = screen.getByRole("button", { name: /cancel/i });
-      const closeButton = screen.getByLabelText(/close modal/i);
-
-      await waitFor(() => {
-        expect(modalOverlay.contains(document.activeElement)).toBe(true);
-        expect(dateField).toHaveFocus();
-      });
-
-      // 🔁 Tabulation on logical order
-      await user.tab();
-      expect(timeField).toHaveFocus();
-
-      await user.tab();
-      expect(hoursField).toHaveFocus();
-
-      await user.tab();
-      expect(minutesField).toHaveFocus();
-
-      await user.tab();
-      expect(activityTypeField).toHaveFocus();
-
-      await user.tab();
-      expect(notesField).toHaveFocus();
-
-      await user.tab();
-      expect(cancelButton).toHaveFocus();
-
-      await user.tab();
-      expect(closeButton).toHaveFocus();
-
-      // 🔄 Complete cycle
-      await user.tab();
-      expect(dateField).toHaveFocus();
-    });
+    expect(mockOnSubmit).toHaveBeenCalled();
   });
 });

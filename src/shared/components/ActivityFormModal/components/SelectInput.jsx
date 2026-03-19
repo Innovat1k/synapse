@@ -36,7 +36,7 @@ export const SelectInput = ({
       onSelectionChange={(key) => onChange(key || "")}
       isDisabled={disabled}
       className="w-full"
-      // domRef={inputRef}
+      aria-label={label}
     >
       {label && (
         <Label
@@ -98,10 +98,10 @@ export const SelectInput = ({
                 px-3 py-2.5 text-slate-200 rounded-lg
                 outline-none cursor-pointer capitalize
                 transition-colors duration-100
-                data-[focused]:bg-slate-800/70
-                data-[selected]:bg-teal-900/40
-                data-[selected]:text-teal-100
-                data-[selected]:font-medium
+                data-focused:bg-slate-800/70
+                data-selected:bg-teal-900/40
+                data-selected:text-teal-100
+                data-selected:font-medium
               `}
             >
               {item.name}

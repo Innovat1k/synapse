@@ -22,6 +22,8 @@ export const usePurgeActivities = (skillId, skillName = "") => {
   // Close modal
   const closePurgeModal = () => {
     setModal({ isOpened: false, context: "confirm-step" });
+    setHasError(false);
+    setTypedSkillName("");
   };
 
   // Move to verification modal context

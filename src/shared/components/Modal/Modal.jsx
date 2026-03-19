@@ -19,6 +19,7 @@ export const Modal = ({
   size = "md",
   initialFocusRef,
   dataTestId = "modal",
+  showDescriptionInFull = false,
 }) => {
   const modalRef = useRef(null);
   const closeButtonRef = useRef(null);
@@ -31,8 +32,13 @@ export const Modal = ({
     modalRef,
     initialFocusRef || closeButtonRef,
   );
+
   useFocusTrap(isOpened && isTopModal, modalRef);
-  useKeyboardDismiss({ isOpen: isOpened, onDismiss: onClose });
+
+  useKeyboardDismiss({
+    isOpen: isOpened && isTopModal,
+    onDismiss: onClose,
+  });
 
   if (!isOpened) {
     return null;
@@ -102,7 +108,7 @@ export const Modal = ({
                 {title}
               </h2>
               {/*Hide the description in Full mode to maximize graph space */}
-              {description && !isFull && (
+              {description && (!isFull || showDescriptionInFull) && (
                 <p className="text-slate-500 text-xs mt-1 leading-relaxed">
                   {description}
                 </p>

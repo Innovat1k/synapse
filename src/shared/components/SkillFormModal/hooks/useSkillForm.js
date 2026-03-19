@@ -5,7 +5,7 @@ import { useToast } from "../../Toast/hooks/useToast";
 import {
   useIncomingSkillLinks,
   useOutgoingSkillLinks,
-} from "../../../../pages/SkillDetailPage/components/SkillLinks/hooks/useSkillLinks";
+} from "@pages/SkillDetailPage/components/SkillLinks/hooks/useSkillLinks";
 import { useActivitiesQuery } from "../../../hooks/useActivitiesQuery/useActivitiesQuery";
 
 const initialFormData = {
@@ -21,7 +21,6 @@ export const useSkillForm = ({
   mode = "edit",
   initialData,
   onSubmit,
-  onClose,
   isOpened,
 }) => {
   const [skillFormData, setSkillFormData] = useState(initialFormData);
@@ -97,12 +96,6 @@ export const useSkillForm = ({
     }));
   };
 
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
   //Form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -151,7 +144,6 @@ export const useSkillForm = ({
       handleChangeTag,
       handleChangeTrack,
       handleAddTag,
-      handleOverlayClick,
       handleRemoveTag,
       handleSubmit,
     },

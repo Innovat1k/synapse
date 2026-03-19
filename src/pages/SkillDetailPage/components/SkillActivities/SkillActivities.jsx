@@ -9,36 +9,23 @@ import {
 import { useActivityModal } from "@shared/components/ActivityFormModal/hooks/useActivityModal";
 import ActivityFormModal from "@shared/components/ActivityFormModal/ActivityFormModal";
 import { useActivitiesQuery } from "@shared/hooks/useActivitiesQuery/useActivitiesQuery";
-import {
-  formatDateShort,
-  formatDuration,
-} from "@shared/utils/utils";
+import { formatDateShort, formatDuration } from "@shared/utils/utils";
 import ButtonSpinner from "@shared/components/ButtonSpinner";
+import { AnimatePresence } from "framer-motion";
 
 function SkillActivities({ skill, skills }) {
   const { activities, isLoading } = useActivitiesQuery(skill.skill_id);
   const { modal, methods, selectedActivity, isSubmitting } = useActivityModal(
-    skill.skill_id
+    skill.skill_id,
   );
 
   // Prevent passing undefined skill
-  if (!skill) {return null;}
+  if (!skill) {
+    return null;
+  }
 
   return (
     <>
-      <ActivityFormModal
-        mode={modal.mode}
-        isOpened={modal.isOpened}
-        closeModal={methods.closeModal}
-        closeByOverlay={methods.handleCloseOverlay}
-        selectedActivity={selectedActivity}
-        skill={skill}
-        allSkills={skills}
-        isSubmitting={isSubmitting}
-        onSubmit={methods.handleSaveActivity}
-        onDelete={methods.handleDelete}
-      />
-
       <div>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 md:mb-6">
           <div className="flex flex-wrap items-center gap-3">
@@ -53,7 +40,7 @@ function SkillActivities({ skill, skills }) {
               >
                 <LuListChecks
                   size={14}
-                  className="text-slate-500 flex-shrink-0"
+                  className="text-slate-500 shrink-0"
                   aria-hidden="true"
                 />
                 <span className="text-sm font-medium text-slate-200 tabular-nums">
@@ -93,11 +80,11 @@ function SkillActivities({ skill, skills }) {
                     <table className="w-full">
                       <thead>
                         <tr className="text-left text-slate-400 border-b border-slate-800/50">
-                          <th className="py-3 px-4 min-w-[140px]">Date</th>
-                          <th className="py-3 px-4 min-w-[100px]">Duration</th>
-                          <th className="py-3 px-4 min-w-[100px]">Type</th>
+                          <th className="py-3 px-4 min-w-35">Date</th>
+                          <th className="py-3 px-4 min-w-25">Duration</th>
+                          <th className="py-3 px-4 min-w-25">Type</th>
                           <th className="py-3 px-4">Notes</th>
-                          <th className="py-3 px-4 text-right min-w-[90px]">
+                          <th className="py-3 px-4 text-right min-w-22.5">
                             Actions
                           </th>
                         </tr>
@@ -167,11 +154,11 @@ function SkillActivities({ skill, skills }) {
                       <div className="flex justify-between items-start mb-2">
                         <div>
                           <div className="flex items-center gap-1.5 text-slate-400 text-xs">
-                            <LuCalendar size={12} className="flex-shrink-0" />
+                            <LuCalendar size={12} className="shrink-0" />
                             <span>{formatDateShort(activity.logged_at)}</span>
                           </div>
                         </div>
-                        <div className="flex gap-1.5 flex-shrink-0">
+                        <div className="flex gap-1.5 shrink-0">
                           <button
                             className="text-teal-400 hover:text-teal-300 p-0.5 rounded"
                             aria-label={`Edit activity ${activity.id}`}
@@ -214,6 +201,23 @@ function SkillActivities({ skill, skills }) {
           </>
         )}
       </div>
+
+      <AnimatePresence>
+        {modal.isOpened && (
+          <ActivityFormModal
+            mode={modal.mode}
+            isOpened={true}
+            closeModal={methods.closeModal}
+            closeByOverlay={methods.handleCloseOverlay}
+            selectedActivity={selectedActivity}
+            skill={skill}
+            allSkills={skills}
+            isSubmitting={isSubmitting}
+            onSubmit={methods.handleSaveActivity}
+            onDelete={methods.handleDelete}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 }

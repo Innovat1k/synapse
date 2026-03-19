@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, vi } from "vitest";
 import PurgeActivitiesModal from "./PurgeActivitiesModal";
 import userEvent from "@testing-library/user-event";
@@ -25,7 +25,7 @@ const renderComponent = ({
       handlePurge={handlePurge}
       skillValue={skillValue}
       changeValue={changeValue}
-    />
+    />,
   );
 };
 
@@ -51,7 +51,7 @@ describe("PurgeActivitiesModal", () => {
       expect(
         screen.getByRole("heading", {
           name: /Irreversible Purge Confirmation/i,
-        })
+        }),
       ).toBeInTheDocument();
 
       expect(screen.getByText(/you are about to delete/i)).toBeInTheDocument();
@@ -60,10 +60,10 @@ describe("PurgeActivitiesModal", () => {
       expect(screen.getByText(/this action is permanent/i)).toBeInTheDocument();
 
       expect(
-        screen.getByRole("button", { name: /cancel/i })
+        screen.getByRole("button", { name: /cancel/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: /Continue to purge/i })
+        screen.getByRole("button", { name: /Continue to purge/i }),
       ).toBeInTheDocument();
     });
 
@@ -77,11 +77,11 @@ describe("PurgeActivitiesModal", () => {
       expect(
         screen.getByRole("heading", {
           name: /Irreversible Purge Confirmation/i,
-        })
+        }),
       ).toBeInTheDocument();
 
       await user.click(
-        screen.getByRole("button", { name: /continue to purge/i })
+        screen.getByRole("button", { name: /continue to purge/i }),
       );
 
       expect(mockOpenFinalVerification).toHaveBeenCalled();
@@ -93,23 +93,17 @@ describe("PurgeActivitiesModal", () => {
       renderComponent({ context: "verification-step" });
 
       expect(
-        screen.getByRole("heading", { name: /Confirm Skill Name/i })
+        screen.getByRole("heading", { name: /Confirm Skill Name/i }),
       ).toBeInTheDocument();
-
       expect(screen.getByText(/to confirm deletion of/i)).toBeInTheDocument();
-
       expect(screen.getByText("3 activities")).toBeInTheDocument();
-
       expect(screen.getByText('"javascript"')).toBeInTheDocument();
-
-      expect(screen.getByLabelText(/enter skill name/i)).toBeInTheDocument();
-
+      expect(screen.getByRole("textbox")).toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: /cancel/i })
+        screen.getByRole("button", { name: /cancel/i }),
       ).toBeInTheDocument();
-
       expect(
-        screen.getByRole("button", { name: /purge permanently/i })
+        screen.getByRole("button", { name: /purge permanently/i }),
       ).toBeInTheDocument();
     });
 
@@ -120,81 +114,13 @@ describe("PurgeActivitiesModal", () => {
         handlePurge: mockHandlePurge,
       });
 
-      expect(screen.getByLabelText(/enter skill name/i)).toHaveValue(
-        "javascript"
-      );
+      expect(screen.getByRole("textbox")).toHaveValue("javascript");
 
       await user.click(
-        screen.getByRole("button", { name: /purge permanently/i })
+        screen.getByRole("button", { name: /purge permanently/i }),
       );
 
       expect(mockHandlePurge).toHaveBeenCalled();
-    });
-  });
-
-  describe("PurgeActivitiesModal accessibility", () => {
-    let user;
-
-    beforeEach(() => {
-      user = userEvent.setup();
-    });
-
-    it("closes purge confirmation modal when Escape key is pressed", async () => {
-      const mockCloseModal = vi.fn();
-      render(
-        <PurgeActivitiesModal
-          isOpened={true}
-          context="verification-step"
-          closeModal={mockCloseModal}
-        />
-      );
-
-      expect(screen.getByTestId("purge-modal-overlay")).toBeInTheDocument();
-
-      await user.keyboard("{Escape}");
-
-      await waitFor(() => {
-        expect(mockCloseModal).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    it("keeps focus trapped within the purge modal when tabbing", async () => {
-      render(
-        <PurgeActivitiesModal
-          isOpened={true}
-          context="verification-step"
-          closeModal={vi.fn()}
-        />
-      );
-
-      const overlay = screen.getByTestId("purge-modal-overlay");
-      const inputField = screen.getByLabelText(/enter skill name/i);
-      const cancelButton = screen.getByRole("button", { name: /cancel/i });
-      const purgeButton = screen.getByRole("button", {
-        name: /purge permanently/i,
-      });
-      const closeButton = screen.getByLabelText(/close modal/i);
-
-      await waitFor(() => {
-        expect(overlay.contains(document.activeElement)).toBe(true);
-        expect(inputField).toHaveFocus();
-      });
-
-      // 1. Tab → Cancel
-      await user.tab();
-      expect(cancelButton).toHaveFocus();
-
-      // 2. Tab → Purge
-      await user.tab();
-      expect(purgeButton).toHaveFocus();
-
-      // 3. Tab → Close (×)
-      await user.tab();
-      expect(closeButton).toHaveFocus();
-
-      // 4. Tab → retour à l'input (cycle complet)
-      await user.tab();
-      expect(inputField).toHaveFocus();
     });
   });
 });

@@ -5,6 +5,7 @@ import SkillFormModal from "@shared/components/SkillFormModal/SkillFormModal";
 import SkillsTable from "./components/SkillsTable";
 import SkillsCard from "./components/SkillsCard";
 import { useOutletContext } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 
 const CATEGORIES = ["all skills", "backend", "devOps", "frontend", "others"];
 
@@ -16,15 +17,19 @@ const SkillsListPage = () => {
 
   return (
     <>
-      <SkillFormModal
-        isOpened={modal.isModalOpen}
-        initialData={selectedSkill}
-        isSubmitting={isSubmitting}
-        mode={modal.modalMode}
-        onClose={methods.closeModal}
-        onDelete={methods.handleDelete}
-        onSubmit={methods.handleSaveSkill}
-      />
+      <AnimatePresence>
+        {modal.isModalOpen && (
+          <SkillFormModal
+            isOpened={true}
+            initialData={selectedSkill}
+            isSubmitting={isSubmitting}
+            mode={modal.modalMode}
+            onClose={methods.closeModal}
+            onDelete={methods.handleDelete}
+            onSubmit={methods.handleSaveSkill}
+          />
+        )}
+      </AnimatePresence>
 
       <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-6">
         <div className="flex items-center gap-3 mb-6">
@@ -34,7 +39,7 @@ const SkillsListPage = () => {
             className="flex items-center gap-1.5 bg-slate-900/50 px-2 py-0.5 rounded-md border border-slate-800/40 translate-y-0.5"
             data-testid="skill-count-badge"
           >
-            <LuBookOpen size={14} className="text-slate-500 flex-shrink-0" />
+            <LuBookOpen size={14} className="text-slate-500 shrink-0" />
             {isLoading ? (
               <div className="h-4 w-4 bg-slate-800 animate-pulse rounded" />
             ) : (

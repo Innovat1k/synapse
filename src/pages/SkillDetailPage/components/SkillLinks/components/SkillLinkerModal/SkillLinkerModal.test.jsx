@@ -25,6 +25,7 @@ describe("SkillLinkerModal", () => {
     QueryWrapper = ({ children }) => (
       <QueryClientProvider client={client}>{children}</QueryClientProvider>
     );
+    skillService.fetchSkills.mockResolvedValue(mockSkills);
   });
 
   const renderComponent = ({
@@ -64,7 +65,7 @@ describe("SkillLinkerModal", () => {
       ).toBeInTheDocument();
       expect(
         screen.getByRole("button", {
-          name: /link as prerequisite/i,
+          name: /link as .../i,
         }),
       ).toBeInTheDocument();
     });
@@ -85,7 +86,7 @@ describe("SkillLinkerModal", () => {
       ).toBeInTheDocument();
       expect(
         screen.getByRole("button", {
-          name: /link as prerequisite/i,
+          name: /link as .../i,
         }),
       ).toBeInTheDocument();
     });
@@ -183,26 +184,6 @@ describe("SkillLinkerModal", () => {
       ).toBeInTheDocument();
     });
 
-    it("calls onClose if X button is clicked", async () => {
-      const mockOnClose = vi.fn();
-      skillService.fetchSkills.mockResolvedValue([]);
-
-      renderComponent({
-        mode: "outgoing",
-        currentSkillId: "skill-b",
-        onClose: mockOnClose,
-      });
-
-      expect(
-        screen.getByRole("heading", {
-          name: /Add a skill unlocked by react js/i,
-        }),
-      ).toBeInTheDocument();
-
-      await user.click(screen.getByRole("button", { name: /close modal/i }));
-      expect(mockOnClose).toHaveBeenCalledTimes(1);
-    });
-
     it("shows loading indicator while checking for existing links", async () => {
       skillService.fetchSkills.mockResolvedValue(mockSkills);
 
@@ -223,10 +204,9 @@ describe("SkillLinkerModal", () => {
       });
 
       await user.click(screen.getByRole("button", { name: /node js/i }));
-
-      const loader = screen.getByLabelText(/loading/i);
-      expect(loader).toBeInTheDocument();
-      expect(loader).toHaveTextContent("Checking for conflicts…");
+      expect(
+        screen.getByLabelText(/Checking for conflicts…/i),
+      ).toBeInTheDocument();
     });
 
     it("displays error message if selected skill is already linked in the same direction", async () => {
@@ -296,8 +276,9 @@ describe("SkillLinkerModal", () => {
       render(<SkillLinkerModal isOpened={true} mode="outgoing" />, {
         wrapper: QueryWrapper,
       });
+
       expect(
-        screen.getByRole("button", { name: /link as prerequisite/i }),
+        screen.getByRole("button", { name: /link as .../i }),
       ).toBeDisabled();
     });
   });

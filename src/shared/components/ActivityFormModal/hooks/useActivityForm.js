@@ -49,12 +49,15 @@ export const useActivityForm = ({
   });
 
   //
-const initialTouchedState = useMemo(() => ({
-  skill_id: false,
-  logged_at: false,
-  duration: false,
-  activity_type: false,
-}), []);
+  const initialTouchedState = useMemo(
+    () => ({
+      skill_id: false,
+      logged_at: false,
+      duration: false,
+      activity_type: false,
+    }),
+    [],
+  );
 
   const [touched, setTouched] = useState(initialTouchedState);
 
@@ -80,7 +83,9 @@ const initialTouchedState = useMemo(() => ({
 
   // 2. Initialize data when modal get opened
   useEffect(() => {
-    if (!isOpened) {return;}
+    if (!isOpened) {
+      return;
+    }
 
     if (mode === "create") {
       setActivityData({
@@ -142,6 +147,7 @@ const initialTouchedState = useMemo(() => ({
 
       // Priority: selected_skill > value from activityData
       skill_id: selected_skill?.skill_id || activityData.skill_id,
+      track_id: selected_skill?.track_id || "default-track",
       logged_at: isoLoggedAt,
       duration_minutes: formatMinutes(durationData),
     };
@@ -149,7 +155,9 @@ const initialTouchedState = useMemo(() => ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!isFormValid) {return;}
+    if (!isFormValid) {
+      return;
+    }
 
     onSubmit({
       ...(initialData?.id ? { id: initialData.id } : {}),

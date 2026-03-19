@@ -69,14 +69,6 @@ const Dashboard = () => {
         openSkillModal={skillModal.methods.openCreateModal}
       />
 
-      <SkillFormModal
-        isOpened={skillModal.modal.isModalOpen}
-        mode={skillModal.modal.modalMode}
-        isSubmitting={skillModal.isSubmitting}
-        onClose={skillModal.methods.closeModal}
-        onSubmit={skillModal.methods.handleSaveSkill}
-      />
-
       <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-slate-100">Dashboard</h1>
@@ -310,6 +302,16 @@ const Dashboard = () => {
       </div>
 
       <AnimatePresence>
+        {skillModal.modal.isModalOpen && (
+          <SkillFormModal
+            isOpened={true}
+            mode={skillModal.modal.modalMode}
+            isSubmitting={skillModal.isSubmitting}
+            onClose={skillModal.methods.closeModal}
+            onSubmit={skillModal.methods.handleSaveSkill}
+          />
+        )}
+
         {isFullscreenGraph && (
           <Modal
             isOpened={isFullscreenGraph}

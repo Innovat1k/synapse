@@ -11,7 +11,9 @@ export const fetchActivitiesBySkill = async (skillId) => {
       .eq("skill_id", skillId)
       .order("logged_at", { ascending: false });
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
     return data;
   } catch {
     // TODO: log to monitoring service (e.g., Sentry)
@@ -26,7 +28,9 @@ export const createActivity = async (activityData) => {
     .insert(activityData)
     .select();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data[0];
 };
 
@@ -38,7 +42,9 @@ export const updateActivity = async (id, updates) => {
     .eq("id", id)
     .select();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data[0];
 };
 
@@ -46,7 +52,9 @@ export const updateActivity = async (id, updates) => {
 export const deleteActivity = async (id) => {
   const { error } = await supabase.from(TABLE).delete().eq("id", id);
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return true;
 };
 
@@ -54,6 +62,8 @@ export const deleteActivity = async (id) => {
 export const purgeActivitiesBySkill = async (skillId) => {
   const { error } = await supabase.from(TABLE).delete().eq("skill_id", skillId);
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return true;
 };
