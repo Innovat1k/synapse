@@ -5,8 +5,7 @@ import { render } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
 import * as routerDom from "react-router-dom";
-import SkillDetailPage from "@/pages/SkillDetailPage/SkillDetailPage";
-import { mockSkills } from "./mockData";
+import SkillDetailPage from "@pages/SkillDetailPage/SkillDetailPage";
 
 // Mocks useOutletContext from React Router for testing nested route contexts
 export const mockOutletContext = (contextValue) => {
@@ -26,7 +25,7 @@ export const renderSkillDetailPage = (skillId = "skill-react") => {
     },
   });
 
-  mockOutletContext({ skills: mockSkills, isLoading: false });
+  // mockOutletContext({ skills: mockSkills, isLoading: false });
 
   const wrapper = ({ children }) => (
     <QueryClientProvider client={queryClient}>

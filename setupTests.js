@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom";
 import { afterAll, afterEach, beforeAll, beforeEach, vi } from "vitest";
-import { server } from "./src/mocks/server";
+import { server } from "@mocks/server";
+import { resetAllStores } from "./src/mocks/stores";
 
 // Clear mocks before test
 beforeEach(() => {
@@ -25,15 +26,15 @@ window.ResizeObserver = class {
 
 beforeAll(() => {
   server.listen({
-    onUnhandledRequest: "error", // Avertit si requête non mockée
+    onUnhandledRequest: "error",
   });
 });
 
 afterEach(() => {
   server.resetHandlers();
+  resetAllStores();
 });
 
-// Arrêter proprement à la fin
 afterAll(() => {
   server.close();
 });

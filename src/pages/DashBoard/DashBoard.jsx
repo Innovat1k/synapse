@@ -77,7 +77,7 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Column 1 */}
           <div className="space-y-6">
-            <Card>
+            <Card dataTestId="current-focus">
               <h2 className="text-lg font-semibold text-slate-100 mb-4">
                 Current Focus
               </h2>
@@ -184,7 +184,10 @@ const Dashboard = () => {
                     className="text-slate-500 shrink-0"
                     aria-hidden="true"
                   />
-                  <span className="text-sm font-medium text-slate-200 tabular-nums">
+                  <span
+                    className="text-sm font-medium text-slate-200 tabular-nums"
+                    data-testid="skill-count-badge"
+                  >
                     {filtered.skills.length < 10
                       ? `0${filtered.skills.length}`
                       : filtered.skills.length}

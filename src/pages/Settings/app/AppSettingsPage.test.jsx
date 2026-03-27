@@ -84,7 +84,7 @@ describe("AppSettingsPage", () => {
 
       const disabledCard = screen.getByText(/Skill Categories/i).closest("div");
       expect(disabledCard).toHaveAttribute("aria-disabled", "true");
-      expect(disabledCard).not.toHaveAttribute("tabIndex"); // pas focusable
+      expect(disabledCard).not.toHaveAttribute("tabIndex");
     });
   });
 });

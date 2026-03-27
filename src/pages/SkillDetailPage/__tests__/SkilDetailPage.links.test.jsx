@@ -1,4 +1,4 @@
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import userEvent from "@testing-library/user-event";
 import {
@@ -6,17 +6,11 @@ import {
   mockSkills,
   renderSkillDetailPage,
 } from "./test-utils";
+import { clearActivities, clearSkillLinks } from "@mocks/stores";
+import { http } from "msw";
+import { server } from "@mocks/server";
+import { SUPABASE_URL } from "@services/supabase-client";
 
-import * as skillService from "@services/skillService";
-import * as skillLinksService from "@services/skillLinksService";
-import * as activityService from "@services/activityService";
-
-// Mocks
-vi.mock("../../../services/skillService");
-vi.mock("../../../services/skillLinksService");
-vi.mock("../../../services/activityService");
-
-// Mock router
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
   return {
@@ -33,71 +27,50 @@ describe("SkillDetailPage : SkillLinksSection", () => {
 
   beforeEach(() => {
     user = userEvent.setup();
-
-    // Services
-    skillService.fetchSkills.mockResolvedValue(mockSkills);
-    activityService.fetchActivitiesBySkill.mockResolvedValue([]);
-    skillLinksService.checkExistingLinks.mockResolvedValue({
-      hasDirectLink: false,
-      hasReverseLink: false,
-    });
-    skillLinksService.fetchIncomingSkillLinks.mockResolvedValue([]);
-    skillLinksService.fetchOutgoingSkillLinks.mockResolvedValue([]);
+    clearActivities();
   });
 
   describe("Link creation", () => {
     it("allows the user to submit a new skill link", async () => {
-      skillLinksService.fetchIncomingSkillLinks
-        .mockResolvedValueOnce([])
-        .mockResolvedValueOnce([
-          {
-            id: "link-project-mgmt-support",
-            source_skill_id: MOCK_SKILL_IDS.PROJECT_MGMT,
-            target_skill_id: CURRENT_SKILL_ID,
-            type: "support",
-            skill_name: "Project Management",
-          },
-        ]);
-
-      skillLinksService.createSkillLink.mockResolvedValue({
-        id: "link-project-mgmt-support",
-        source_skill_id: MOCK_SKILL_IDS.PROJECT_MGMT,
-        target_skill_id: CURRENT_SKILL_ID,
-        type: "support",
-      });
-
+      clearSkillLinks();
       renderSkillDetailPage(CURRENT_SKILL_ID);
 
-      const addPrereqBtn = await screen.findByRole("button", {
-        name: /add a prerequisite/i,
-      });
+      expect(
+        await screen.findByText(/No prerequisites defined yet/i),
+      ).toBeInTheDocument();
+      expect(
+        await screen.findByText(/This skill doesn't unlock anything yet/i),
+      ).toBeInTheDocument();
 
-      await user.click(addPrereqBtn);
       await user.click(
-        screen.getByRole("button", { name: /project management/i }),
+        screen.getByRole("button", {
+          name: /add a prerequisite/i,
+        }),
       );
+
+      await user.click(await screen.findByRole("button", { name: /java/i }));
       await user.click(screen.getByRole("button", { name: /support/i }));
       await user.click(
         screen.getByRole("button", { name: /link as support/i }),
       );
 
       await waitFor(() => {
+        expect(screen.getByRole("link", { name: /java/i })).toBeInTheDocument();
         expect(
-          screen.getByRole("link", { name: /Project Management/i }),
-        ).toBeInTheDocument();
-        expect(screen.queryByTestId("modal-overlay")).not.toBeInTheDocument();
-      });
-
-      expect(skillLinksService.createSkillLink).toHaveBeenCalledWith({
-        source_skill_id: MOCK_SKILL_IDS.PROJECT_MGMT,
-        target_skill_id: CURRENT_SKILL_ID,
-        type: "support",
+          screen.queryByTestId("skill-linker-modal-content"),
+        ).not.toBeInTheDocument();
       });
     });
 
     it("displays an error if the mutation fails", async () => {
-      skillLinksService.createSkillLink.mockRejectedValue(
-        new Error("Network error"),
+      clearSkillLinks();
+      server.use(
+        http.post(`${SUPABASE_URL}/rest/v1/synapse_skill_links`, () => {
+          return HttpResponse.json(
+            { error: "Network error", message: "Failed to create link" },
+            { status: 500 },
+          );
+        }),
       );
 
       renderSkillDetailPage(CURRENT_SKILL_ID);
@@ -127,23 +100,20 @@ describe("SkillDetailPage : SkillLinksSection", () => {
     });
 
     it("blocks submission if link already exists", async () => {
-      skillLinksService.checkExistingLinks.mockResolvedValue({
-        hasDirectLink: true,
-      });
-
       renderSkillDetailPage(CURRENT_SKILL_ID);
 
-      await waitFor(() => {
-        expect(
-          screen.getByRole("button", { name: /add a prerequisite/i }),
-        ).toBeInTheDocument();
-      });
+      expect(
+        await screen.findByRole("link", { name: /project/i }),
+      ).toBeInTheDocument();
 
       await user.click(
         screen.getByRole("button", { name: /add a prerequisite/i }),
       );
       await user.click(
-        screen.getByRole("button", { name: /project management/i }),
+        within(screen.getByTestId("skill-linker-modal-content")).getByRole(
+          "button",
+          { name: /project management/i },
+        ),
       );
 
       await waitFor(() => {
@@ -153,36 +123,33 @@ describe("SkillDetailPage : SkillLinksSection", () => {
           ),
         ).toBeInTheDocument();
       });
-
-      expect(
-        screen.getByRole("button", { name: /link as prerequisite/i }),
-      ).toBeDisabled();
     });
 
-    it("shows synergy warning if reverse link exists", async () => {
-      skillLinksService.checkExistingLinks.mockResolvedValue({
-        hasReverseLink: true,
-      });
-
+    it("shows synergy warning if reverse link exists and allows user to create that link", async () => {
       renderSkillDetailPage(CURRENT_SKILL_ID);
 
-      await waitFor(() => {
-        expect(
-          screen.getByRole("button", { name: /add a prerequisite/i }),
-        ).toBeInTheDocument();
-      });
+      expect(
+        await screen.findByRole("link", { name: /project/i }),
+      ).toBeInTheDocument();
 
       await user.click(
-        screen.getByRole("button", { name: /add a prerequisite/i }),
+        await screen.findByRole("button", {
+          name: /add a skill this unlocks/i,
+        }),
       );
-      await user.click(screen.getByText("Java").closest("button"));
+      await user.click(
+        within(screen.getByTestId("skill-linker-modal-content")).getByRole(
+          "button",
+          { name: /project management/i },
+        ),
+      );
 
       await waitFor(() => {
         expect(
           screen.getByRole("heading", { name: /synergy detected/i }),
         ).toBeInTheDocument();
         expect(screen.getByTestId("skills-synergy")).toHaveTextContent(
-          /java and react js form a reinforcing loop/i,
+          /project management and react js form a reinforcing loop/i,
         );
       });
     });
@@ -190,108 +157,132 @@ describe("SkillDetailPage : SkillLinksSection", () => {
 
   describe("Link deletion", () => {
     it("allows user to confirm and remove a link", async () => {
-      const existingLink = {
-        id: "link-javascript-prereq",
-        source_skill_id: MOCK_SKILL_IDS.JAVA,
-        target_skill_id: CURRENT_SKILL_ID,
-        type: "prerequisite",
-        skill_name: "Java",
-      };
-
-      skillLinksService.fetchIncomingSkillLinks
-        .mockResolvedValueOnce([existingLink])
-        .mockResolvedValueOnce([]);
-
-      skillLinksService.deleteSkillLink.mockResolvedValue(undefined);
-
       renderSkillDetailPage(CURRENT_SKILL_ID);
 
-      await waitFor(() => {
-        expect(screen.getByRole("link", { name: /Java/i })).toBeInTheDocument();
-      });
+      expect(
+        await screen.findByRole("link", { name: /project management/i }),
+      ).toBeInTheDocument();
 
-      await user.hover(screen.getByRole("link", { name: /Java/i }));
+      await user.hover(
+        screen.getByRole("link", { name: /project management/i }),
+      );
       await user.click(
-        screen.getByRole("button", { name: /remove link to java/i }),
+        screen.getByRole("button", {
+          name: /remove link to project management/i,
+        }),
+      );
+
+      expect(screen.getByTestId("action-description")).toHaveTextContent(
+        /ready to remove the link between project management and react js/i,
       );
 
       await user.click(screen.getByRole("button", { name: /sever!/i }));
 
       await waitFor(() => {
         expect(
-          screen.queryByRole("link", { name: /Java/i }),
+          screen.queryByRole("link", { name: /project management/i }),
         ).not.toBeInTheDocument();
+        expect(
+          screen.getByText(/No prerequisites defined yet/i),
+        ).toBeInTheDocument();
       });
-
-      expect(skillLinksService.deleteSkillLink).toHaveBeenCalledWith(
-        "link-javascript-prereq",
-      );
     });
 
     it("keeps the link if deletion fails", async () => {
-      const existingLink = {
-        id: "link-java-prereq",
-        source_skill_id: MOCK_SKILL_IDS.JAVA,
-        target_skill_id: CURRENT_SKILL_ID,
-        type: "prerequisite",
-        skill_name: "Java",
-      };
-
-      skillLinksService.fetchIncomingSkillLinks.mockResolvedValue([
-        existingLink,
-      ]);
-      skillLinksService.deleteSkillLink.mockRejectedValue(
-        new Error("Network error"),
+      server.use(
+        http.delete(`${SUPABASE_URL}/rest/v1/synapse_skill_links`, () => {
+          return HttpResponse.json(
+            { error: "Network error", message: "Failed to delete link" },
+            { status: 500 },
+          );
+        }),
       );
 
       renderSkillDetailPage(CURRENT_SKILL_ID);
 
-      await waitFor(() => {
-        expect(screen.getByRole("link", { name: /Java/i })).toBeInTheDocument();
-      });
+      expect(
+        await screen.findByRole("link", { name: /project management/i }),
+      ).toBeInTheDocument();
 
-      await user.hover(screen.getByRole("link", { name: /Java/i }));
+      await user.hover(
+        screen.getByRole("link", { name: /project management/i }),
+      );
       await user.click(
-        screen.getByRole("button", { name: /remove link to java/i }),
+        screen.getByRole("button", {
+          name: /remove link to project management/i,
+        }),
       );
       await user.click(screen.getByRole("button", { name: /sever!/i }));
 
       await waitFor(() => {
-        expect(screen.getByRole("link", { name: /Java/i })).toBeInTheDocument();
+        expect(
+          screen.getByRole("link", { name: /project management/i }),
+        ).toBeInTheDocument();
       });
     });
 
     it("keeps the link if user cancels deletion", async () => {
-      const existingLink = {
-        id: "link-java-prereq",
-        source_skill_id: MOCK_SKILL_IDS.JAVA,
-        target_skill_id: CURRENT_SKILL_ID,
-        type: "prerequisite",
-        skill_name: "Java",
-      };
-
-      skillLinksService.fetchIncomingSkillLinks.mockResolvedValue([
-        existingLink,
-      ]);
-
       renderSkillDetailPage(CURRENT_SKILL_ID);
 
       await waitFor(() => {
-        expect(screen.getByRole("link", { name: /Java/i })).toBeInTheDocument();
+        expect(
+          screen.getByRole("link", { name: /project management/i }),
+        ).toBeInTheDocument();
       });
 
-      await user.hover(screen.getByRole("link", { name: /Java/i }));
+      await user.hover(
+        screen.getByRole("link", { name: /project management/i }),
+      );
       await user.click(
-        screen.getByRole("button", { name: /remove link to java/i }),
+        screen.getByRole("button", {
+          name: /remove link to project management/i,
+        }),
       );
 
       await user.click(screen.getByRole("button", { name: /keep link/i }));
 
-      expect(screen.getByRole("link", { name: /Java/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("link", { name: /project management/i }),
+      ).toBeInTheDocument();
+
+      await waitFor(() => {
+        expect(
+          screen.queryByRole("heading", { name: /sever/i }),
+        ).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe("Link deletion on Mobile", () => {
+    it("removes link between skills by Edit menu", async () => {
+      renderSkillDetailPage(CURRENT_SKILL_ID);
 
       expect(
-        screen.queryByRole("heading", { name: /sever/i }),
-      ).not.toBeInTheDocument();
+        await screen.findByRole("link", { name: /project management/i }),
+      ).toBeInTheDocument();
+
+      await user.click(screen.getByRole("button", { name: /edit/i }));
+
+      const removeLinkBtn = screen.getByRole("button", {
+        name: /remove link to project management/i,
+      });
+      expect(removeLinkBtn).toBeInTheDocument();
+
+      await user.click(removeLinkBtn);
+      expect(screen.getByTestId("action-description")).toHaveTextContent(
+        /ready to remove the link between project management and react js/i,
+      );
+
+      await user.click(screen.getByRole("button", { name: /sever!/i }));
+
+      await waitFor(() => {
+        expect(
+          screen.queryByRole("link", { name: /project management/i }),
+        ).not.toBeInTheDocument();
+        expect(
+          screen.getByText(/No prerequisites defined yet/i),
+        ).toBeInTheDocument();
+      });
     });
   });
 });

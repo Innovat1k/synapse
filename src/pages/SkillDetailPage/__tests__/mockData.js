@@ -24,7 +24,7 @@ export const mockSkills = [
     level: 1,
     description: "Exploring the fundamentals of Java development.",
     tags: ["programming"],
-    track_id: "arc-icte",
+    track_id: "computer-science",
   },
   {
     name: "Project Management",
@@ -33,7 +33,7 @@ export const mockSkills = [
     level: 3,
     description: "Managing small agile projects and coordinating tasks.",
     tags: ["organization"],
-    track_id: "arc-icte",
+    track_id: "computer-science",
   },
 ];
 

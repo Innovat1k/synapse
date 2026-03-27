@@ -4,6 +4,7 @@ import { supabase } from "./supabase-client";
  * Fetch incoming skill links (where skillId is the TARGET)
  */
 export const fetchIncomingSkillLinks = async (skillId) => {
+  console.log("Fetching incoming links for:", skillId);
   const { data, error } = await supabase
     .from("synapse_skill_links")
     .select(

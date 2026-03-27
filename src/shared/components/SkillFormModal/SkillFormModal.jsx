@@ -206,6 +206,7 @@ const SkillFormModal = ({
                   value={skillFormData.category}
                   onChange={methods.handleChange}
                   required
+                  data-testid="category-input"
                 />
               </div>
 
@@ -257,13 +258,14 @@ const SkillFormModal = ({
                   />
                   <button
                     type="button"
+                    aria-label="Add tag"
                     onClick={methods.handleAddTag}
                     className="px-3 py-2.5 bg-teal-400 hover:bg-teal-500 text-black rounded-lg flex items-center justify-center transition-colors"
                   >
                     <LuPlus size={16} />
                   </button>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2" data-testid="skill-tags">
                   {skillFormData.tags.map((tag) => (
                     <span
                       key={tag}

@@ -24,7 +24,7 @@ describe("modals", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByRole("heading", { level: 2, name: /add new skill/i })
+          screen.getByRole("heading", { level: 2, name: /add new skill/i }),
         ).toBeInTheDocument();
         expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/category/i)).toBeInTheDocument();
@@ -49,7 +49,7 @@ describe("modals", () => {
 
       await waitFor(() => {
         expect(
-          screen.queryByRole("heading", { level: 2, name: /add new skill/i })
+          screen.queryByRole("heading", { level: 2, name: /add new skill/i }),
         ).not.toBeInTheDocument();
       });
     });
@@ -64,21 +64,23 @@ describe("modals", () => {
           "button",
           {
             name: /Edit skill Digital Painting/i,
-          }
-        )
+          },
+        ),
       );
 
-      const editModal = within(await screen.findByTestId(/modal-overlay/i));
+      const editModal = within(
+        await screen.findByTestId(/skill-modal-content/i),
+      );
 
       expect(
-        screen.getByRole("heading", { level: 2, name: /edit skill/i })
+        screen.getByRole("heading", { name: /edit skill/i }),
       ).toBeInTheDocument();
 
       expect(editModal.getByLabelText(/name/i)).toHaveValue("Digital Painting");
       expect(editModal.getByLabelText(/category/i)).toHaveValue("art");
       expect(editModal.getByLabelText(/level/i)).toHaveValue("3");
       expect(editModal.getByLabelText(/description/i)).toHaveValue(
-        "Practicing digital illustration using drawing tablets."
+        "Practicing digital illustration using drawing tablets.",
       );
 
       const skill_tags = within(editModal.getByTestId("skill-tags"));
@@ -88,13 +90,13 @@ describe("modals", () => {
       expect(
         editModal.getByRole("button", {
           name: /update skill/i,
-        })
+        }),
       ).toBeInTheDocument();
 
       expect(
         editModal.getByRole("button", {
           name: /cancel/i,
-        })
+        }),
       ).toBeInTheDocument();
     });
 
@@ -106,19 +108,19 @@ describe("modals", () => {
           "button",
           {
             name: /edit skill digital painting/i,
-          }
-        )
+          },
+        ),
       );
 
       await user.click(
         screen.getByRole("button", {
           name: /cancel/i,
-        })
+        }),
       );
 
       await waitFor(() => {
         expect(
-          screen.queryByRole("heading", { level: 2, name: /edit skill/i })
+          screen.queryByRole("heading", { level: 2, name: /edit skill/i }),
         ).not.toBeInTheDocument();
       });
     });
@@ -129,34 +131,34 @@ describe("modals", () => {
       renderComponent(<SkillsListPage />, { skills: mockSkills });
 
       const desktop_layout = within(
-        await screen.findByTestId("list-layout-desktop")
+        await screen.findByTestId("list-layout-desktop"),
       );
 
       await user.click(
         desktop_layout.getByRole("button", {
           name: /delete skill project management/i,
-        })
+        }),
       );
 
       await waitFor(() => {
         expect(
-          screen.getByRole("heading", { level: 2, name: /confirm deletion/i })
+          screen.getByRole("heading", { level: 2, name: /confirm deletion/i }),
         );
 
         const paragraph = screen.getByText(/are you sure/i);
         expect(paragraph).toHaveTextContent(
-          /delete\s+"project management"\s*\?/i
+          /delete\s+"project management"\s*\?/i,
         );
 
         expect(
           screen.getByRole("button", {
             name: /keep it/i,
-          })
+          }),
         ).toBeInTheDocument();
         expect(
           screen.getByRole("button", {
             name: /delete permanently/i,
-          })
+          }),
         ).toBeInTheDocument();
       });
     });
@@ -167,8 +169,8 @@ describe("modals", () => {
       await user.click(
         within(await screen.findByTestId("list-layout-desktop")).getByRole(
           "button",
-          { name: /delete skill java/i }
-        )
+          { name: /delete skill java/i },
+        ),
       );
 
       expect(screen.getByText(/confirm deletion/i)).toBeInTheDocument();
@@ -177,7 +179,7 @@ describe("modals", () => {
 
       await waitFor(() => {
         expect(
-          screen.queryByRole("heading", { name: /confirm deletion/i })
+          screen.queryByRole("heading", { name: /confirm deletion/i }),
         ).not.toBeInTheDocument();
       });
 

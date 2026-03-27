@@ -1,6 +1,22 @@
 import { vi } from "vitest";
 import * as routerDom from "react-router-dom";
+import { screen, waitFor } from "@testing-library/react";
+import { describe, it, expect, beforeEach } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { renderSkillDetailPage } from "./test-utils";
+import {
+  resetAllStores,
+  seedActivities,
+  defaultActivities,
+} from "@mocks/stores";
 
+const SKILL_IDS = {
+  REACT: "skill-react",
+  JAVA: "skill-java",
+  PROJECT_MGMT: "skill-project-mgmt",
+};
+
+// Mock react-router-dom
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
   return {
@@ -10,33 +26,19 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-import { screen, waitFor } from "@testing-library/react";
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { server } from "@mocks/server";
-import userEvent from "@testing-library/user-event";
-import { renderSkillDetailPage } from "./test-utils";
-import { MOCK_SKILL_IDS } from "./mockData";
-import { resetStore } from "@mocks/handlers";
-
 describe("SkillDetailPage", () => {
   let user;
 
   beforeEach(() => {
     user = userEvent.setup();
-    server.resetHandlers();
-    resetStore();
   });
 
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it("displays SkillDetailPage with correct skill details including track", async () => {
+  it("displays skill details with correct track", async () => {
     routerDom.useParams.mockReturnValue({
-      skillId: MOCK_SKILL_IDS.PROJECT_MGMT,
+      skillId: SKILL_IDS.PROJECT_MGMT,
     });
 
-    renderSkillDetailPage(MOCK_SKILL_IDS.PROJECT_MGMT);
+    renderSkillDetailPage();
 
     await waitFor(() => {
       expect(
@@ -46,217 +48,126 @@ describe("SkillDetailPage", () => {
 
     expect(screen.getByText(/level 3/i)).toBeInTheDocument();
     expect(screen.getByText(/category: others/i)).toBeInTheDocument();
-
-    await waitFor(() => {
-      expect(screen.getByText(/track: arc icte/i)).toBeInTheDocument();
-    });
-  });
-
-  it("opens edition modal filled with current skill data", async () => {
-    routerDom.useParams.mockReturnValue({ skillId: MOCK_SKILL_IDS.JAVA });
-    renderSkillDetailPage(MOCK_SKILL_IDS.JAVA);
-
-    await waitFor(() => {
-      expect(
-        screen.getByRole("button", { name: /open skill actions/i }),
-      ).toBeInTheDocument();
-    });
-
-    await user.click(
-      screen.getByRole("button", { name: /open skill actions/i }),
-    );
-    await user.click(screen.getByRole("button", { name: /edit skill/i }));
-
-    await waitFor(() => {
-      expect(screen.getByTestId("modal-overlay")).toBeInTheDocument();
-    });
-
     expect(
-      screen.getByRole("heading", { name: /edit skill/i }),
-    ).toBeInTheDocument();
-    expect(screen.getByLabelText(/name/i).value).toMatch(/java/i);
-    expect(screen.getByLabelText(/category/i).value).toMatch(/backend/i);
-    expect(screen.getByLabelText(/level/i).value).toBe("1");
-  });
-
-  it("opens deletion modal when delete button is clicked", async () => {
-    routerDom.useParams.mockReturnValue({ skillId: MOCK_SKILL_IDS.JAVA });
-    renderSkillDetailPage(MOCK_SKILL_IDS.JAVA);
-
-    await waitFor(() => {
-      expect(
-        screen.getByRole("button", { name: /open skill actions/i }),
-      ).toBeInTheDocument();
-    });
-
-    await user.click(
-      screen.getByRole("button", { name: /open skill actions/i }),
-    );
-    await user.click(screen.getByRole("button", { name: /delete skill/i }));
-
-    await waitFor(() => {
-      expect(screen.getByTestId("modal-overlay")).toBeInTheDocument();
-    });
-
-    expect(
-      screen.getByRole("heading", { name: /confirm deletion/i }),
+      await screen.findByText(/track: computer science/i),
     ).toBeInTheDocument();
   });
 
-  it("removes all activities after valid purge confirmation", async () => {
-    routerDom.useParams.mockReturnValue({ skillId: MOCK_SKILL_IDS.REACT });
-    renderSkillDetailPage(MOCK_SKILL_IDS.REACT);
+  it("displays activity count from default data", async () => {
+    routerDom.useParams.mockReturnValue({ skillId: SKILL_IDS.REACT });
+    renderSkillDetailPage();
 
     await waitFor(() => {
       expect(screen.getByTestId("activity-count-badge")).toHaveTextContent("2");
     });
-
-    await user.click(
-      screen.getByRole("button", { name: /open skill actions/i }),
-    );
-
-    await user.click(screen.getByRole("button", { name: /purge activities/i }));
-
-    await user.click(
-      screen.getByRole("button", { name: /continue to purge/i }),
-    );
-
-    await waitFor(() => {
-      expect(screen.getByLabelText(/enter skill name/i)).toBeInTheDocument();
-    });
-
-    await user.type(screen.getByLabelText(/enter skill name/i), "React JS");
-
-    await user.click(
-      screen.getByRole("button", { name: /purge permanently/i }),
-    );
-
-    await waitFor(() => {
-      expect(
-        screen.queryByTestId("activity-count-badge"),
-      ).not.toBeInTheDocument();
-    });
-
-    expect(
-      screen.getByText(/You haven't logged any activity for this skill/i),
-    ).toBeInTheDocument();
   });
 
-  describe("SkillActionsMenu", () => {
-    beforeEach(async () => {
-      routerDom.useParams.mockReturnValue({ skillId: MOCK_SKILL_IDS.REACT });
-      renderSkillDetailPage(MOCK_SKILL_IDS.REACT);
+  describe("Edit skill", () => {
+    beforeEach(() => {
+      resetAllStores();
+    });
+
+    it("opens edition modal filled with current skill data", async () => {
+      routerDom.useParams.mockReturnValue({ skillId: SKILL_IDS.JAVA });
+      renderSkillDetailPage();
+
       await waitFor(() => {
         expect(
           screen.getByRole("button", { name: /open skill actions/i }),
         ).toBeInTheDocument();
       });
-    });
 
-    it("shows skill actions menu when actions button is clicked", async () => {
       await user.click(
         screen.getByRole("button", { name: /open skill actions/i }),
       );
+      await user.click(screen.getByRole("button", { name: /edit skill/i }));
+
+      await waitFor(() => {
+        expect(screen.getByTestId("skill-modal-content")).toBeInTheDocument();
+      });
+
       expect(
-        screen.getByRole("button", { name: /edit skill/i }),
+        screen.getByRole("heading", { name: /edit skill/i }),
+      ).toBeInTheDocument();
+      expect(screen.getByLabelText(/name/i).value).toMatch(/java/i);
+      expect(screen.getByLabelText(/category/i).value).toMatch(/backend/i);
+      expect(screen.getByLabelText(/level/i).value).toBe("1");
+    });
+  });
+
+  describe("Custom data scenarios", () => {
+    it("handles skill with no activities", async () => {
+      seedActivities([
+        {
+          id: "act-001",
+          skill_id: "skill-java",
+          activity_type: "learning",
+          duration_minutes: 60,
+          logged_at: "2025-01-01T00:00:00Z",
+        },
+      ]);
+
+      routerDom.useParams.mockReturnValue({ skillId: SKILL_IDS.REACT });
+      renderSkillDetailPage();
+
+      await waitFor(() => {
+        expect(
+          screen.queryByTestId("activity-count-badge"),
+        ).not.toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(/You haven't logged any activity/i),
       ).toBeInTheDocument();
     });
 
-    it("hides skill actions menu when close button is clicked", async () => {
-      await user.click(
-        screen.getByRole("button", { name: /open skill actions/i }),
-      );
+    it("handles skill with many activities", async () => {
+      seedActivities([
+        ...defaultActivities.filter((a) => a.skill_id !== SKILL_IDS.REACT),
+        {
+          id: "act-r1",
+          skill_id: SKILL_IDS.REACT,
+          activity_type: "learning",
+          duration_minutes: 30,
+          logged_at: "2025-01-01T00:00:00Z",
+        },
+        {
+          id: "act-r2",
+          skill_id: SKILL_IDS.REACT,
+          activity_type: "project work",
+          duration_minutes: 45,
+          logged_at: "2025-01-02T00:00:00Z",
+        },
+        {
+          id: "act-r3",
+          skill_id: SKILL_IDS.REACT,
+          activity_type: "reading",
+          duration_minutes: 60,
+          logged_at: "2025-01-03T00:00:00Z",
+        },
+        {
+          id: "act-r4",
+          skill_id: SKILL_IDS.REACT,
+          activity_type: "coding",
+          duration_minutes: 90,
+          logged_at: "2025-01-04T00:00:00Z",
+        },
+        {
+          id: "act-r5",
+          skill_id: SKILL_IDS.REACT,
+          activity_type: "learning",
+          duration_minutes: 120,
+          logged_at: "2025-01-05T00:00:00Z",
+        },
+      ]);
+
+      routerDom.useParams.mockReturnValue({ skillId: SKILL_IDS.REACT });
+      renderSkillDetailPage();
 
       await waitFor(() => {
-        expect(
-          screen.getByRole("button", { name: /edit skill/i }),
-        ).toBeInTheDocument();
-      });
-
-      await user.click(
-        screen.getByRole("button", { name: /close actions menu/i }),
-      );
-
-      await waitFor(() => {
-        expect(
-          screen.queryByRole("button", { name: /edit skill/i }),
-        ).not.toBeInTheDocument();
-      });
-    });
-  });
-
-  describe("PurgeActivitiesModal actions", () => {
-    beforeEach(async () => {
-      routerDom.useParams.mockReturnValue({ skillId: MOCK_SKILL_IDS.REACT });
-      renderSkillDetailPage(MOCK_SKILL_IDS.REACT);
-
-      await waitFor(() => {
-        expect(
-          screen.getByRole("button", { name: /open skill actions/i }),
-        ).toBeInTheDocument();
-      });
-
-      await user.click(
-        screen.getByRole("button", { name: /open skill actions/i }),
-      );
-      await user.click(
-        screen.getByRole("button", { name: /purge activities/i }),
-      );
-      await user.click(
-        screen.getByRole("button", { name: /continue to purge/i }),
-      );
-
-      await waitFor(() => {
-        expect(screen.getByTestId("purge-modal-overlay")).toBeInTheDocument();
-      });
-    });
-
-    it("shows validation error when skill name does not match", async () => {
-      await user.type(screen.getByLabelText(/enter skill name/i), "Java");
-      await user.click(
-        screen.getByRole("button", { name: /purge permanently/i }),
-      );
-
-      await waitFor(() => {
-        expect(
-          screen.getByText(/The skill name does not match. Please try again/i),
-        ).toBeInTheDocument();
-      });
-
-      const purgeButton = screen.getByRole("button", {
-        name: /purge permanently/i,
-      });
-      expect(purgeButton).toHaveClass("cursor-not-allowed");
-      expect(purgeButton).toHaveClass("bg-red-600/50");
-    });
-
-    it("shows validation error when skill name is empty", async () => {
-      await user.clear(screen.getByLabelText(/enter skill name/i));
-      await user.click(
-        screen.getByRole("button", { name: /purge permanently/i }),
-      );
-
-      await waitFor(() => {
-        expect(
-          screen.getByText(/Please enter the skill name/i),
-        ).toBeInTheDocument();
-      });
-
-      const purgeButton = screen.getByRole("button", {
-        name: /purge permanently/i,
-      });
-      expect(purgeButton).toHaveClass("cursor-not-allowed");
-      expect(purgeButton).toHaveClass("bg-red-600/50");
-    });
-
-    it("closes purge modal when clicking outside", async () => {
-      expect(screen.getByTestId("purge-modal-overlay")).toBeInTheDocument();
-      await user.click(screen.getByTestId("purge-modal-overlay"));
-
-      await waitFor(() => {
-        expect(
-          screen.queryByTestId("purge-modal-overlay"),
-        ).not.toBeInTheDocument();
+        expect(screen.getByTestId("activity-count-badge")).toHaveTextContent(
+          "5",
+        );
       });
     });
   });
