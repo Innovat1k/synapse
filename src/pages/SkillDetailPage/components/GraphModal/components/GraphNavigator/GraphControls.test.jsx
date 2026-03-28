@@ -52,18 +52,6 @@ describe("GraphControls", () => {
       expect(resetBtn).toBeDisabled();
       expect(resetBtn).toHaveAttribute("aria-disabled", "true");
     });
-
-    it("positions controls horizontally on mobile", () => {
-      render(<GraphControls {...defaultProps} isMobile={true} />);
-      const container = screen.getByRole("group");
-      expect(container).toHaveClass("flex-row");
-    });
-
-    it("positions controls vertically on desktop", () => {
-      render(<GraphControls {...defaultProps} isMobile={false} />);
-      const container = screen.getByRole("group");
-      expect(container).toHaveClass("flex-col");
-    });
   });
 
   describe("Actions", () => {

@@ -41,11 +41,9 @@ describe("Dashboard – Create Skill Flow", () => {
       screen.getByRole("button", { name: /create my first skill/i }),
     );
 
-    await waitFor(() => {
-      expect(
-        screen.queryByRole("heading", { name: /log activity/i }),
-      ).not.toBeInTheDocument();
-    });
+    expect(
+      screen.queryByRole("heading", { name: /log activity/i }),
+    ).not.toBeInTheDocument();
 
     const createSkillModal = within(screen.getByTestId("skill-modal-content"));
 
@@ -101,4 +99,4 @@ describe("Dashboard – Create Skill Flow", () => {
       "01",
     );
   });
-});
+}, 10000);

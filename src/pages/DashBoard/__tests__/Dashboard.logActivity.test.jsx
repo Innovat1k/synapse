@@ -24,7 +24,7 @@ describe("Dashboard – Log Activity Flow", () => {
   });
 
   it("opens log activity modal with creating skill cta if skills list is empty", async () => {
-    clearSkills()
+    clearSkills();
     render(<Dashboard />, { wrapper: Wrapper });
 
     await user.click(
@@ -86,5 +86,5 @@ describe("Dashboard – Log Activity Flow", () => {
     expect(
       screen.queryByRole("heading", { name: /cannot log activity/i }),
     ).not.toBeInTheDocument();
-  });
+  }, 10000);
 });

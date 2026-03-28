@@ -56,14 +56,10 @@ describe("AppSettingsPage", () => {
       expect(link).toHaveAttribute("href", "/settings/app/tracks");
     });
 
-    it("prevents interaction with coming-soon cards", () => {
+    it("prevents interaction with coming-soon cards", async () => {
       renderAppSettingsPage();
 
-      expect(
-        screen.queryByRole("link", { name: /Skill Categories/i }),
-      ).not.toBeInTheDocument();
-
-      const disabledCard = screen.getByText(/Skill Categories/i).closest("div");
+      const disabledCard = screen.getByTestId("coming-soon-skill-categories");
       expect(disabledCard).toBeInTheDocument();
       expect(disabledCard).toHaveAttribute("aria-disabled", "true");
       expect(disabledCard).toHaveClass("cursor-not-allowed");
@@ -82,7 +78,7 @@ describe("AppSettingsPage", () => {
     it("coming-soon cards are not focusable and marked as disabled", () => {
       renderAppSettingsPage();
 
-      const disabledCard = screen.getByText(/Skill Categories/i).closest("div");
+      const disabledCard = screen.getByTestId("coming-soon-skill-categories");
       expect(disabledCard).toHaveAttribute("aria-disabled", "true");
       expect(disabledCard).not.toHaveAttribute("tabIndex");
     });

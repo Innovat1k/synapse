@@ -13,11 +13,15 @@ export const GraphTooltip = ({
   mutualSkills,
   incoming,
   onComplete,
-  mousePos,
+  mousePos = { x: 0, y: 0 },
 }) => {
   const getMessage = () => {
-    if (mutualSkills.has(node.id)) {return "Mutual dependency with core";}
-    if (incoming.has(node.id)) {return "Required to reach core skill";}
+    if (mutualSkills.has(node.id)) {
+      return "Mutual dependency with core";
+    }
+    if (incoming.has(node.id)) {
+      return "Required to reach core skill";
+    }
     return "Unlocked after mastering core";
   };
 
@@ -55,7 +59,7 @@ export const GraphTooltip = ({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.1 }}
-      className="z-[100] px-4 py-3 bg-slate-900/95 backdrop-blur-xl border border-slate-700/50 rounded-xl shadow-2xl min-w-[220px] max-w-[280px]"
+      className="z-100 px-4 py-3 bg-slate-900/95 backdrop-blur-xl border border-slate-700/50 rounded-xl shadow-2xl min-w-55 max-w-70"
       style={getDynamicStyles()}
     >
       <div className="flex justify-between items-center mb-1">

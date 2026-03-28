@@ -8,15 +8,12 @@ import userEvent from "@testing-library/user-event";
 
 vi.mock("./hooks/useSkillLinks");
 
-const useHookFactory = (hook, { data, isLoading = false, isError = false }) => {
-  hook.mockReturnValue({ data, isLoading, isError });
-};
-
 const mockSkill = { name: "React JS" };
 
 describe("SkillLinksSection", () => {
   let client;
   let QueryWrapper;
+  let user;
 
   beforeEach(() => {
     client = new QueryClient({
@@ -31,6 +28,20 @@ describe("SkillLinksSection", () => {
         <MemoryRouter>{children}</MemoryRouter>
       </QueryClientProvider>
     );
+
+    user = userEvent.setup();
+
+    useSkillLinksModule.useIncomingSkillLinks.mockReturnValue({
+      data: [],
+      isLoading: false,
+      isError: false,
+    });
+
+    useSkillLinksModule.useOutgoingSkillLinks.mockReturnValue({
+      data: [],
+      isLoading: false,
+      isError: false,
+    });
   });
 
   const renderComponent = () => {
@@ -51,13 +62,9 @@ describe("SkillLinksSection", () => {
 
   describe("Incoming Skill Links", () => {
     it("renders skeleton while loading", () => {
-      useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
+      useSkillLinksModule.useIncomingSkillLinks.mockReturnValue({
         data: undefined,
         isLoading: true,
-      });
-
-      useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, {
-        data: [],
       });
 
       renderComponent();
@@ -67,11 +74,11 @@ describe("SkillLinksSection", () => {
     });
 
     it("renders nothing when there is an error", () => {
-      useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
+      useSkillLinksModule.useIncomingSkillLinks.mockReturnValue({
         data: undefined,
         isError: true,
       });
-      useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, { data: [] });
+      useSkillLinksModule.useOutgoingSkillLinks.mockReturnValue({ data: [] });
 
       renderComponent();
 
@@ -79,8 +86,8 @@ describe("SkillLinksSection", () => {
     });
 
     it("renders nothing and shows fallback message when incoming links are empty", () => {
-      useHookFactory(useSkillLinksModule.useIncomingSkillLinks, { data: [] });
-      useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, { data: [] });
+      useSkillLinksModule.useIncomingSkillLinks.mockReturnValue({ data: [] });
+      useSkillLinksModule.useOutgoingSkillLinks.mockReturnValue({ data: [] });
 
       renderComponent();
 
@@ -103,13 +110,8 @@ describe("SkillLinksSection", () => {
         },
       ];
 
-      useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
+      useSkillLinksModule.useIncomingSkillLinks.mockReturnValue({
         data: mockLinks,
-        isLoading: false,
-      });
-
-      useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, {
-        data: undefined,
         isLoading: false,
       });
 
@@ -137,15 +139,6 @@ describe("SkillLinksSection", () => {
     });
 
     it("opens the creation modal for incoming links", async () => {
-      useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
-        data: [],
-        isLoading: false,
-      });
-
-      useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, {
-        data: [],
-        isLoading: false,
-      });
       renderComponent();
 
       expect(
@@ -155,7 +148,7 @@ describe("SkillLinksSection", () => {
         screen.getByText(/No prerequisites defined yet/i),
       ).toBeInTheDocument();
 
-      await userEvent.click(
+      await user.click(
         screen.getByRole("button", { name: /add a prerequisite skill/i }),
       );
 
@@ -171,22 +164,13 @@ describe("SkillLinksSection", () => {
     });
 
     it("closes modal when 'Close' button is clicked", async () => {
-      useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
-        data: [],
-        isLoading: false,
-      });
-
-      useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, {
-        data: [],
-        isLoading: false,
-      });
       renderComponent();
 
       expect(
         screen.getByRole("heading", { name: /Required to Master/i }),
       ).toBeInTheDocument();
 
-      await userEvent.click(
+      await user.click(
         screen.getByRole("button", { name: /add a prerequisite skill/i }),
       );
       expect(
@@ -195,19 +179,15 @@ describe("SkillLinksSection", () => {
         }),
       ).toBeInTheDocument();
 
-      await userEvent.click(
-        screen.getByRole("button", { name: /close modal/i }),
-      );
+      await user.click(screen.getByRole("button", { name: /close modal/i }));
 
       await waitFor(() => {
         expect(
-          screen.queryByRole("heading", {
-            name: /add a prerequisite for react js/i,
-          }),
+          screen.queryByTestId("skill-linker-modal-content"),
         ).not.toBeInTheDocument();
         expect(
-          screen.queryByRole("button", {
-            name: /link as .../i,
+          screen.queryByRole("heading", {
+            name: /add a prerequisite for react js/i,
           }),
         ).not.toBeInTheDocument();
       });
@@ -216,12 +196,12 @@ describe("SkillLinksSection", () => {
 
   describe("Outgoing Skill Links", () => {
     it("renders nothing when there is an error", () => {
-      useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, {
+      useSkillLinksModule.useOutgoingSkillLinks.mockReturnValue({
         data: undefined,
         isError: true,
       });
 
-      useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
+      useSkillLinksModule.useIncomingSkillLinks.mockReturnValue({
         data: undefined,
         isError: true,
       });
@@ -232,9 +212,6 @@ describe("SkillLinksSection", () => {
     });
 
     it("renders nothing and shows fallback message when outgoing links are empty", () => {
-      useHookFactory(useSkillLinksModule.useIncomingSkillLinks, { data: [] });
-      useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, { data: [] });
-
       renderComponent();
 
       expect(
@@ -258,11 +235,7 @@ describe("SkillLinksSection", () => {
         },
       ];
 
-      useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
-        data: [],
-      });
-
-      useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, {
+      useSkillLinksModule.useOutgoingSkillLinks.mockReturnValue({
         data: mockLinks,
       });
 
@@ -292,15 +265,6 @@ describe("SkillLinksSection", () => {
     });
 
     it("opens the creation modal for outgoing links", async () => {
-      useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
-        data: [],
-        isLoading: false,
-      });
-
-      useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, {
-        data: [],
-        isLoading: false,
-      });
       renderComponent();
 
       expect(
@@ -310,7 +274,7 @@ describe("SkillLinksSection", () => {
         screen.getByText(/this skill doesn't unlock anything yet./i),
       ).toBeInTheDocument();
 
-      await userEvent.click(
+      await user.click(
         screen.getByRole("button", { name: /add a skill this unlocks/i }),
       );
 
@@ -326,22 +290,13 @@ describe("SkillLinksSection", () => {
     });
 
     it("closes the modal if 'Cancel' button is clicked", async () => {
-      useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
-        data: [],
-        isLoading: false,
-      });
-
-      useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, {
-        data: [],
-        isLoading: false,
-      });
       renderComponent();
 
       expect(
         screen.getByRole("heading", { name: /enables mastery of/i }),
       ).toBeInTheDocument();
 
-      await userEvent.click(
+      await user.click(
         screen.getByRole("button", { name: /add a skill this unlocks/i }),
       );
       expect(
@@ -350,7 +305,7 @@ describe("SkillLinksSection", () => {
         }),
       ).toBeInTheDocument();
 
-      await userEvent.click(screen.getByRole("button", { name: /cancel/i }));
+      await user.click(screen.getByRole("button", { name: /cancel/i }));
 
       await waitFor(() => {
         expect(
@@ -368,19 +323,8 @@ describe("SkillLinksSection", () => {
   });
 
   describe("Editing skills links", () => {
-    let user;
-
-    beforeEach(() => {
-      user = userEvent.setup();
-    });
-
     it("switches to editing mode if 'Edit' button is clicked", async () => {
-      useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
-        data: [],
-        isLoading: false,
-      });
-
-      useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, {
+      useSkillLinksModule.useOutgoingSkillLinks.mockReturnValue({
         data: [
           { id: "skill-a-1", type: "support", skill_name: "Digital painting" },
         ],
@@ -418,12 +362,7 @@ describe("SkillLinksSection", () => {
     });
 
     it("exits edit mode when 'Done' is clicked", async () => {
-      useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
-        data: [],
-        isLoading: false,
-      });
-
-      useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, {
+      useSkillLinksModule.useOutgoingSkillLinks.mockReturnValue({
         data: [
           { id: "skill-a-1", type: "support", skill_name: "Digital painting" },
         ],
@@ -460,15 +399,6 @@ describe("SkillLinksSection", () => {
     });
 
     it("disables 'Edit' button when no links are present", async () => {
-      useHookFactory(useSkillLinksModule.useIncomingSkillLinks, {
-        data: [],
-        isLoading: false,
-      });
-
-      useHookFactory(useSkillLinksModule.useOutgoingSkillLinks, {
-        data: [],
-        isLoading: false,
-      });
       renderComponent();
 
       expect(

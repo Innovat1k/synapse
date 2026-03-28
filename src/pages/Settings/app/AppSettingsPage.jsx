@@ -46,6 +46,7 @@ export const AppSettingsPage = () => {
                 className="flex items-start sm:items-center gap-4 p-4 md:p-5 rounded-2xl bg-slate-900/20 border border-slate-800/40 opacity-50 cursor-not-allowed"
                 aria-disabled="true"
                 role="group"
+                data-testid={`coming-soon-${setting.title.toLowerCase().replace(/ /g, "-")}`}
               >
                 <div className="shrink-0 p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-500">
                   <Icon size={22} />
@@ -86,7 +87,7 @@ export const AppSettingsPage = () => {
                   {setting.description}
                 </p>
               </div>
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <LuChevronRight className="w-4 h-4 text-slate-600 group-hover:text-slate-300 transition-transform group-hover:translate-x-1" />
               </div>
             </Link>

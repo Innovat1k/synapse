@@ -1,64 +1,105 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { ResourceForm } from './ResourceForm';
-import { beforeEach, vi, describe, it, expect } from 'vitest';
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { ResourceForm } from "./ResourceForm";
+import { beforeEach, vi, describe, it, expect } from "vitest";
 
-describe('ResourceForm', () => {
+const CATEGORIES = [
+  { value: "frontend", label: "Frontend" },
+  { value: "backend", label: "Backend" },
+];
+
+describe("ResourceForm", () => {
   let user;
   let mockOnSubmit;
+  let mockOnTitleChange;
+  let mockOnCategoryChange;
 
   beforeEach(() => {
     user = userEvent.setup();
-    mockOnSubmit = vi.fn();
+    mockOnSubmit = vi.fn((e) => e.preventDefault());
+    mockOnTitleChange = vi.fn();
+    mockOnCategoryChange = vi.fn();
   });
 
-  it('renders title and category fields correctly', () => {
-    render(<ResourceForm onSubmit={mockOnSubmit} />);
+  const renderComponent = (props = {}) => {
+    return render(
+      <ResourceForm
+        title=""
+        category=""
+        generatedId=""
+        categories={CATEGORIES}
+        onTitleChange={mockOnTitleChange}
+        onCategoryChange={mockOnCategoryChange}
+        onSubmit={mockOnSubmit}
+        {...props}
+      />,
+    );
+  };
+
+  it("renders form fields and submit button", () => {
+    renderComponent();
 
     expect(screen.getByLabelText(/Track Title/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Category/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Create Track/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Create Track/i }),
+    ).toBeInTheDocument();
   });
 
-  it('generates track_id from title and calls onSubmit with correct data', async () => {
-    render(<ResourceForm onSubmit={mockOnSubmit} />);
-
-    await user.type(screen.getByLabelText(/Track Title/i), 'React Architecture');
-    
-    await user.selectOptions(screen.getByLabelText(/Category/i), 'backend');
-
-    await user.click(screen.getByRole('button', { name: /Create Track/i }));
-
-    expect(mockOnSubmit).toHaveBeenCalledWith({
-      title: 'React Architecture',
-      track_id: 'react-architecture',
-      category: 'backend',
+  it("displays provided title and generatedId", () => {
+    renderComponent({
+      title: "React Architecture",
+      generatedId: "react-architecture",
     });
+
+    expect(screen.getByDisplayValue("React Architecture")).toBeInTheDocument();
+
+    expect(screen.getByText("react-architecture")).toBeInTheDocument();
   });
 
-  it('disables submit button when title is empty', async () => {
-    render(<ResourceForm onSubmit={mockOnSubmit} />);
+  it("calls onTitleChange when typing", async () => {
+    renderComponent();
 
-    const submitButton = screen.getByRole('button', { name: /Create Track/i });
-    expect(submitButton).toBeDisabled();
+    const input = screen.getByLabelText(/Track Title/i);
+    await user.type(input, "React");
 
-    await user.type(screen.getByLabelText(/Track Title/i), 'Test');
-    expect(submitButton).not.toBeDisabled();
+    expect(mockOnTitleChange).toHaveBeenCalled();
   });
 
-  it('shows auto-generated ID preview', async () => {
-    render(<ResourceForm onSubmit={mockOnSubmit} />);
+  it("calls onCategoryChange when selecting a category", async () => {
+    renderComponent();
 
-    expect(screen.getByText(/no-title-yet/i)).toBeInTheDocument();
+    const select = screen.getByLabelText(/Category/i);
+    await user.selectOptions(select, "backend");
 
-    await user.type(screen.getByLabelText(/Track Title/i), 'Data Science');
-    expect(screen.getByText(/data-science/i)).toBeInTheDocument();
+    expect(mockOnCategoryChange).toHaveBeenCalledWith("backend");
   });
 
-  it('does not call onSubmit when form is submitted with empty title', async () => {
-    render(<ResourceForm onSubmit={mockOnSubmit} />);
+  it("disables submit button when title is empty", () => {
+    renderComponent({ title: "" });
 
-    await user.click(screen.getByRole('button', { name: /Create Track/i }));
-    expect(mockOnSubmit).not.toHaveBeenCalled();
+    expect(
+      screen.getByRole("button", { name: /Create Track/i }),
+    ).toBeDisabled();
+  });
+
+  it("enables submit button when title is provided", () => {
+    renderComponent({ title: "React" });
+
+    expect(
+      screen.getByRole("button", { name: /Create Track/i }),
+    ).not.toBeDisabled();
+  });
+
+  it("calls onSubmit when form is submitted", async () => {
+    renderComponent({ title: "React" });
+
+    const button = screen.getByRole("button", {
+      name: /Create Track/i,
+    });
+
+    await user.click(button);
+
+    expect(mockOnSubmit).toHaveBeenCalled();
   });
 });

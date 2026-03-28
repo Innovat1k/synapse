@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { server } from "@mocks/server";
 import { http, HttpResponse } from "msw";
 import { SUPABASE_URL } from "@services/supabase-client";
+import { clearTracks } from "@mocks/stores";
 
 const waitForLoadingToFinish = () =>
   waitFor(() => {
@@ -22,8 +23,6 @@ describe("TracksPage", () => {
     client = new QueryClient({
       defaultOptions: { queries: { retry: false } },
     });
-
-    server.resetHandlers();
   });
 
   const renderPage = () => {
@@ -60,12 +59,7 @@ describe("TracksPage", () => {
     });
 
     it("renders empty state when no tracks exist", async () => {
-      server.use(
-        http.get(`${SUPABASE_URL}/rest/v1/synapse_tracks`, () => {
-          return HttpResponse.json([]);
-        }),
-      );
-
+      clearTracks();
       renderPage();
 
       await waitForLoadingToFinish();
@@ -73,27 +67,10 @@ describe("TracksPage", () => {
     });
 
     it("renders track list when tracks exist", async () => {
-      server.use(
-        http.get(`${SUPABASE_URL}/rest/v1/synapse_tracks`, () => {
-          return HttpResponse.json([
-            {
-              track_id: "react",
-              title: "React Architecture",
-              category: "frontend",
-              description: null,
-              is_visible: true,
-              sort_order: 0,
-              created_at: "2026-02-27T12:00:00.000Z",
-              updated_at: "2026-02-27T12:00:00.000Z",
-            },
-          ]);
-        }),
-      );
-
       renderPage();
 
       await waitForLoadingToFinish();
-      expect(screen.getByText(/React Architecture/i)).toBeInTheDocument();
+      expect(screen.getByText(/React Fundamentals/i)).toBeInTheDocument();
     });
   });
 
@@ -124,63 +101,26 @@ describe("TracksPage", () => {
     });
 
     it("cancels deletion when clicking 'Cancel'", async () => {
-      let tracks = [
-        {
-          track_id: "react",
-          title: "React Architecture",
-          category: "frontend",
-          created_at: "2026-02-27T12:00:00.000Z",
-          updated_at: "2026-02-27T12:00:00.000Z",
-        },
-      ];
-
-      server.use(
-        http.get(`${SUPABASE_URL}/rest/v1/synapse_tracks`, () => {
-          return HttpResponse.json(tracks);
-        }),
-      );
-
       renderPage();
       await waitForLoadingToFinish();
 
       await user.click(
         screen.getByRole("button", {
-          name: /delete track React Architecture/i,
+          name: /delete track React Fundamentals/i,
         }),
       );
 
       await user.click(screen.getByRole("button", { name: /cancel/i }));
 
-      await waitFor(() => {
-        expect(screen.getByText(/React Architecture/i)).toBeInTheDocument();
-      });
+      expect(
+        await screen.findByText(/React Fundamentals/i),
+      ).toBeInTheDocument();
     });
   });
 
   describe("Actions", () => {
     it("submits a new track and shows success", async () => {
-      let tracks = [];
-
-      server.use(
-        http.get(`${SUPABASE_URL}/rest/v1/synapse_tracks`, () => {
-          return HttpResponse.json(tracks);
-        }),
-
-        http.post(
-          `${SUPABASE_URL}/rest/v1/synapse_tracks`,
-          async ({ request }) => {
-            const body = await request.json();
-            const newTrack = {
-              ...body,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-            };
-            tracks.push(newTrack); // Simule persistence
-            return HttpResponse.json(newTrack, { status: 201 });
-          },
-        ),
-      );
-
+      clearTracks();
       renderPage();
 
       await waitForLoadingToFinish();
@@ -198,11 +138,8 @@ describe("TracksPage", () => {
     });
 
     it("shows error on duplicate track ID", async () => {
+      clearTracks();
       server.use(
-        http.get(`${SUPABASE_URL}/rest/v1/synapse_tracks`, () => {
-          return HttpResponse.json([]);
-        }),
-
         http.post(`${SUPABASE_URL}/rest/v1/synapse_tracks`, () => {
           return HttpResponse.json(
             {

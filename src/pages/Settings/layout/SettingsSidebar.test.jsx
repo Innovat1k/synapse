@@ -80,7 +80,7 @@ describe("SettingsSidebar", () => {
       renderSidebar();
 
       const links = screen.getAllByRole("link");
-      expect(links).toHaveLength(3);
+      expect(links).toHaveLength(4);
 
       links.forEach((link) => {
         expect(link).toHaveAttribute("href");

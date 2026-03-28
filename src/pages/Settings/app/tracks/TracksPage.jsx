@@ -120,7 +120,7 @@ export const TracksPage = () => {
             <h3 className="text-base md:text-lg font-semibold text-slate-300">
               No tracks established
             </h3>
-            <p className="text-slate-500 text-xs md:text-sm mt-2 max-w-[240px] mx-auto leading-relaxed">
+            <p className="text-slate-500 text-xs md:text-sm mt-2 max-w-60 mx-auto leading-relaxed">
               Your learning ecosystem is currently empty. Start by creating a
               thematic track.
             </p>

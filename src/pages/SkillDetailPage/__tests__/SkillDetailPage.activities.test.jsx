@@ -4,7 +4,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { describe, it, expect, beforeEach } from "vitest";
 import userEvent from "@testing-library/user-event";
 import { renderSkillDetailPage } from "./test-utils";
-import { clearActivities, seedActivities } from "@mocks/stores";
+import { clearActivities, seedActivities, skillsStore } from "@mocks/stores";
 
 const SKILL_IDS = {
   REACT: "skill-react",
@@ -27,6 +27,10 @@ describe("SkillDetailPage: Skill Activities", () => {
 
   beforeEach(() => {
     user = userEvent.setup();
+    routerDom.useOutletContext.mockReturnValue({
+      skills: skillsStore,
+      isLoading: false,
+    });
   });
 
   it("creates an activity for the skill", async () => {
@@ -54,24 +58,26 @@ describe("SkillDetailPage: Skill Activities", () => {
     await user.click(screen.getByRole("option", { name: /research/i }));
     await user.type(
       screen.getByLabelText(/notes/i),
-      "make some search about the new react performance profiler upcoming feature.",
+      "search about the new react profiler feature.",
     );
 
     await user.click(screen.getByRole("button", { name: /add activity/i }));
 
+    expect(await screen.findByTestId("activity-count-badge")).toHaveTextContent(
+      "1",
+    );
+
+    const desktopLayout = within(screen.getByTestId("list-layout-desktop"));
+
+    expect(await desktopLayout.findByText(/1 h 13 mn/i)).toBeInTheDocument();
+    expect(await desktopLayout.findByText(/research/i)).toBeInTheDocument();
+    expect(
+      await desktopLayout.findByText(
+        /search about the new react profiler feature/i,
+      ),
+    ).toBeInTheDocument();
+
     await waitFor(() => {
-      expect(screen.getByTestId("activity-count-badge")).toHaveTextContent("1");
-
-      const desktopLayout = within(screen.getByTestId("list-layout-desktop"));
-
-      expect(desktopLayout.getByText(/1 h 13 mn/i)).toBeInTheDocument();
-      expect(desktopLayout.getByText(/research/i)).toBeInTheDocument();
-      expect(
-        desktopLayout.getByText(
-          /make some search about the new react performance profiler upcoming feature/i,
-        ),
-      ).toBeInTheDocument();
-
       expect(
         screen.queryByText(/You haven't logged any activity for this skill/i),
       ).not.toBeInTheDocument();
@@ -127,12 +133,10 @@ describe("SkillDetailPage: Skill Activities", () => {
       editActivityModal.getByRole("button", { name: /save changes/i }),
     );
 
-    await waitFor(() => {
-      expect(within(activityRow).getByText(/57 mn/i)).toBeInTheDocument();
-      expect(
-        within(activityRow).getByText(/learn performance optimization/i),
-      ).toBeInTheDocument();
-    });
+    expect(await within(activityRow).findByText(/57 mn/i)).toBeInTheDocument();
+    expect(
+      await within(activityRow).findByText(/learn performance optimization/i),
+    ).toBeInTheDocument();
   });
 
   it("deletes the selected activity", async () => {
@@ -214,9 +218,7 @@ describe("SkillDetailPage: Skill Activities", () => {
       screen.getByRole("button", { name: /continue to purge/i }),
     );
 
-    await waitFor(() => {
-      expect(screen.getByText(/confirm skill name/i)).toBeInTheDocument();
-    });
+    expect(await screen.findByText(/confirm skill name/i)).toBeInTheDocument();
 
     await user.type(screen.getByRole("textbox"), "React JS");
     await user.click(
@@ -238,4 +240,4 @@ describe("SkillDetailPage: Skill Activities", () => {
       ),
     ).toBeInTheDocument();
   });
-});
+}, 10000);

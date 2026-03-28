@@ -8,6 +8,7 @@ import {
   resetAllStores,
   seedActivities,
   defaultActivities,
+  skillsStore,
 } from "@mocks/stores";
 
 const SKILL_IDS = {
@@ -31,6 +32,10 @@ describe("SkillDetailPage", () => {
 
   beforeEach(() => {
     user = userEvent.setup();
+    routerDom.useOutletContext.mockReturnValue({
+      skills: skillsStore,
+      isLoading: false,
+    });
   });
 
   it("displays skill details with correct track", async () => {
@@ -47,7 +52,7 @@ describe("SkillDetailPage", () => {
     });
 
     expect(screen.getByText(/level 3/i)).toBeInTheDocument();
-    expect(screen.getByText(/category: others/i)).toBeInTheDocument();
+    expect(screen.getByText(/category: other/i)).toBeInTheDocument();
     expect(
       await screen.findByText(/track: computer science/i),
     ).toBeInTheDocument();

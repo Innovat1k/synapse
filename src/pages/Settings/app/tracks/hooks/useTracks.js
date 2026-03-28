@@ -64,7 +64,6 @@ export const useTracks = (skill = {}) => {
         message = err.message;
       }
       showNotif(`Failed to create track: ${message}`, "error", 6000);
-      throw err;
     }
   };
 
@@ -103,48 +102,39 @@ export const useTracks = (skill = {}) => {
 
   // Filter tracks by skill
   const skillTrack = useMemo(() => {
-    if (!skill?.track_id || !tracks.length) {return null;}
+    if (!skill?.track_id || !tracks.length) {
+      return null;
+    }
     return tracks.find((track) => track.track_id === skill.track_id);
   }, [skill, tracks]);
 
   return {
-    // Global data & status
     data: {
       tracks,
       isError,
       error,
       skillTrack,
     },
-
-    // Loading states (React Query + mutations)
     status: {
       isLoading,
       isCreating,
       isDeleting,
     },
-
-    // UI -Creation form
     createForm: {
       isOpen: isFormOpen,
       open: () => setIsFormOpen(true),
       close: () => setIsFormOpen(false),
     },
-
-    // UI -Modal de suppression
     deleteModal: {
       isOpen: confirmModal.isOpen,
-      context: deleteContext, // { trackId, trackTitle }
+      context: deleteContext,
       open: openDeleteConfirm,
       close: confirmModal.closeModal,
     },
-
-    // Business actions
     actions: {
       create: handleCreate,
       delete: handleConfirmDelete,
     },
-
-    // Optimization (optional)
     utils: {
       prefetchNextPage,
     },

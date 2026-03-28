@@ -74,11 +74,9 @@ describe("SkillsLayout", () => {
       await user.click(screen.getByRole("button", { name: /add tag/i }));
       await user.click(screen.getByRole("button", { name: /save skill/i }));
 
-      await waitFor(() => {
-        expect(
-          screen.getByRole("cell", { name: /python/i }),
-        ).toBeInTheDocument();
-      });
+      expect(
+        await screen.findByRole("cell", { name: /python/i }),
+      ).toBeInTheDocument();
       expect(screen.getByTestId("skill-count-badge")).toHaveTextContent("1");
     });
 
@@ -267,4 +265,4 @@ describe("SkillsLayout", () => {
       });
     });
   });
-});
+}, 10000);

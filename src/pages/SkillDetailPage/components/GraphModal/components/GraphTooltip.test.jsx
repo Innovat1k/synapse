@@ -9,6 +9,7 @@ const mockNode = {
 
 const mockMutualSkills = new Set(["skill-js"]);
 const mockIncoming = new Set(["skill-html"]);
+const mockMousePos = { x: 100, y: 200 };
 
 describe("GraphTooltip", () => {
   it("renders tooltip with correct content for desktop", () => {
@@ -19,6 +20,7 @@ describe("GraphTooltip", () => {
         mutualSkills={mockMutualSkills}
         incoming={mockIncoming}
         config={{ tooltipBottom: "20px" }}
+        mousePos={mockMousePos}
       />,
     );
 
@@ -38,6 +40,7 @@ describe("GraphTooltip", () => {
         mutualSkills={mockMutualSkills}
         incoming={new Set(["skill-html"])}
         config={{ tooltipBottom: "20px" }}
+        mousePos={mockMousePos}
       />,
     );
 
@@ -55,6 +58,7 @@ describe("GraphTooltip", () => {
         mutualSkills={new Set(["skill-js"])}
         incoming={mockIncoming}
         config={{ tooltipBottom: "20px" }}
+        mousePos={mockMousePos}
       />,
     );
 
@@ -72,6 +76,7 @@ describe("GraphTooltip", () => {
         incoming={new Set()}
         config={{}}
         onComplete={() => {}}
+        mousePos={mockMousePos}
       />,
     );
     expect(

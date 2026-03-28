@@ -24,9 +24,15 @@ describe("useToast", () => {
     expect(result.current.notif.isVisible).toBeFalsy();
 
     act(() => {
-      result.current.closeNotif();
+      result.current.showNotif();
     });
 
     expect(result.current.notif.isVisible).toBeTruthy();
+
+    act(() => {
+      result.current.closeNotif();
+    });
+
+    expect(result.current.notif.isVisible).toBeFalsy();
   });
 });

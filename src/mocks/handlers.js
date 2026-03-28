@@ -28,6 +28,27 @@ export const handlers = [
     return HttpResponse.json(tracksStore);
   }),
 
+  http.post(`${SUPABASE_URL}/rest/v1/synapse_tracks`, async ({ request }) => {
+    const newTrack = await request.json();
+
+    if (!newTrack.title) {
+      return new HttpResponse(JSON.stringify({ error: "Title is required" }), {
+        status: 400,
+      });
+    }
+
+    const trackWithId = {
+      ...newTrack,
+      track_id: newTrack.track_id || `track-${Date.now()}`,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    tracksStore.push(trackWithId);
+
+    return HttpResponse.json(trackWithId, { status: 201 });
+  }),
+
   // SKILLS
   http.get(`${SUPABASE_URL}/rest/v1/synapse_skills`, () => {
     return HttpResponse.json(skillsStore);
