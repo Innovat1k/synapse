@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createTrack, fetchTracks, deleteTrack } from "@services/tracksService";
 import { useToast } from "@shared/components/Toast/hooks/useToast";
 import { useModal } from "@shared/components/Modal/hooks/useModal";
+import { TOAST_MESSAGES } from "@shared/components/Toast/toastMessages";
 
 // Manages tracks list data, creation flow, and UI state (form open/close, loading, errors).
 // Includes caching, toast feedback, and optional pagination prefetching.
@@ -55,7 +56,7 @@ export const useTracks = (skill = {}) => {
       const newTrack = await createTrackAsync(data);
 
       setIsFormOpen(false);
-      showNotif(`Track "${newTrack.title}" created successfully!`, "success");
+      showNotif(TOAST_MESSAGES.TRACK.CREATE_SUCCESS, "success");
     } catch (err) {
       let message = "Unknown error";
       if (err?.code === "23505") {
@@ -63,7 +64,7 @@ export const useTracks = (skill = {}) => {
       } else if (err?.message) {
         message = err.message;
       }
-      showNotif(`Failed to create track: ${message}`, "error", 6000);
+      showNotif(TOAST_MESSAGES.TRACK.CREATE_ERROR, "error");
     }
   };
 
@@ -81,10 +82,10 @@ export const useTracks = (skill = {}) => {
 
     try {
       await deleteTrackAsync(trackId);
-      showNotif(`Track deleted successfully!`, "success");
+      showNotif(TOAST_MESSAGES.TRACK.DELETE_SUCCESS, "success");
     } catch (err) {
       queryClient.setQueryData(["tracks"], previousTracks);
-      showNotif(`Failed to delete track: ${err.message}`, "error", 5000);
+      showNotif(TOAST_MESSAGES.TRACK.DELETE_ERROR, "error");
     }
   };
 

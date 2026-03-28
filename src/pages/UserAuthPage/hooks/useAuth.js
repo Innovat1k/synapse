@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../../services/supabase-client";
 import { useAtom } from "jotai";
-import {
-  notification_atom,
-  session_atom,
-  user_atom,
-} from "@atoms/atoms";
+import { notification_atom, session_atom, user_atom } from "@atoms/atoms";
 import { useNavigate } from "react-router-dom";
 import { useFormData } from "./useFormData";
+import { useToast } from "../../../shared/components/Toast/hooks/useToast";
+import { TOAST_MESSAGES } from "../../../shared/components/Toast/toastMessages";
 
 /**
  * Manages user authentication and session state with Supabase.
@@ -51,6 +49,8 @@ export const useAuth = () => {
   // Get form input methods
   const { formData, handleBlur, handleToggleAuth, handleChange, resetForm } =
     useFormData();
+
+  const { showNotif } = useToast();
 
   const navigate = useNavigate();
 
@@ -121,14 +121,11 @@ export const useAuth = () => {
       });
 
       if (error) {
-        setNotification({
-          isVisible: true,
-          type: "error",
-          message:
-            "Invalid login credentials. Please check your email and password.",
-        });
+        showNotif(
+          TOAST_MESSAGES.AUTH.SIGN_IN_ERROR,
+          "error",
+        );
       } else {
-        // TODO: show user-facing success (toast)
         navigate("/dashboard");
       }
     } finally {
@@ -148,14 +145,7 @@ export const useAuth = () => {
         password: formData.password,
       });
       if (error) {
-        const isUserExistsError = /registered/i.test(error.message);
-        setNotification({
-          isVisible: true,
-          type: "error",
-          message: isUserExistsError
-            ? "This email is already registered. Please sign in instead."
-            : "Something went wrong. Please try again later.",
-        });
+        showNotif(TOAST_MESSAGES.AUTH.SIGN_UP_ERROR, "error");
       } else {
         navigate("/auth/check-email");
       }
@@ -172,8 +162,9 @@ export const useAuth = () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) {
-        // TODO: show user-facing success (toast)
+        throw error;
       } else {
+        showNotif(TOAST_MESSAGES.AUTH.SIGN_OUT_SUCCESS, "success");
         resetForm();
         navigate("/auth");
       }

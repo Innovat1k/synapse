@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  createSkill,
-  deleteSkill,
-  updateSkill,
-} from "@services/skillService";
+import { createSkill, deleteSkill, updateSkill } from "@services/skillService";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../../Toast/hooks/useToast";
+import { TOAST_MESSAGES } from "../../Toast/toastMessages";
 
 /**
  * Custom hook for managing modal.
@@ -16,6 +14,8 @@ import { useNavigate } from "react-router-dom";
 export const useSkillModal = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  const { showNotif } = useToast();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState("");
@@ -55,8 +55,19 @@ export const useSkillModal = () => {
 
       await queryClient.invalidateQueries({ queryKey: ["skills"] });
       closeModal();
+      showNotif(
+        modalMode === "create"
+          ? TOAST_MESSAGES.SKILL.CREATE_SUCCESS
+          : TOAST_MESSAGES.SKILL.UPDATE_SUCCESS,
+        "success",
+      );
     } catch {
-      // TODO: show user-facing error (e.g., toast)
+      showNotif(
+        modalMode === "create"
+          ? TOAST_MESSAGES.SKILL.CREATE_ERROR
+          : TOAST_MESSAGES.SKILL.UPDATE_ERROR,
+        "error",
+      );
     } finally {
       setIsSubmitting(false);
       setModalMode("");
@@ -70,8 +81,9 @@ export const useSkillModal = () => {
       await queryClient.invalidateQueries({ queryKey: ["skills"] });
 
       navigate("/skills");
-    } catch  {
-// TODO: show user-facing error (e.g., toast)
+      showNotif(TOAST_MESSAGES.SKILL.DELETE_SUCCESS, "success");
+    } catch {
+      showNotif(TOAST_MESSAGES.SKILL.DELETE_ERROR,"error");
     } finally {
       setSelectedSkill(null);
       setIsSubmitting(false);

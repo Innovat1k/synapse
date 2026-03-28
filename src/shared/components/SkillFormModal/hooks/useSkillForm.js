@@ -110,15 +110,8 @@ export const useSkillForm = ({
         ...(initialData?.skill_id ? { skill_id: initialData.skill_id } : {}),
         ...skillFormData,
       });
-
-      showNotif(
-        mode === "create"
-          ? "Skill successfully created!"
-          : "Skill successfully updated!",
-        "success",
-      );
     } catch (err) {
-      showNotif("An error occurred while saving the skill.", err);
+      throw err;
     }
   };
 

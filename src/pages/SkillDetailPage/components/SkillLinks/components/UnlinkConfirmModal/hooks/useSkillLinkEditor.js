@@ -1,11 +1,17 @@
 import { useState } from "react";
 import { useDeleteSkillLink } from "../../../hooks/useSkillLinks";
+import { useToast } from "@shared/components/Toast/hooks/useToast";
+import { TOAST_MESSAGES } from "@shared/components/Toast/toastMessages";
+
+// Manages skill link editing mode and deletion confirmation flow with toast feedback
 
 export const useSkillLinkEditor = (skillId) => {
   const deleteLinkMutation = useDeleteSkillLink(skillId);
 
   const [isEditing, setIsEditing] = useState(false);
   const [unlinkingLink, setUnlinkingLink] = useState(null);
+
+  const { showNotif } = useToast();
 
   const removeLink = (link) => {
     setUnlinkingLink(link);
@@ -21,7 +27,9 @@ export const useSkillLinkEditor = (skillId) => {
   };
 
   const confirmRemoval = () => {
-    if (!unlinkingLink) {return;}
+    if (!unlinkingLink) {
+      return;
+    }
 
     deleteLinkMutation.mutate(
       {
@@ -31,7 +39,11 @@ export const useSkillLinkEditor = (skillId) => {
       },
       {
         onSuccess: () => {
+          showNotif(TOAST_MESSAGES.LINK.DELETE_SUCCESS, "success");
           cancelRemoval();
+        },
+        onError: () => {
+          showNotif(TOAST_MESSAGES.LINK.DELETE_ERROR, "error");
         },
       },
     );

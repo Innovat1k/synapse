@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { purgeActivitiesBySkill } from "@services/activityService";
 import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@shared/components/Toast/hooks/useToast";
+import { TOAST_MESSAGES } from "@shared/components/Toast/toastMessages";
 
 export const usePurgeActivities = (skillId, skillName = "") => {
   const [modal, setModal] = useState({
@@ -13,6 +15,8 @@ export const usePurgeActivities = (skillId, skillName = "") => {
   const [hasError, setHasError] = useState(false);
 
   const queryClient = useQueryClient();
+
+  const { showNotif } = useToast();
 
   // Toogle the modal
   const openPurgeModal = () => {
@@ -40,32 +44,30 @@ export const usePurgeActivities = (skillId, skillName = "") => {
     }
   };
 
-  // Delete all activities from the current skill
   const confirmPurge = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    try {
-      // Verify if inputed name matches the skill name
-      if (typedSkillName === skillName) {
-        await purgeActivitiesBySkill(skillId);
-        await queryClient.invalidateQueries({
-          queryKey: ["skill-activities", skillId],
-        });
+    if (typedSkillName !== skillName) {
+      setHasError(true);
+      setIsSubmitting(false);
+      return;
+    }
 
-        setHasError(false);
-      } else {
-        setHasError(true);
-        throw new Error("The skill name does not match. Please try again.");
-      }
+    try {
+      await purgeActivitiesBySkill(skillId);
+      await queryClient.invalidateQueries({
+        queryKey: ["skill-activities", skillId],
+      });
+
+      showNotif(TOAST_MESSAGES.ACTIVITY.PURGE_SUCCESS, "success");
+      setHasError(false);
+      setModal({ isOpened: false, context: "confirm-step" });
+      setTypedSkillName("");
     } catch {
-      // TODO: show user-facing error (e.g., toast)
+      showNotif(TOAST_MESSAGES.ACTIVITY.PURGE_ERROR, "error");
     } finally {
       setIsSubmitting(false);
-      if (typedSkillName === skillName) {
-        setModal({ isOpened: false, context: "confirm-step" });
-        setTypedSkillName("");
-      }
     }
   };
 

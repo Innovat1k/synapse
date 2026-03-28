@@ -5,33 +5,19 @@ import {
   deleteActivity,
   updateActivity,
 } from "@services/activityService";
+import { useToast } from "../../Toast/hooks/useToast";
+import { TOAST_MESSAGES } from "../../Toast/toastMessages";
 
-/**
- * Custom hook that encapsulates modal state and CRUD operations for activity management.
- *
- * Manages:
- * - Modal visibility and mode ("create", "edit", "delete")
- * - Selected activity context for edit/delete actions
- * - Submission state (loading/error handling)
- * - Background scroll locking when modal is open
- * - Automatic cache invalidation via React Query after mutations
- *
- * Integrates with Supabase-backed service functions (`createActivity`, `updateActivity`, `deleteActivity`).
- *
- * @param {string} skillId - ID of the parent skill (used for query invalidation)
- *
- * @returns {Object}
- * - `modal`: { isOpened: boolean, mode: string }
- * - `selectedActivity`: the activity being edited or deleted (or null)
- * - `isSubmitting`: boolean indicating if a mutation is in progress
- * - `methods`: object containing all modal and CRUD handlers
- */
+// Manages activity modal state and CRUD operations (create/edit/delete) with toast feedback.
+// Locks background scroll when open and invalidates activity queries after mutations.
 
 export const useActivityModal = (skillId) => {
   const queryClient = useQueryClient();
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [modal, setModal] = useState({ isOpened: false, mode: "" });
+
+  const { showNotif } = useToast();
 
   // Handle background scroll
   useEffect(() => {
@@ -84,14 +70,19 @@ export const useActivityModal = (skillId) => {
       await queryClient.invalidateQueries({
         queryKey: ["skill-activities", skillId],
       });
+
+      showNotif(
+        modal.mode === "create"
+          ? TOAST_MESSAGES.ACTIVITY.CREATE_SUCCESS
+          : TOAST_MESSAGES.ACTIVITY.UPDATE_SUCCESS, "success"
+      );
       closeModal();
     } catch {
-      // TODO: show user-facing error (e.g., toast) in Phase 4
-      // For now, log in dev (will be replaced by toast)
-      // if (import.meta.env.DEV) {
-      //   console.error("Activity form error:", error);
-      // }
-      // Do NOT rethrow — handle gracefully in UI layer
+      showNotif(
+        modal.mode === "create"
+          ? TOAST_MESSAGES.ACTIVITY.CREATE_ERROR
+          : TOAST_MESSAGES.ACTIVITY.UPDATE_ERROR, "error"
+      );
     } finally {
       setIsSubmitting(false);
       setModal({ mode: "" });
@@ -105,8 +96,10 @@ export const useActivityModal = (skillId) => {
       await queryClient.invalidateQueries({
         queryKey: ["skill-activities", skillId],
       });
+
+      showNotif(TOAST_MESSAGES.ACTIVITY.DELETE_SUCCESS, "success");
     } catch {
-      // TODO: show user-facing error (e.g., toast)
+      showNotif(TOAST_MESSAGES.ACTIVITY.DELETE_ERROR, "error");
     } finally {
       setSelectedActivity(null);
       setIsSubmitting(false);
