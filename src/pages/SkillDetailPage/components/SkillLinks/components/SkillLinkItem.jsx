@@ -30,7 +30,7 @@ export const SkillLinkItem = ({
         <span className="truncate max-w-35 font-medium text-sm">
           {skillName}
         </span>
-        <LuX size={14} strokeWidth={3} className="text-red-400 flex-shrink-0" />
+        <LuX size={14} strokeWidth={3} className="text-red-400 shrink-0" />
       </button>
     );
   }

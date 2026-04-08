@@ -1,9 +1,12 @@
-import { supabase } from "./supabase-client";
+import { getSupabase } from "./supabase.lazy";
 
 export const fetchSubgraph = async (centerSkillId) => {
-  if (!centerSkillId) {return { nodes: [], links: [] };}
+  if (!centerSkillId) {
+    return { nodes: [], links: [] };
+  }
 
   // Fetching the links (UUID friendly)
+  const supabase = await getSupabase();
   const { data: directLinks, error: linksError } = await supabase
     .from("synapse_skill_links")
     .select("source_skill_id, target_skill_id")
@@ -11,7 +14,9 @@ export const fetchSubgraph = async (centerSkillId) => {
       `source_skill_id.eq.${centerSkillId},target_skill_id.eq.${centerSkillId}`,
     );
 
-  if (linksError) {throw linksError;}
+  if (linksError) {
+    throw linksError;
+  }
 
   const skillIds = new Set([centerSkillId]);
 
@@ -36,14 +41,16 @@ export const fetchSubgraph = async (centerSkillId) => {
     .select("skill_id, name, level")
     .in("skill_id", cleanIds);
 
-  if (skillsError) {throw skillsError;}
+  if (skillsError) {
+    throw skillsError;
+  }
 
   // Final mapping for the GraphView
   const nodes = skills.map((skill) => ({
     id: skill.skill_id,
     label: skill.name,
     level: skill.level,
-    status: "available", // Mock status while waiting for DB
+    status: "available",
     isCenter: skill.skill_id === centerSkillId,
   }));
 

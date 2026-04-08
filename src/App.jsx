@@ -1,40 +1,27 @@
 import { Outlet } from "react-router-dom";
 import { useAuth } from "@pages/UserAuthPage/hooks/useAuth";
 import { useAuthRedirect } from "@pages/UserAuthPage/hooks/useAuthRedirect";
-import Loader from "@shared/components/Loader";
 import Header from "@shared/components/Header/Header";
 import NavBar from "@shared/components/NavBar/NavBar";
 import ToastComponent from "@shared/components/Toast/ToastComponent";
+import Loader from "@shared/components/Loader";
 
 function App() {
   const { loader, methods, user } = useAuth();
   useAuthRedirect();
 
-  const isAuthRoute = window.location.pathname.startsWith("/auth");
-
-  if (loader.isInitialLoading && !loader.isSigningOut) {
-    return <Loader />;
-  }
-
-  if (loader.isSigningOut) {
-    return <Loader />;
-  }
+  if (loader.isInitialLoading && !loader.isSigningOut) {return <Loader />;}
+  if (loader.isSigningOut) {return <Loader />;}
 
   return (
     <div className="relative min-h-screen flex flex-col bg-slate-950">
-      {isAuthRoute ? (
-        <Outlet />
-      ) : (
-        <>
-          <Header signOut={methods.handleSignOut} user={user} />
-          <div className="flex flex-1 overflow-hidden">
-            <NavBar />
-            <main className="flex-1 p-4 md:p-6 pb-24 md:pb-0 md:ml-[20%] overflow-y-auto bg-slate-950">
-              <Outlet context={{ methods, user }} />
-            </main>
-          </div>
-        </>
-      )}
+      <Header signOut={methods.handleSignOut} user={user} />
+      <div className="flex flex-1 overflow-hidden">
+        <NavBar />
+        <main className="flex-1 p-4 md:p-6 pb-24 md:pb-0 md:ml-[20%] overflow-y-auto bg-slate-950">
+          <Outlet context={{ methods, user }} />
+        </main>
+      </div>
       <ToastComponent />
     </div>
   );

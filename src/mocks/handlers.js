@@ -99,8 +99,11 @@ export const handlers = [
     const idParam = url.searchParams.get("id");
 
     let skillId;
-    if (skillIdParam?.startsWith("eq.")) skillId = skillIdParam.slice(3);
-    else if (idParam?.startsWith("eq.")) skillId = idParam.slice(3);
+    if (skillIdParam?.startsWith("eq.")) {
+      skillId = skillIdParam.slice(3);
+    } else if (idParam?.startsWith("eq.")) {
+      skillId = idParam.slice(3);
+    }
 
     if (!skillId) {
       return new HttpResponse(
@@ -193,7 +196,6 @@ export const handlers = [
 
     if (skillIdParam?.startsWith("eq.")) {
       const skillId = skillIdParam.slice(3);
-      const initialLength = activitiesStore.length;
 
       for (let i = activitiesStore.length - 1; i >= 0; i--) {
         if (activitiesStore[i].skill_id === skillId) {
@@ -210,7 +212,6 @@ export const handlers = [
 
       if (index !== -1) {
         activitiesStore.splice(index, 1);
-        console.log(`Delete: activité ${id} supprimée`);
       }
 
       return new HttpResponse(null, { status: 204 });
@@ -266,7 +267,6 @@ export const handlers = [
     `${SUPABASE_URL}/rest/v1/synapse_skill_links`,
 
     async ({ request }) => {
-      console.log("processing deletion");
       const newLink = await request.json();
 
       if (

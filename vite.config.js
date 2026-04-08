@@ -2,10 +2,19 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
+import { visualizer } from "rollup-plugin-visualizer";
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react({
+      babel: { plugins: ["babel-plugin-react-compiler"] },
+    }),
+    tailwindcss(),
+    ...(process.env.ANALYZE === "true"
+      ? [visualizer({ open: true, gzipSize: true, brotliSize: true })]
+      : []),
+  ],
+
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -21,6 +30,11 @@ export default defineConfig({
       "@mocks": path.resolve(__dirname, "./src/mocks"),
     },
   },
+
+  optimizeDeps: {
+    include: ["react", "react-dom/client", "react-router-dom"],
+  },
+
   test: {
     globals: true,
     environment: "jsdom",
@@ -31,5 +45,19 @@ export default defineConfig({
       exclude: ["node_modules/", "dist/", "tests/"],
     },
     ui: true,
+  },
+
+  build: {
+    target: "esnext",
+    minify: "esbuild",
+    cssMinify: true,
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "react-vendor": ["react", "react-dom/client"],
+        },
+      },
+    },
   },
 });

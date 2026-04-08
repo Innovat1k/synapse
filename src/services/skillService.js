@@ -1,4 +1,4 @@
-import { supabase } from "./supabase-client";
+import { getSupabase } from "./supabase.lazy";
 
 const SKILLS_TABLE = "synapse_skills";
 
@@ -14,12 +14,15 @@ export const fetchSkills = async () => {
   try {
     // We rely on RLS (Row Level Security) on the 'skills' table
     // to automatically filter records based on the current user's ID (auth.uid()).
+    const supabase = await getSupabase();
     const { data, error } = await supabase
       .from(SKILLS_TABLE)
       .select("*")
       .order("created_at", { ascending: false }); // Latest skills first
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
     return data;
   } catch {
     // TODO: log to monitoring service (e.g., Sentry)
@@ -34,12 +37,15 @@ export const fetchSkills = async () => {
 export const createSkill = async (skillData) => {
   // We rely on RLS policy to automatically set or verify the user_id
   // during the insert operation to ensure security.
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from(SKILLS_TABLE)
     .insert(skillData)
     .select();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data[0];
 };
 
@@ -50,13 +56,16 @@ export const createSkill = async (skillData) => {
  */
 export const updateSkill = async (id, updates) => {
   // RLS ensures only the owner of the skill with this ID can update it.
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from(SKILLS_TABLE)
     .update(updates)
     .eq("skill_id", id)
     .select();
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return data[0];
 };
 
@@ -66,11 +75,14 @@ export const updateSkill = async (id, updates) => {
  */
 export const deleteSkill = async (id) => {
   // RLS ensures only the owner of the skill with this ID can delete it.
+  const supabase = await getSupabase();
   const { error } = await supabase
     .from(SKILLS_TABLE)
     .delete()
     .eq("skill_id", id);
 
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return true;
 };

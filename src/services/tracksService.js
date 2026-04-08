@@ -1,7 +1,8 @@
-import { supabase } from "./supabase-client";
+import { getSupabase } from "./supabase.lazy";
 
 // Fetches all tracks from Supabase, ordered by title
 export const fetchTracks = async () => {
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from("synapse_tracks")
     .select("*")
@@ -15,6 +16,7 @@ export const fetchTracks = async () => {
 
 // Creates a new track in Supabase and returns the inserted record
 export const createTrack = async (trackData) => {
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from("synapse_tracks")
     .insert(trackData)
@@ -29,6 +31,7 @@ export const createTrack = async (trackData) => {
 
 // Deletes a track from Supabase by its track_id
 export const deleteTrack = async (trackId) => {
+  const supabase = await getSupabase();
   const { error } = await supabase
     .from("synapse_tracks")
     .delete()

@@ -1,11 +1,14 @@
 import { LuClock, LuTriangleAlert, LuCircleAlert } from "react-icons/lu";
 import { useActivityForm } from "./hooks/useActivityForm";
-import ButtonSpinner from "../ButtonSpinner";
+// import ButtonSpinner from "../ButtonSpinner";
 import DeleteModal from "../DeleteModal/DeleteModal";
 import DatetimeInput from "./components/DatetimeInput/DatetimeInput";
-import SelectInput from "./components/SelectInput";
-import { useRef } from "react";
+// import SelectInput from "./components/SelectInput";
+import React, { Suspense, useRef } from "react";
 import { Modal } from "../Modal/Modal";
+
+const SelectInput = React.lazy(() => import("./components/SelectInput"));
+const ButtonSpinner = React.lazy(() => import("../ButtonSpinner"));
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
@@ -122,23 +125,25 @@ function ActivityFormModal({
                   </div>
                 </div>
               ) : (
-                <SelectInput
-                  label="Skill"
-                  value={activityData?.skill_id || ""}
-                  key={activityData?.skill_id}
-                  id="skill_id"
-                  onChange={(value) =>
-                    methods.handleChange({
-                      target: { id: "skill_id", value },
-                    })
-                  }
-                  options={allSkills.map((s) => ({
-                    value: s.skill_id,
-                    label: s.name,
-                  }))}
-                  placeholder="Select a skill..."
-                  disabled={isSubmitting}
-                />
+                <Suspense fallback={<div>Loading input…</div>}>
+                  <SelectInput
+                    label="Skill"
+                    value={activityData?.skill_id || ""}
+                    key={activityData?.skill_id}
+                    id="skill_id"
+                    onChange={(value) =>
+                      methods.handleChange({
+                        target: { id: "skill_id", value },
+                      })
+                    }
+                    options={allSkills.map((s) => ({
+                      value: s.skill_id,
+                      label: s.name,
+                    }))}
+                    placeholder="Select a skill..."
+                    disabled={isSubmitting}
+                  />
+                </Suspense>
               )}
 
               <AnimatePresence>
@@ -224,20 +229,22 @@ function ActivityFormModal({
           </div>
 
           <div className="space-y-5">
-            <SelectInput
-              label="Activity type"
-              value={activityData.activity_type}
-              id="activity_type"
-              key={activityData.activity_type || "empty"}
-              onChange={(value) =>
-                methods.handleChange({
-                  target: { id: "activity_type", value },
-                })
-              }
-              options={ACTIVITIES_TYPE}
-              placeholder="Choose an activity type"
-              disabled={isSubmitting}
-            />
+            <Suspense>
+              <SelectInput
+                label="Activity type"
+                value={activityData.activity_type}
+                id="activity_type"
+                key={activityData.activity_type || "empty"}
+                onChange={(value) =>
+                  methods.handleChange({
+                    target: { id: "activity_type", value },
+                  })
+                }
+                options={ACTIVITIES_TYPE}
+                placeholder="Choose an activity type"
+                disabled={isSubmitting}
+              />
+            </Suspense>
 
             <div>
               <label
@@ -272,9 +279,11 @@ function ActivityFormModal({
               className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed shadow-[0_0_12px_rgba(16,185,129,0.4)] w-full sm:w-auto cursor-pointer"
             >
               {isSubmitting ? (
-                <ButtonSpinner
-                  label={mode === "create" ? "Adding..." : "Saving..."}
-                />
+                <Suspense fallback={null}>
+                  <ButtonSpinner
+                    label={mode === "create" ? "Adding..." : "Saving..."}
+                  />
+                </Suspense>
               ) : mode === "create" ? (
                 "Add activity"
               ) : (

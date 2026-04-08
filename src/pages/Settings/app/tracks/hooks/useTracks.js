@@ -53,7 +53,7 @@ export const useTracks = (skill = {}) => {
 
   const handleCreate = async (data) => {
     try {
-      const newTrack = await createTrackAsync(data);
+      const _newTrack = await createTrackAsync(data);
 
       setIsFormOpen(false);
       showNotif(TOAST_MESSAGES.TRACK.CREATE_SUCCESS, "success");
@@ -64,7 +64,7 @@ export const useTracks = (skill = {}) => {
       } else if (err?.message) {
         message = err.message;
       }
-      showNotif(TOAST_MESSAGES.TRACK.CREATE_ERROR, "error");
+      showNotif(message, "error");
     }
   };
 
@@ -83,7 +83,7 @@ export const useTracks = (skill = {}) => {
     try {
       await deleteTrackAsync(trackId);
       showNotif(TOAST_MESSAGES.TRACK.DELETE_SUCCESS, "success");
-    } catch (err) {
+    } catch {
       queryClient.setQueryData(["tracks"], previousTracks);
       showNotif(TOAST_MESSAGES.TRACK.DELETE_ERROR, "error");
     }

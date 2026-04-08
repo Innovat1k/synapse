@@ -1,10 +1,10 @@
-import { supabase } from "./supabase-client";
+import { getSupabase } from "./supabase.lazy";
 
 /**
  * Fetch incoming skill links (where skillId is the TARGET)
  */
 export const fetchIncomingSkillLinks = async (skillId) => {
-  console.log("Fetching incoming links for:", skillId);
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from("synapse_skill_links")
     .select(
@@ -35,6 +35,7 @@ export const fetchIncomingSkillLinks = async (skillId) => {
  * Fetch outgoing skill links (where skillId is the SOURCE)
  */
 export const fetchOutgoingSkillLinks = async (skillId) => {
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from("synapse_skill_links")
     .select(
@@ -69,6 +70,7 @@ export const createSkillLink = async ({
   target_skill_id,
   type,
 }) => {
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from("synapse_skill_links")
     .insert({ source_skill_id, target_skill_id, type })
@@ -87,6 +89,7 @@ export const createSkillLink = async ({
  */
 export const checkExistingLinks = async (sourceId, targetId) => {
   try {
+    const supabase = await getSupabase();
     const { data: directData, error: directError } = await supabase
       .from("synapse_skill_links")
       .select("id", { count: "exact" })
@@ -133,6 +136,7 @@ export const deleteSkillLink = async (linkId) => {
     throw new Error("Link ID is required");
   }
 
+  const supabase = await getSupabase();
   const { error } = await supabase
     .from("synapse_skill_links")
     .delete()
@@ -147,6 +151,7 @@ export const deleteSkillLink = async (linkId) => {
  * Fetch ALL skill links (for the global graph view)
  */
 export const fetchAllSkillLinks = async () => {
+  const supabase = await getSupabase();
   const { data, error } = await supabase.from("synapse_skill_links").select(`
       id,
       source_skill_id,

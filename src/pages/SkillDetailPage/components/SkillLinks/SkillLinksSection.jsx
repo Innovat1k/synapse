@@ -62,7 +62,7 @@ export const SkillLinksSection = ({ skillId, skill }) => {
           disabled={noLinks}
           onClick={methods.toggleEditing}
           className={`
-            text-xs font-bold px-4 py-1.5 rounded-full transition-all border flex items-center justify-center min-w-[65px]
+            text-xs font-bold px-4 py-1.5 rounded-full transition-all border flex items-center justify-center min-w-16.25
           ${
             noLinks
               ? "cursor-not-allowed opacity-30 grayscale-[0.5]"

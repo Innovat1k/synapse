@@ -83,7 +83,7 @@ export const useSkillModal = () => {
       navigate("/skills");
       showNotif(TOAST_MESSAGES.SKILL.DELETE_SUCCESS, "success");
     } catch {
-      showNotif(TOAST_MESSAGES.SKILL.DELETE_ERROR,"error");
+      showNotif(TOAST_MESSAGES.SKILL.DELETE_ERROR, "error");
     } finally {
       setSelectedSkill(null);
       setIsSubmitting(false);

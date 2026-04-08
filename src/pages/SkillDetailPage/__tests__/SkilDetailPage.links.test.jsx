@@ -7,7 +7,7 @@ import {
   renderSkillDetailPage,
 } from "./test-utils";
 import { clearActivities, clearSkillLinks } from "@mocks/stores";
-import { http } from "msw";
+import { http, HttpResponse } from "msw";
 import { server } from "@mocks/server";
 import { SUPABASE_URL } from "@services/supabase-client";
 

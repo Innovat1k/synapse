@@ -33,7 +33,7 @@ export const SettingsLayout = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSidebarOpen(false)}
-              className="md:hidden fixed inset-0 z-[60] bg-slate-950/80 backdrop-blur-sm"
+              className="md:hidden fixed inset-0 z-60 bg-slate-950/80 backdrop-blur-sm"
               data-testid="mobile-overlay"
             />
 
@@ -43,7 +43,7 @@ export const SettingsLayout = () => {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="md:hidden fixed left-0 top-0 z-[70] h-full w-72 bg-slate-900 border-r border-slate-800 p-6 shadow-2xl"
+              className="md:hidden fixed left-0 top-0 z-70 h-full w-72 bg-slate-900 border-r border-slate-800 p-6 shadow-2xl"
             >
               <div className="flex items-center justify-between mb-8">
                 <span className="font-semibold text-white">Menu</span>
@@ -63,7 +63,7 @@ export const SettingsLayout = () => {
 
       {/* --- MAIN CONTENT --- */}
       <main className="flex-1 flex flex-col min-w-0 h-screen">
-        {/* Header Mobile */}
+        {/*Header Mobile */}
         <header className="md:hidden flex items-center justify-between p-4 bg-slate-900/60 border-b border-slate-800/50 backdrop-blur-md">
           <h1 className="text-lg font-semibold">Settings</h1>
           <button

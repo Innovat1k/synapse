@@ -1,11 +1,10 @@
 import { useAtom } from "jotai";
 import { notification_atom } from "@atoms/atoms";
-// import { notification_atom } from "@/atoms/atoms";
 
 export const useToast = () => {
   const [notif, setNotif] = useAtom(notification_atom);
 
-  // Affiche une notification avec auto-fermeture
+  // Show a notification with auto-close
   const showNotif = (message, type = "success", duration = 3000) => {
     setNotif({
       isVisible: true,
@@ -14,7 +13,7 @@ export const useToast = () => {
       duration,
     });
 
-    // Auto-fermeture après le délai
+    // Self-closing after timeout
     if (duration > 0) {
       setTimeout(() => {
         setNotif((prev) =>
@@ -24,7 +23,7 @@ export const useToast = () => {
     }
   };
 
-  // Ferme immédiatement (annule le timeout si nécessaire)
+  // Close immediately (cancels timeout if necessary)
   const closeNotif = () => {
     setNotif((prev) => ({ ...prev, isVisible: false }));
   };

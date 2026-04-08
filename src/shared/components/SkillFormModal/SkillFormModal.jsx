@@ -1,11 +1,16 @@
 import { LuPlus, LuTriangleAlert } from "react-icons/lu";
 import { useSkillForm } from "./hooks/useSkillForm";
-import ButtonSpinner from "../ButtonSpinner";
-import { useRef } from "react";
+// import ButtonSpinner from "../ButtonSpinner";
+import React, { Suspense, useRef } from "react";
 import { TrackFormModal } from "../TrackFormModal/TrackFormModal";
 import { useTracks } from "../../../pages/Settings/app/tracks/hooks/useTracks";
-import SelectInput from "../ActivityFormModal/components/SelectInput";
+// import SelectInput from "../ActivityFormModal/components/SelectInput";
 import { Modal } from "@shared/components/Modal/Modal";
+
+const SelectInput = React.lazy(
+  () => import("../ActivityFormModal/components/SelectInput"),
+);
+const ButtonSpinner = React.lazy(() => import("../ButtonSpinner"));
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
@@ -87,7 +92,9 @@ const SkillFormModal = ({
                 className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm sm:text-base shadow-[0_0_12px_rgba(239,68,68,0.2)]"
               >
                 {isSubmitting ? (
-                  <ButtonSpinner label="Deleting..." inline />
+                  <Suspense fallback={null}>
+                    <ButtonSpinner label="Deleting..." inline />
+                  </Suspense>
                 ) : (
                   "Delete permanently"
                 )}
@@ -151,18 +158,20 @@ const SkillFormModal = ({
                   </div>
                 ) : (
                   <>
-                    <SelectInput
-                      id="track_id"
-                      value={skillFormData.track_id}
-                      onChange={methods.handleChangeTrack}
-                      options={tracks.map((t) => ({
-                        value: t.track_id,
-                        label: t.title,
-                      }))}
-                      placeholder="Select a track..."
-                      disabled={isSubmitting}
-                      label="Learning Track"
-                    />
+                    <Suspense fallback={<div>Loading select...</div>}>
+                      <SelectInput
+                        id="track_id"
+                        value={skillFormData.track_id}
+                        onChange={methods.handleChangeTrack}
+                        options={tracks.map((t) => ({
+                          value: t.track_id,
+                          label: t.title,
+                        }))}
+                        placeholder="Select a track..."
+                        disabled={isSubmitting}
+                        label="Learning Track"
+                      />
+                    </Suspense>
                     <AnimatePresence>
                       {mode === "edit" &&
                         hasAssociatedData &&
@@ -318,9 +327,11 @@ const SkillFormModal = ({
                 className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors"
               >
                 {isSubmitting ? (
-                  <ButtonSpinner
-                    label={mode === "create" ? "Creating..." : "Saving..."}
-                  />
+                  <Suspense fallback={null}>
+                    <ButtonSpinner
+                      label={mode === "create" ? "Creating..." : "Saving..."}
+                    />
+                  </Suspense>
                 ) : mode === "create" ? (
                   "Save Skill"
                 ) : (

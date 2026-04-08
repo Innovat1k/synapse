@@ -1,10 +1,11 @@
-import { supabase } from "./supabase-client";
+import { getSupabase } from "./supabase.lazy";
 
 const TABLE = "synapse_activities";
 
 // --- Fetching all activities for a specific skill ---
 export const fetchActivitiesBySkill = async (skillId) => {
   try {
+    const supabase = await getSupabase();
     const { data, error } = await supabase
       .from(TABLE)
       .select("*")
@@ -17,12 +18,13 @@ export const fetchActivitiesBySkill = async (skillId) => {
     return data;
   } catch {
     // TODO: log to monitoring service (e.g., Sentry)
-    return []; // fallback safe for UI
+    return [];
   }
 };
 
 // --- Adding activity ---
 export const createActivity = async (activityData) => {
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from(TABLE)
     .insert(activityData)
@@ -36,6 +38,7 @@ export const createActivity = async (activityData) => {
 
 // --- Updating activity ---
 export const updateActivity = async (id, updates) => {
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from(TABLE)
     .update(updates)
@@ -50,6 +53,7 @@ export const updateActivity = async (id, updates) => {
 
 // --- Removing activity ---
 export const deleteActivity = async (id) => {
+  const supabase = await getSupabase();
   const { error } = await supabase.from(TABLE).delete().eq("id", id);
 
   if (error) {
@@ -60,6 +64,7 @@ export const deleteActivity = async (id) => {
 
 // --- Removing all activities for a skill ---
 export const purgeActivitiesBySkill = async (skillId) => {
+  const supabase = await getSupabase();
   const { error } = await supabase.from(TABLE).delete().eq("skill_id", skillId);
 
   if (error) {

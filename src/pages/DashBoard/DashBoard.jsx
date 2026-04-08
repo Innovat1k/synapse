@@ -13,24 +13,37 @@ import {
   LuBookOpen,
   LuMaximize2,
 } from "react-icons/lu";
-import CircularProgressChart from "../../shared/components/CircularProgressChart/CircularProgressChart";
+import CircularProgressChart from "@shared/components/CircularProgressChart/CircularProgressChart";
 import Card from "./components/Card";
 import ActivityItem from "./components/ActivityItem";
 import MetricCard from "./components/MetricCard";
 import SkillBadge from "./components/SkillBadge";
 import WeeklyProgressChart from "./components/WeeklyProgressChart";
-import ActivityFormModal from "@shared/components/ActivityFormModal/ActivityFormModal";
 import { useActivityModal } from "@shared/components/ActivityFormModal/hooks/useActivityModal";
-import SkillFormModal from "@shared/components/SkillFormModal/SkillFormModal";
 import { useSkillModal } from "@shared/components/SkillFormModal/hooks/useSkillModal";
 import { useDashboardData } from "./hooks/useDashboardData";
 import { TrackSelector } from "./components/TrackSelector";
 import { SkillsGrid } from "./components/SkillsGrid";
-import { useState } from "react";
-import { Modal } from "../../shared/components/Modal/Modal";
+import React, { Suspense, useState } from "react";
+import { Modal } from "@shared/components/Modal/Modal";
 import { CategorySelector } from "./components/CategorySelector";
 import { AnimatePresence } from "framer-motion";
-import { DashboardGraph } from "./components/DashboardGraph/DashboardGraph";
+import { useInView } from "../../shared/hooks/useInView ";
+import ButtonSpinner from "../../shared/components/ButtonSpinner";
+
+const ActivityFormModal = React.lazy(
+  () => import("@shared/components/ActivityFormModal/ActivityFormModal"),
+);
+
+const SkillFormModal = React.lazy(
+  () => import("@shared/components/SkillFormModal/SkillFormModal"),
+);
+
+const DashboardGraph = React.lazy(() =>
+  import("./components/DashboardGraph/DashboardGraph").then((module) => ({
+    default: module.DashboardGraph,
+  })),
+);
 
 const Dashboard = () => {
   const goals = [
@@ -56,18 +69,25 @@ const Dashboard = () => {
   const FIXED_LIMIT = 5;
   const displayedSkills = filtered.skills.slice(0, FIXED_LIMIT);
 
+  // Load on scroll
+  const { ref, isInView } = useInView({
+    rootMargin: "200px",
+  });
+
   return (
     <>
-      <ActivityFormModal
-        mode={activityModal.modal.mode}
-        isOpened={activityModal.modal.isOpened}
-        allSkills={data.skills}
-        onSubmit={activityModal.methods.handleSaveActivity}
-        closeModal={activityModal.methods.closeModal}
-        isSubmitting={activityModal.isSubmitting}
-        closeByOverlay={activityModal.methods.handleCloseOverlay}
-        openSkillModal={skillModal.methods.openCreateModal}
-      />
+      <Suspense>
+        <ActivityFormModal
+          mode={activityModal.modal.mode}
+          isOpened={activityModal.modal.isOpened}
+          allSkills={data.skills}
+          onSubmit={activityModal.methods.handleSaveActivity}
+          closeModal={activityModal.methods.closeModal}
+          isSubmitting={activityModal.isSubmitting}
+          closeByOverlay={activityModal.methods.handleCloseOverlay}
+          openSkillModal={skillModal.methods.openCreateModal}
+        />
+      </Suspense>
 
       <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-6">
         <div className="flex justify-between items-center mb-6">
@@ -289,12 +309,25 @@ const Dashboard = () => {
                 </button>
               </div>
 
-              <div className="h-75 relative rounded-xl overflow-hidden bg-slate-950/40 border border-slate-800/50 shadow-inner">
-                <DashboardGraph
-                  skills={data.skills}
-                  links={data.links}
-                  isCompact={true}
-                />
+              <div
+                ref={ref}
+                className="h-75 relative rounded-xl overflow-hidden bg-slate-950/40 border border-slate-800/50 shadow-inner"
+              >
+                {isInView && (
+                  <Suspense
+                    fallback={
+                      <div className="flex w-full h-full items-center justify-center">
+                        <ButtonSpinner
+                          label="Loading graph"
+                          labelColor="text-slate-400"
+                          color="text-teal-600"
+                        />
+                      </div>
+                    }
+                  >
+                    <DashboardGraph skills={data.skills} isCompact={true} />
+                  </Suspense>
+                )}
 
                 {/*Discreet overlay to invite action on hover */}
                 <div className="absolute inset-0 bg-teal-500/5 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-700" />
@@ -305,15 +338,17 @@ const Dashboard = () => {
       </div>
 
       <AnimatePresence>
-        {skillModal.modal.isModalOpen && (
-          <SkillFormModal
-            isOpened={true}
-            mode={skillModal.modal.modalMode}
-            isSubmitting={skillModal.isSubmitting}
-            onClose={skillModal.methods.closeModal}
-            onSubmit={skillModal.methods.handleSaveSkill}
-          />
-        )}
+        <Suspense>
+          {skillModal.modal.isModalOpen && (
+            <SkillFormModal
+              isOpened={true}
+              mode={skillModal.modal.modalMode}
+              isSubmitting={skillModal.isSubmitting}
+              onClose={skillModal.methods.closeModal}
+              onSubmit={skillModal.methods.handleSaveSkill}
+            />
+          )}
+        </Suspense>
 
         {isFullscreenGraph && (
           <Modal
@@ -330,7 +365,6 @@ const Dashboard = () => {
                   isOpened={isFullscreenGraph}
                   onClose={() => setIsFullscreenGraph(false)}
                   skills={filtered.skills}
-                  links={data.links}
                   isCompact={false}
                   selectors={
                     <div className="flex items-center gap-6 sm:gap-2">

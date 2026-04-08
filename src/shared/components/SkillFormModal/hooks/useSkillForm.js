@@ -105,14 +105,10 @@ export const useSkillForm = ({
       return;
     }
 
-    try {
-      await onSubmit({
-        ...(initialData?.skill_id ? { skill_id: initialData.skill_id } : {}),
-        ...skillFormData,
-      });
-    } catch (err) {
-      throw err;
-    }
+    await onSubmit({
+      ...(initialData?.skill_id ? { skill_id: initialData.skill_id } : {}),
+      ...skillFormData,
+    });
   };
 
   // Auto select the newly created track

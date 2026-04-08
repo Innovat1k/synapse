@@ -1,7 +1,7 @@
+import { useQueries } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { useSkillsQuery } from "../../../shared/hooks/useSkillsQuery/useSkillsQuery";
-import { useTracksQuery } from "../../../shared/hooks/useTracksQuery";
-import { useSkillLinksQuery } from "../../../shared/hooks/useSkillLinksQuery";
+import { fetchSkills } from "@services/skillService";
+import { fetchTracks } from "@services/tracksService";
 
 // Orchestrates dashboard data: skills, tracks, and links with dynamic filtering by track/category.
 // Computes view mode (global/track/category) and exposes actions to update selections.
@@ -10,14 +10,34 @@ export const useDashboardData = () => {
   const [selectedTrackId, setSelectedTrackId] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  const { skills = [], isLoading: isLoadingSkills } = useSkillsQuery();
-  const { tracks = [], isLoading: isLoadingTracks } = useTracksQuery();
-  const { links = [], isLoading: isLoadingLinks } = useSkillLinksQuery();
+  const [
+    { data: skills = [], isLoading: isLoadingSkills },
+    { data: tracks = [], isLoading: isLoadingTracks },
+  ] = useQueries({
+    queries: [
+      {
+        queryKey: ["skills"],
+        queryFn: fetchSkills,
+        staleTime: 5 * 60 * 1000,
+        placeholderData: (previousData) => previousData,
+      },
+      {
+        queryKey: ["tracks"],
+        queryFn: fetchTracks,
+        staleTime: 5 * 60 * 1000,
+        placeholderData: (previousData) => previousData,
+      },
+    ],
+  });
 
   // Determines current view mode based on active filters
   const mode = useMemo(() => {
-    if (selectedCategory) {return "category";}
-    if (selectedTrackId !== "all") {return "track";}
+    if (selectedCategory) {
+      return "category";
+    }
+    if (selectedTrackId !== "all") {
+      return "track";
+    }
     return "global";
   }, [selectedTrackId, selectedCategory]);
 
@@ -44,8 +64,8 @@ export const useDashboardData = () => {
   );
 
   return {
-    data: { skills, tracks, links, categories },
-    filtered: { skills: filteredSkills, links },
+    data: { skills, tracks, categories },
+    filtered: { skills: filteredSkills },
     view: {
       selectedTrackId,
       selectedCategory,
@@ -56,6 +76,6 @@ export const useDashboardData = () => {
       selectTrack: setSelectedTrackId,
       selectCategory: setSelectedCategory,
     },
-    isLoading: isLoadingSkills || isLoadingTracks || isLoadingLinks,
+    isLoading: isLoadingSkills || isLoadingTracks,
   };
 };

@@ -34,7 +34,7 @@ function UserAuthPage() {
     touched[field] && validation.errors[field];
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-slate-950">
+    <div className="w-full">
       <div className="p-8 w-full max-w-md bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-slate-800/50 shadow-xl">
         <img
           className="w-30 mx-auto"
@@ -77,7 +77,7 @@ function UserAuthPage() {
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
                 >
-                  <LuCircleAlert className="w-4 h-4 text-red-400 flex-shrink-0" />{" "}
+                  <LuCircleAlert className="w-4 h-4 text-red-400 shrink-0" />{" "}
                   <span>{validation.errors.email}</span>
                 </motion.p>
               )}
@@ -112,7 +112,7 @@ function UserAuthPage() {
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
                 >
-                  <LuCircleAlert className="w-4 h-4 text-red-400 flex-shrink-0" />{" "}
+                  <LuCircleAlert className="w-4 h-4 text-red-400 shrink-0" />{" "}
                   <span>{validation.errors.password}</span>
                 </motion.p>
               )}
@@ -153,7 +153,7 @@ function UserAuthPage() {
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
                     >
-                      <LuCircleAlert className="w-4 h-4 text-red-400 flex-shrink-0" />{" "}
+                      <LuCircleAlert className="w-4 h-4 text-red-400 shrink-0" />{" "}
                       <span>{validation.errors.confirmPassword}</span>
                     </motion.p>
                   )}

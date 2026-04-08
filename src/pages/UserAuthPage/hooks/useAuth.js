@@ -1,42 +1,14 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../../../services/supabase-client";
 import { useAtom } from "jotai";
 import { notification_atom, session_atom, user_atom } from "@atoms/atoms";
 import { useNavigate } from "react-router-dom";
 import { useFormData } from "./useFormData";
-import { useToast } from "../../../shared/components/Toast/hooks/useToast";
-import { TOAST_MESSAGES } from "../../../shared/components/Toast/toastMessages";
+import { useToast } from "@shared/components/Toast/hooks/useToast";
+import { TOAST_MESSAGES } from "@shared/components/Toast/toastMessages";
+import { getSupabase } from "@services/supabase.lazy";
 
-/**
- * Manages user authentication and session state with Supabase.
- *
- * Handles:
- * - Initial session restoration on app load (with timeout fallback)
- * - Sign-in and sign-up flows with user feedback via notifications
- * - Secure sign-out (clears form data and navigates away)
- * - Real-time auth state sync via Supabase listener
- *
- * Uses Jotai atoms only to ensure stable state during mounting
- * (prevents undefined values), not for cross-component sharing.
- *
- * @param {void} — This hook takes no parameters.
- * @returns {{
- *   loader: { isSubmitting: boolean; isInitialLoading: boolean; isSigningOut: boolean },
- *   isLoading: boolean,
- *   userSession: import('@supabase/supabase-js').Session | null,
- *   user: import('@supabase/supabase-js').User | null,
- *   notification: { isVisible?: boolean; type: string; message: string },
- *   methods: {
- *     handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
- *     handleBlur: (e: React.FocusEvent<HTMLInputElement>) => void,
- *     handleToggleAuth: () => void,
- *     handleSignIn: (e: React.FormEvent) => Promise<void>,
- *     handleSignUp: (e: React.FormEvent) => Promise<void>,
- *     handleSignOut: () => Promise<void>
- *   }
- * }} Authentication state and action handlers.
- */
-
+// Manages full authentication flow (sign-in/sign-up/sign-out) with session persistence via Jotai atoms.
+// Includes 5s timeout fallback on init and lazy Supabase client loading for performance.
 export const useAuth = () => {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,21 +18,18 @@ export const useAuth = () => {
   const [userSession, setUserSession] = useAtom(session_atom);
   const [user, setUser] = useAtom(user_atom);
 
-  // Get form input methods
   const { formData, handleBlur, handleToggleAuth, handleChange, resetForm } =
     useFormData();
-
   const { showNotif } = useToast();
-
   const navigate = useNavigate();
 
-  // Check and update user session
   useEffect(() => {
     let isSubscribed = true;
     let timeoutId;
 
     const initAuth = async () => {
       try {
+        const supabase = await getSupabase();
         const { data } = await supabase.auth.getSession();
         if (isSubscribed) {
           setUserSession(data.session);
@@ -75,99 +44,86 @@ export const useAuth = () => {
       }
     };
 
-    // Guard Timeout (5 seconds)
+    // Guard Timeout (5 secondes)
     timeoutId = setTimeout(() => {
-      if (isSubscribed) {
-        setIsInitialLoading(false);
-      }
+      if (isSubscribed) {setIsInitialLoading(false);}
     }, 5000);
 
-    const authListener = supabase.auth.onAuthStateChange((_, session) => {
-      if (isSubscribed) {
-        setUserSession(session);
-      }
+    const setupListener = async () => {
+      const supabase = await getSupabase();
+      const authListener = supabase.auth.onAuthStateChange((_, session) => {
+        if (isSubscribed) {setUserSession(session);}
+      });
+      return authListener.data.subscription;
+    };
+
+    let subscription;
+    initAuth().then(async () => {
+      subscription = await setupListener();
     });
-
-    const subscription = authListener.data.subscription;
-
-    initAuth();
 
     return () => {
       isSubscribed = false;
       clearTimeout(timeoutId);
-      subscription.unsubscribe();
+      if (subscription) {subscription.unsubscribe();}
     };
   }, [setUserSession]);
 
-  // Get user with session
   useEffect(() => {
-    if (userSession?.user) {
-      setUser(userSession.user);
-    } else {
-      setUser(null);
-    }
+    if (userSession?.user) {setUser(userSession.user);}
+    else {setUser(null);}
   }, [userSession, setUser]);
 
-  // Sign In
   const handleSignIn = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setNotification({ type: "", message: "" });
 
     try {
+      const supabase = await getSupabase();
       const { error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
       });
 
-      if (error) {
-        showNotif(
-          TOAST_MESSAGES.AUTH.SIGN_IN_ERROR,
-          "error",
-        );
-      } else {
-        navigate("/dashboard");
-      }
+      if (error) {showNotif(TOAST_MESSAGES.AUTH.SIGN_IN_ERROR, "error");}
+      else {navigate("/dashboard");}
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Sign Up
   const handleSignUp = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setNotification({ type: "", message: "" });
 
     try {
+      const supabase = await getSupabase();
       const { error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
       });
-      if (error) {
-        showNotif(TOAST_MESSAGES.AUTH.SIGN_UP_ERROR, "error");
-      } else {
-        navigate("/auth/check-email");
-      }
+
+      if (error) {showNotif(TOAST_MESSAGES.AUTH.SIGN_UP_ERROR, "error");}
+      else {navigate("/auth/check-email");}
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Sign Out
   const handleSignOut = async () => {
     setIsSigningOut(true);
     setIsInitialLoading(true);
 
     try {
+      const supabase = await getSupabase();
       const { error } = await supabase.auth.signOut();
-      if (error) {
-        throw error;
-      } else {
-        showNotif(TOAST_MESSAGES.AUTH.SIGN_OUT_SUCCESS, "success");
-        resetForm();
-        navigate("/auth");
-      }
+      if (error) {throw error;}
+
+      showNotif(TOAST_MESSAGES.AUTH.SIGN_OUT_SUCCESS, "success");
+      resetForm();
+      navigate("/auth");
     } finally {
       setIsSigningOut(false);
       setIsInitialLoading(false);

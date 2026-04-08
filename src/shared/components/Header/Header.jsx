@@ -1,5 +1,4 @@
-import { Avatar } from "radix-ui"; // ✅ Correction d'import
-import { LuSearch } from "react-icons/lu";
+import * as Avatar from "@radix-ui/react-avatar";
 import { Link } from "react-router-dom";
 
 function Header({ signOut, user }) {
@@ -13,17 +12,10 @@ function Header({ signOut, user }) {
       </Link>
 
       <div className="flex items-center gap-4">
-        <button
-          aria-label="Search"
-          className="text-slate-400 hover:text-slate-200"
-        >
-          <LuSearch size={24} />
-        </button>
-
         <div className="flex items-center gap-3">
           <Avatar.Root className="w-10 h-10 rounded-full overflow-hidden">
             <Avatar.Image
-              src={"/user-img.jpeg"}
+              // src={"/user-img.jpeg"}
               alt={`Avatar of ${user?.name}`}
               className="w-full h-full object-cover"
             />

@@ -7,7 +7,6 @@ import { useSkillModal } from "@shared/components/SkillFormModal/hooks/useSkillM
 import PurgeActivitiesModal from "./components/PurgeActivitiesModal/PurgeActivitiesModal";
 import { usePurgeActivities } from "./components/PurgeActivitiesModal/hooks/usePurgeActivities";
 import { useActivitiesQuery } from "@shared/hooks/useActivitiesQuery/useActivitiesQuery";
-import SkillSkeleton from "./components/SkillSkeleton";
 import SkillActionsMenu from "./components/SkillActionsMenu/SkillActionsMenu";
 import { SkillLinksSection } from "./components/SkillLinks/SkillLinksSection";
 import { useGraphModal } from "./components/GraphModal/hooks/useGraphModal";
@@ -31,11 +30,6 @@ function SkillDetailPage() {
     useSubgraph(skillId);
 
   const { data: trackData } = useTracks(skill);
-
-  // Show the skeleton if skill is not ready
-  if (!skill) {
-    return <SkillSkeleton />;
-  }
 
   return (
     <>
