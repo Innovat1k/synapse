@@ -14,6 +14,14 @@ import SkillsListPage from "../pages/SkillsListPage/SkillsListPage";
 import SkillDetailPage from "../pages/SkillDetailPage/SkillDetailPage";
 import { clearSkills } from "../mocks/stores";
 
+const TEST_USER_ID = "025af00a-1837-44e0-b03d-6150e1da4611";
+vi.mock("@pages/UserAuthPage/hooks/useAuth", () => ({
+  useAuth: () => ({
+    user: { id: TEST_USER_ID },
+    loader: { isInitialLoading: false },
+  }),
+}));
+
 describe("SkillsLayout", () => {
   let queryClient;
   let LayoutWrapper;

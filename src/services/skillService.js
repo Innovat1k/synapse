@@ -1,4 +1,4 @@
-import { getSupabase } from "./supabase.lazy";
+import { getSupabase } from "./supabase-lazy";
 
 const SKILLS_TABLE = "synapse_skills";
 
@@ -10,15 +10,14 @@ const SKILLS_TABLE = "synapse_skills";
  */
 
 // --- 1. READ (Fetching all skills for the current user) ---
-export const fetchSkills = async () => {
+export const fetchSkills = async (userId) => {
   try {
-    // We rely on RLS (Row Level Security) on the 'skills' table
-    // to automatically filter records based on the current user's ID (auth.uid()).
     const supabase = await getSupabase();
     const { data, error } = await supabase
       .from(SKILLS_TABLE)
       .select("*")
-      .order("created_at", { ascending: false }); // Latest skills first
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
 
     if (error) {
       throw error;
@@ -26,7 +25,7 @@ export const fetchSkills = async () => {
     return data;
   } catch {
     // TODO: log to monitoring service (e.g., Sentry)
-    return []; // fallback safe for UI
+    return [];
   }
 };
 

@@ -37,7 +37,8 @@ export default defineConfig({
 
   test: {
     globals: true,
-    environment: "jsdom",
+    // environment: "jsdom",
+    environment: "happy-dom",
     setupFiles: "./setupTests.js",
     coverage: {
       provider: "c8",

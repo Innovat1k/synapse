@@ -1,31 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { formatMinutes } from "@utils/utils";
 import { useActivityValidation } from "./useActivityValidation";
 
 /**
  * Custom hook to manage form state and validation logic for creating or editing an activity.
- *
- * Handles:
- * - Initialization and reset of activity data based on mode ("create" or "edit")
- * - Synchronization with modal open/close state
- * - Duration input management (hours/minutes → total minutes)
- * - Validation via `useActivityValidation`
- * - Controlled input updates and touched-state tracking for real-time validation
- *
- * @param {Object} options - Configuration object
- * @param {string} [options.mode="edit"] - Form mode: "create" or "edit"
- * @param {Array} options.skills - List of available skills (used to infer context)
- * @param {Object} [options.initialData] - Initial activity data when editing
- * @param {string} options.id - Skill ID (used as fallback for skill_id in create mode)
- * @param {Function} options.onSubmit - Callback triggered on valid form submission
- * @param {boolean} options.isOpened - Controls form reset when modal closes
- *
- * @returns {Object} Form state and handlers:
- * - `activityData` – current values of non-duration fields
- * - `durationData` – { hours, minutes }
- * - `errors` – validation messages (only for touched fields)
- * - `isFormValid` – boolean indicating overall validity
- * - `methods` – { handleChange, handleChangeDuration, handleSubmit }
+ * All comments in English for international standardization
  */
 
 export const useActivityForm = ({
@@ -48,7 +27,6 @@ export const useActivityForm = ({
     minutes: 0,
   });
 
-  //
   const initialTouchedState = useMemo(
     () => ({
       skill_id: false,
@@ -71,19 +49,22 @@ export const useActivityForm = ({
     touched,
   });
 
-  // Synchronize initialData on edit mode and clear form data if mode changes
-  // 1. Reset data when modal get closed
+  const hasInitialized = useRef(false);
+
+  // 1. Reset data when modal gets closed
   useEffect(() => {
     if (!isOpened) {
       setActivityData({});
       setDurationData({ hours: 0, minutes: 0 });
       setTouched(initialTouchedState);
+      hasInitialized.current = false;
     }
   }, [isOpened, initialTouchedState]);
 
-  // 2. Initialize data when modal get opened
+  // 2. Initialize data ONLY ONCE when modal opens
   useEffect(() => {
-    if (!isOpened) {
+    // Skip if not opened or already initialized this session
+    if (!isOpened || hasInitialized.current) {
       return;
     }
 
@@ -92,9 +73,11 @@ export const useActivityForm = ({
         activity_type: "learning",
         logged_at: new Date().toISOString(),
         notes: "",
+        // Initialize skill_id only once (id comes from CurrentFocus context or null)
         skill_id: id || "",
       });
       setDurationData({ hours: 0, minutes: 0 });
+      setTouched(initialTouchedState);
     } else if (mode === "edit" && initialData?.id) {
       setActivityData({
         ...initialData,
@@ -104,13 +87,15 @@ export const useActivityForm = ({
         skill_id: initialData.skill_id || "",
       });
 
-      // Duration
+      // Duration conversion for edit mode
       if (initialData.duration_minutes !== null) {
         const hours = Math.floor(initialData.duration_minutes / 60);
         const minutes = initialData.duration_minutes % 60;
         setDurationData({ hours, minutes });
       }
     }
+
+    hasInitialized.current = true;
   }, [isOpened, mode, initialData, id]);
 
   // Change duration inputs value and convert durationData to minutes
@@ -122,31 +107,29 @@ export const useActivityForm = ({
     setTouched((prev) => ({ ...prev, duration: true }));
   };
 
-  // Change inputs value
+  // Change inputs value - THIS IS KEY: preserves user selections
   const handleChange = (e) => {
-    const { id, value } = e.target;
+    const { id: fieldId, value } = e.target;
 
     setActivityData((prev) => ({
       ...prev,
-      [id]: value ?? "",
+      [fieldId]: value ?? "",
     }));
-    setTouched((prev) => ({ ...prev, [id]: true }));
+    setTouched((prev) => ({ ...prev, [fieldId]: true }));
   };
 
-  // Complete activity data
-  const selected_skill = skills.find((skill) => skill.skill_id === id) || null;
+  // Complete activity data for submission
+  const selected_skill =
+    skills.find((skill) => skill.skill_id === activityData.skill_id) || null;
 
   const activity = useMemo(() => {
-    // If logged_at doesn't exist -> use current date
     const isoLoggedAt = activityData?.logged_at
       ? new Date(activityData.logged_at).toISOString()
       : new Date().toISOString();
 
     return {
       ...activityData,
-
-      // Priority: selected_skill > value from activityData
-      skill_id: selected_skill?.skill_id || activityData.skill_id,
+      skill_id: activityData.skill_id,
       track_id: selected_skill?.track_id || "default-track",
       logged_at: isoLoggedAt,
       duration_minutes: formatMinutes(durationData),

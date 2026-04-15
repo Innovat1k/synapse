@@ -1,4 +1,4 @@
-import { getSupabase } from "./supabase.lazy";
+import { getSupabase } from "./supabase-lazy";
 
 /**
  * Fetch incoming skill links (where skillId is the TARGET)

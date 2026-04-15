@@ -1,43 +1,46 @@
-// /**
-//  * Dashboard for rendering all widgets.
-//  *
-//  * Note: Widgets and charts are currently mocked with placeholder data.
-//  * Implementation will be rolled out incrementally per development phase.
-//  */
+import React, { Suspense, useState } from "react";
+import { AnimatePresence } from "framer-motion";
 
-import {
-  LuCirclePlus,
-  LuCircleCheck,
-  LuClock,
-  LuArrowUpRight,
-  LuBookOpen,
-  LuMaximize2,
-} from "react-icons/lu";
-import CircularProgressChart from "@shared/components/CircularProgressChart/CircularProgressChart";
+import { LuCirclePlus, LuBookOpen, LuMaximize2 } from "react-icons/lu";
+
+import { Modal } from "@shared/components/Modal/Modal";
+import ButtonSpinner from "@shared/components/ButtonSpinner";
+import { useInView } from "@shared/hooks/useInView ";
+
 import Card from "./components/Card";
-import ActivityItem from "./components/ActivityItem";
-import MetricCard from "./components/MetricCard";
-import SkillBadge from "./components/SkillBadge";
-import WeeklyProgressChart from "./components/WeeklyProgressChart";
+import CurrentFocus from "./components/CurrentFocus/CurrentFocus";
+import KeyMetrics from "./components/KeyMetrics/KeyMetrics";
+import WeeklyProgress from "./components/WeeklyProgress/WeeklyProgress";
+import ActivityTimeline from "./components/ActivityTimeline/ActivityTimeline";
+import DailyActivity from "./components/DailyActivity/DailyActivity";
+import { SkillsGrid } from "./components/SkillsGrid";
+import { TrackSelector } from "./components/TrackSelector";
+import { CategorySelector } from "./components/CategorySelector";
+
 import { useActivityModal } from "@shared/components/ActivityFormModal/hooks/useActivityModal";
 import { useSkillModal } from "@shared/components/SkillFormModal/hooks/useSkillModal";
+
+import { useAuth } from "@pages/UserAuthPage/hooks/useAuth";
 import { useDashboardData } from "./hooks/useDashboardData";
-import { TrackSelector } from "./components/TrackSelector";
-import { SkillsGrid } from "./components/SkillsGrid";
-import React, { Suspense, useState } from "react";
-import { Modal } from "@shared/components/Modal/Modal";
-import { CategorySelector } from "./components/CategorySelector";
-import { AnimatePresence } from "framer-motion";
-import { useInView } from "../../shared/hooks/useInView ";
-import ButtonSpinner from "../../shared/components/ButtonSpinner";
+import { useWeeklyProgress } from "./components/WeeklyProgress/hooks/useWeeklyProgress";
+import { useRecentActivities } from "./components/ActivityTimeline/hooks/useRecentActivities";
+import { useCurrentFocus } from "./components/CurrentFocus/hooks/useCurrentFocus";
+import { useKeyMetrics } from "./components/KeyMetrics/hooks/useKeyMetrics";
+import { useDailyActivity } from "./components/DailyActivity/hooks/useDailyActivity";
 
-const ActivityFormModal = React.lazy(
-  () => import("@shared/components/ActivityFormModal/ActivityFormModal"),
-);
+import ActivityFormModal from "@shared/components/ActivityFormModal/ActivityFormModal";
+import SkillFormModal from "../../shared/components/SkillFormModal/SkillFormModal";
 
-const SkillFormModal = React.lazy(
-  () => import("@shared/components/SkillFormModal/SkillFormModal"),
-);
+import { user_atom, session_atom } from "@atoms/atoms";
+import { useAtomValue } from "jotai";
+
+// const ActivityFormModal = React.lazy(
+//   () => import("@shared/components/ActivityFormModal/ActivityFormModal"),
+// );
+
+// const SkillFormModal = React.lazy(
+//   () => import("@shared/components/SkillFormModal/SkillFormModal"),
+// );
 
 const DashboardGraph = React.lazy(() =>
   import("./components/DashboardGraph/DashboardGraph").then((module) => ({
@@ -46,19 +49,6 @@ const DashboardGraph = React.lazy(() =>
 );
 
 const Dashboard = () => {
-  const goals = [
-    "Complete 'React Native' course",
-    "Learn Supabase Auth",
-    "Build portfolio website",
-  ];
-
-  const activityTimeline = [
-    { text: "Logged 7 hours on React", time: "2h ago" },
-    { text: "Increased SOL to React", time: "4h ago" },
-    { text: "Increased SOL to level 3", time: "Yesterday" },
-    { text: "Created 'Typoophy' skill", time: "Last week" },
-  ];
-
   const [isFullscreenGraph, setIsFullscreenGraph] = useState(false);
 
   const { data, filtered, view, actions, isLoading } = useDashboardData();
@@ -74,20 +64,40 @@ const Dashboard = () => {
     rootMargin: "200px",
   });
 
+  const { user, loader } = useAuth();
+  // const user = useAtomValue(user_atom);
+
+  const currentFocus = useCurrentFocus(user?.id, { daysBack: 7 });
+  const recentActivities = useRecentActivities(user?.id, { limit: 5 });
+  const keyMetrics = useKeyMetrics(user?.id);
+  const dailyActivity = useDailyActivity(user?.id, { daysBack: 7 });
+  const weeklyProgress = useWeeklyProgress(user?.id, {
+    trackId: view.selectedTrackId !== "all" ? view.selectedTrackId : null,
+  });
+
+  if (loader.isInitialLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-950">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-400 mx-auto" />
+      </div>
+    );
+  }
+
   return (
     <>
-      <Suspense>
-        <ActivityFormModal
-          mode={activityModal.modal.mode}
-          isOpened={activityModal.modal.isOpened}
-          allSkills={data.skills}
-          onSubmit={activityModal.methods.handleSaveActivity}
-          closeModal={activityModal.methods.closeModal}
-          isSubmitting={activityModal.isSubmitting}
-          closeByOverlay={activityModal.methods.handleCloseOverlay}
-          openSkillModal={skillModal.methods.openCreateModal}
-        />
-      </Suspense>
+      {/* <Suspense> */}
+      <ActivityFormModal
+        mode={activityModal.modal.mode}
+        isOpened={activityModal.modal.isOpened}
+        allSkills={data.skills}
+        onSubmit={activityModal.methods.handleSaveActivity}
+        closeModal={activityModal.methods.closeModal}
+        isSubmitting={activityModal.isSubmitting}
+        closeByOverlay={activityModal.methods.handleCloseOverlay}
+        openSkillModal={skillModal.methods.openCreateModal}
+        skill={activityModal.preselectedSkill}
+      />
+      {/* </Suspense> */}
 
       <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-6">
         <div className="flex justify-between items-center mb-6">
@@ -98,89 +108,32 @@ const Dashboard = () => {
           {/* Column 1 */}
           <div className="space-y-6">
             <Card dataTestId="current-focus">
-              <h2 className="text-lg font-semibold text-slate-100 mb-4">
-                Current Focus
-              </h2>
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-sm text-slate-400">
-                  {view.currentTrack?.title || "Select a track"}
-                </span>
-                <div className="flex items-center gap-1 text-xs text-slate-500">
-                  <LuClock /> 2h ago
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between mb-4">
-                <CircularProgressChart value={85} strokeWidth={5} />
-                <div className="text-right">
-                  <div className="text-xs text-slate-400">Level 4/5</div>
-                  <button
-                    type="button"
-                    className="mt-2 bg-teal-400 hover:bg-teal-500 text-slate-900 px-2 py-1 rounded text-xs font-medium transition-colors cursor-pointer"
-                    onClick={activityModal.methods.openCreateModal}
-                  >
-                    Log Activity
-                  </button>
-                </div>
-              </div>
-
-              <h3 className="font-medium text-slate-100 mb-2">My Goals</h3>
-              <ul className="space-y-2">
-                {goals.map((goal, i) => (
-                  <li
-                    key={i}
-                    className="flex items-start gap-2 text-sm text-slate-300"
-                  >
-                    <LuCircleCheck className="text-emerald-400 mt-0.5" />
-                    <span>{goal}</span>
-                  </li>
-                ))}
-              </ul>
+              <CurrentFocus
+                data={currentFocus.data}
+                isLoading={currentFocus.isLoading}
+                error={currentFocus.error}
+                onLogActivity={(focusData) => {
+                  const skillForModal = focusData
+                    ? {
+                        skill_id: focusData.skill_id,
+                        name: focusData.skill_name,
+                        track_title: focusData.track_title,
+                      }
+                    : null;
+                  activityModal.methods.openCreateModal(skillForModal);
+                }}
+              />
             </Card>
 
             <Card>
-              <h2 className="text-lg font-semibold text-slate-100 mb-4">
-                Related Skills
-              </h2>
-              <div className="flex flex-wrap gap-2">
-                {filtered.skills.slice(0, 8).map((skill) => (
-                  <SkillBadge
-                    key={skill.skill_id}
-                    name={skill.name}
-                    level={skill.level}
-                    color="bg-slate-800/50 text-slate-200"
-                  />
-                ))}
-              </div>
-            </Card>
-
-            <Card>
-              <h2 className="text-lg font-semibold text-slate-100 mb-4">
+              <h2 className="text-sm font-bold uppercase. tracking-wider text-slate-100 mb-4">
                 Key Metrics
               </h2>
-              <div className="grid grid-cols-3 gap-4">
-                <MetricCard
-                  title="Hours"
-                  value="25"
-                  subtitle="This week"
-                  icon={<LuClock />}
-                  color="text-teal-400"
-                />
-                <MetricCard
-                  title="Projects Completed"
-                  value="380"
-                  subtitle="Total"
-                  icon={<LuCircleCheck />}
-                  color="text-emerald-400"
-                />
-                <MetricCard
-                  title="SOL Level"
-                  value="5"
-                  subtitle="Out of 10"
-                  icon={<LuArrowUpRight />}
-                  color="text-amber-400"
-                />
-              </div>
+              <KeyMetrics
+                data={keyMetrics.data}
+                isLoading={keyMetrics.isLoading}
+                error={keyMetrics.error}
+              />
             </Card>
           </div>
 
@@ -262,7 +215,25 @@ const Dashboard = () => {
             </Card>
 
             <Card>
-              <WeeklyProgressChart />
+              <h2 className="text-lg font-semibold text-slate-100 mb-4">
+                Weekly Progress
+              </h2>
+              <WeeklyProgress
+                data={weeklyProgress.data || []}
+                isLoading={weeklyProgress.isLoading}
+                error={weeklyProgress.error}
+              />
+            </Card>
+
+            <Card>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">
+                Daily Activity
+              </h2>
+              <DailyActivity
+                data={dailyActivity.data}
+                isLoading={dailyActivity.isLoading}
+                error={dailyActivity.error}
+              />
             </Card>
           </div>
 
@@ -272,14 +243,11 @@ const Dashboard = () => {
               <h2 className="text-lg font-semibold text-slate-100 mb-4">
                 Activity Timeline
               </h2>
-              <div className="text-xs text-slate-500 mb-2">
-                Planned for Phase 5
-              </div>
-              <div className="space-y-4">
-                {activityTimeline.map((item, i) => (
-                  <ActivityItem key={i} text={item.text} time={item.time} />
-                ))}
-              </div>
+              <ActivityTimeline
+                data={recentActivities.data || []}
+                isLoading={recentActivities.isLoading}
+                error={recentActivities.error}
+              />
             </Card>
 
             <Card
@@ -338,17 +306,17 @@ const Dashboard = () => {
       </div>
 
       <AnimatePresence>
-        <Suspense>
-          {skillModal.modal.isModalOpen && (
-            <SkillFormModal
-              isOpened={true}
-              mode={skillModal.modal.modalMode}
-              isSubmitting={skillModal.isSubmitting}
-              onClose={skillModal.methods.closeModal}
-              onSubmit={skillModal.methods.handleSaveSkill}
-            />
-          )}
-        </Suspense>
+        {/* <Suspense> */}
+        {skillModal.modal.isModalOpen && (
+          <SkillFormModal
+            isOpened={true}
+            mode={skillModal.modal.modalMode}
+            isSubmitting={skillModal.isSubmitting}
+            onClose={skillModal.methods.closeModal}
+            onSubmit={skillModal.methods.handleSaveSkill}
+          />
+        )}
+        {/* </Suspense> */}
 
         {isFullscreenGraph && (
           <Modal

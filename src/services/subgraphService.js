@@ -1,4 +1,4 @@
-import { getSupabase } from "./supabase.lazy";
+import { getSupabase } from "./supabase-lazy";
 
 export const fetchSubgraph = async (centerSkillId) => {
   if (!centerSkillId) {

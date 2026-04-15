@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useFormData } from "./useFormData";
 import { useToast } from "@shared/components/Toast/hooks/useToast";
 import { TOAST_MESSAGES } from "@shared/components/Toast/toastMessages";
-import { getSupabase } from "@services/supabase.lazy";
+import { getSupabase } from "@services/supabase-lazy";
 
 // Manages full authentication flow (sign-in/sign-up/sign-out) with session persistence via Jotai atoms.
 // Includes 5s timeout fallback on init and lazy Supabase client loading for performance.

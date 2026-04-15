@@ -4,6 +4,8 @@ import { createSkill, deleteSkill, updateSkill } from "@services/skillService";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../Toast/hooks/useToast";
 import { TOAST_MESSAGES } from "../../Toast/toastMessages";
+import invalidateDashboardQueries from "@pages/DashBoard/utils/invalidateDashboardQueries";
+import { useAuth } from "@pages/UserAuthPage/hooks/useAuth";
 
 /**
  * Custom hook for managing modal.
@@ -12,6 +14,7 @@ import { TOAST_MESSAGES } from "../../Toast/toastMessages";
  */
 
 export const useSkillModal = () => {
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -45,6 +48,8 @@ export const useSkillModal = () => {
   };
 
   const handleSaveSkill = async (skillData) => {
+    console.log(skillData);
+
     setIsSubmitting(true);
     try {
       if (modalMode === "create") {
@@ -54,6 +59,8 @@ export const useSkillModal = () => {
       }
 
       await queryClient.invalidateQueries({ queryKey: ["skills"] });
+      await invalidateDashboardQueries(queryClient, user.id);
+
       closeModal();
       showNotif(
         modalMode === "create"
@@ -79,6 +86,7 @@ export const useSkillModal = () => {
     try {
       await deleteSkill(selectedSkill.skill_id);
       await queryClient.invalidateQueries({ queryKey: ["skills"] });
+      await invalidateDashboardQueries(queryClient, user.id);
 
       navigate("/skills");
       showNotif(TOAST_MESSAGES.SKILL.DELETE_SUCCESS, "success");

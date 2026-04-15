@@ -1,8 +1,13 @@
 // Mutable in-memory stores for integration tests with reset/seed utilities
+
+// Unique mock user ID for all tests
+const TEST_USER_ID = "025af00a-1837-44e0-b03d-6150e1da4611";
+
 export const defaultSkills = [
   {
     name: "React JS",
     skill_id: "skill-react",
+    user_id: TEST_USER_ID,
     category: "frontend",
     level: 4,
     description:
@@ -13,6 +18,7 @@ export const defaultSkills = [
   {
     name: "Java",
     skill_id: "skill-java",
+    user_id: TEST_USER_ID,
     category: "backend",
     level: 1,
     description: "Exploring the fundamentals of Java development.",
@@ -22,6 +28,7 @@ export const defaultSkills = [
   {
     name: "Project Management",
     skill_id: "skill-project-mgmt",
+    user_id: TEST_USER_ID,
     category: "other",
     level: 3,
     description: "Managing small agile projects and coordinating tasks.",
@@ -34,6 +41,7 @@ export const defaultActivities = [
   {
     id: "act-001",
     skill_id: "skill-react",
+    user_id: TEST_USER_ID,
     activity_type: "learning",
     logged_at: "2025-01-08T18:00:00Z",
     duration_minutes: 150,
@@ -42,6 +50,7 @@ export const defaultActivities = [
   {
     id: "act-002",
     skill_id: "skill-react",
+    user_id: TEST_USER_ID,
     activity_type: "project work",
     logged_at: "2025-01-11T14:00:00Z",
     duration_minutes: 210,
@@ -50,6 +59,7 @@ export const defaultActivities = [
   {
     id: "act-003",
     skill_id: "skill-java",
+    user_id: TEST_USER_ID,
     activity_type: "learning",
     logged_at: "2025-02-15T10:30:00Z",
     duration_minutes: 90,

@@ -1,4 +1,4 @@
-import { getSupabase } from "./supabase.lazy";
+import { getSupabase } from "./supabase-lazy";
 
 const TABLE = "synapse_activities";
 

@@ -1,4 +1,4 @@
-import { getSupabase } from "./supabase.lazy";
+import { getSupabase } from "./supabase-lazy";
 
 // Fetches all tracks from Supabase, ordered by title
 export const fetchTracks = async () => {
