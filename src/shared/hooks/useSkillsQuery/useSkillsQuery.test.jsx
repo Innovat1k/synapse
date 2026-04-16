@@ -4,7 +4,13 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { useSkillsQuery } from "./useSkillsQuery";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-vi.mock("../../../services/skillService");
+vi.mock("@pages/UserAuthPage/hooks/useAuth", () => ({
+  useAuth: () => ({
+    user: { id: "user-123" },
+  }),
+}));
+
+vi.mock("@services/skillService");
 
 const mockSkills = [
   {
@@ -47,6 +53,7 @@ describe("useSkillQuery", () => {
 
   it("returns the fetched array data if loading is finished", async () => {
     vi.mocked(skillService.fetchSkills).mockResolvedValue(mockSkills);
+
     const { result } = renderHook(() => useSkillsQuery(), {
       wrapper: queryWrapper,
     });
@@ -59,7 +66,7 @@ describe("useSkillQuery", () => {
 
   it("exposes isLoading: true while fetching is in progress", async () => {
     const mockPromise = new Promise((resolve) =>
-      setTimeout(() => resolve([{ id: "1", name: "React" }]), 100)
+      setTimeout(() => resolve([{ id: "1", name: "React" }]), 100),
     );
     vi.mocked(skillService.fetchSkills).mockReturnValue(mockPromise);
 

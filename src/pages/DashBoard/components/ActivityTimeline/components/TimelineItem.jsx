@@ -1,6 +1,8 @@
-import { motion } from "framer-motion";
 import { formatDuration } from "../../../utils/dashboardUtils";
 import { useRelativeTime } from "../hooks/useRelativeTime";
+
+// eslint-disable-next-line no-unused-vars
+import { motion } from "framer-motion";
 
 const ACTIVITY_CONFIG = {
   learning: { icon: "🎓", color: "text-blue-400", bg: "bg-blue-500/10" },

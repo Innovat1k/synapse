@@ -6,14 +6,21 @@ import * as skillService from "@services/skillService";
 import userEvent from "@testing-library/user-event";
 import * as skillLinkService from "@services/skillLinksService";
 import { createDeferredPromise } from "@shared/utils/utils";
+import { MemoryRouter } from "react-router-dom";
+
+vi.mock("@pages/UserAuthPage/hooks/useAuth", () => ({
+  useAuth: () => ({
+    user: { id: "user-123" },
+  }),
+}));
 
 vi.mock("@services/skillService");
 vi.mock("@services/skillLinksService");
 
 const mockSkills = [
-  { name: "javascript", skill_id: "skill-a" },
-  { name: "react js", skill_id: "skill-b" },
-  { name: "node js", skill_id: "skill-c" },
+  { name: "javascript", skill_id: "skill-a", user_id: "user-123" },
+  { name: "react js", skill_id: "skill-b", user_id: "user-123" },
+  { name: "node js", skill_id: "skill-c", user_id: "user-123" },
 ];
 
 describe("SkillLinkerModal", () => {
@@ -23,7 +30,9 @@ describe("SkillLinkerModal", () => {
   beforeEach(() => {
     client = new QueryClient();
     QueryWrapper = ({ children }) => (
-      <QueryClientProvider client={client}>{children}</QueryClientProvider>
+      <QueryClientProvider client={client}>
+        <MemoryRouter>{children}</MemoryRouter>
+      </QueryClientProvider>
     );
     skillService.fetchSkills.mockResolvedValue(mockSkills);
   });
@@ -95,11 +104,9 @@ describe("SkillLinkerModal", () => {
       skillService.fetchSkills.mockResolvedValue(mockSkills);
       renderComponent({ mode: "outgoing", currentSkillId: "skill-b" });
 
-      await waitFor(() => {
-        expect(
-          screen.getByRole("button", { name: /javascript/i }),
-        ).toBeInTheDocument();
-      });
+      expect(
+        await screen.findByRole("button", { name: /javascript/i }),
+      ).toBeInTheDocument();
       expect(
         screen.getByRole("button", { name: /node js/i }),
       ).toBeInTheDocument();

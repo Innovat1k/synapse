@@ -96,7 +96,7 @@ export const useActivityForm = ({
     }
 
     hasInitialized.current = true;
-  }, [isOpened, mode, initialData, id]);
+  }, [isOpened, mode, initialData, id, initialTouchedState]);
 
   // Change duration inputs value and convert durationData to minutes
   const handleChangeDuration = (e) => {

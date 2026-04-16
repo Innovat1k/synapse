@@ -3,8 +3,12 @@ import { beforeEach, describe, expect } from "vitest";
 import Dashboard from "../DashBoard";
 import userEvent from "@testing-library/user-event";
 import { clearSkills } from "@mocks/stores";
-import { renderWithProviders } from "./test-utils";
-import { clearActivities } from "../../../mocks/stores";
+import { clearActivities } from "@mocks/stores";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { MemoryRouter } from "react-router-dom";
+import { ReactFlowProvider } from "@xyflow/react";
+import { Provider } from "jotai";
+import { user_atom, session_atom } from "@atoms/atoms";
 
 const TEST_USER_ID = "025af00a-1837-44e0-b03d-6150e1da4611";
 
@@ -14,6 +18,44 @@ vi.mock("@pages/UserAuthPage/hooks/useAuth", () => ({
     loader: { isInitialLoading: false },
   }),
 }));
+
+const createQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        gcTime: 0,
+        staleTime: 0,
+      },
+    },
+  });
+
+const createJotaiProvider = ({ children }) => (
+  <Provider
+    initialValues={[
+      [user_atom, { id: TEST_USER_ID, email: "test@example.com" }],
+      [session_atom, { user: { id: TEST_USER_ID }, access_token: "mock" }],
+    ]}
+  >
+    {children}
+  </Provider>
+);
+
+const buildWrapper = () => {
+  const queryClient = createQueryClient();
+
+  return ({ children }) => (
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter>
+        <ReactFlowProvider>
+          {createJotaiProvider({ children })}
+        </ReactFlowProvider>
+      </MemoryRouter>
+    </QueryClientProvider>
+  );
+};
+
+const renderWithProviders = (ui) => render(ui, { wrapper: buildWrapper() });
 
 describe("Dashboard – Log Activity Flow", () => {
   let user;
@@ -50,7 +92,6 @@ describe("Dashboard – Log Activity Flow", () => {
   });
 
   it("opens log activity modal and allows to create an activity", async () => {
-    // clearActivities();
     renderWithProviders(<Dashboard />);
 
     expect(await screen.findByText(/current focus/i)).toBeInTheDocument();
@@ -100,20 +141,16 @@ describe("Dashboard – Log Activity Flow", () => {
 
     await user.click(screen.getByRole("button", { name: /add activity/i }));
 
-    // expect(
-    //   screen.queryByTestId("activity-modal-content"),
-    // ).not.toBeInTheDocument();
-    // expect(
-    //   screen.queryByRole("heading", { name: /log activity/i }),
-    // ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("activity-modal-content"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: /log activity/i }),
+    ).not.toBeInTheDocument();
 
-    await user.click(
-      await screen.findByRole("button", { name: /log for/i }),
-    );
-    // expect(
-    //   screen.queryByRole("heading", { name: /cannot log activity/i }),
-    // ).not.toBeInTheDocument();
-
-    screen.debug(undefined, 90000);
+    await user.click(await screen.findByRole("button", { name: /log for/i }));
+    expect(
+      screen.queryByRole("heading", { name: /cannot log activity/i }),
+    ).not.toBeInTheDocument();
   }, 10000);
 });

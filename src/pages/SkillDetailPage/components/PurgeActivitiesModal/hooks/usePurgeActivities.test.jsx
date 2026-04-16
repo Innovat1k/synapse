@@ -3,6 +3,13 @@ import { beforeEach, describe, expect, vi } from "vitest";
 import { usePurgeActivities } from "./usePurgeActivities";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as activityService from "@services/activityService";
+import { MemoryRouter } from "react-router-dom";
+
+vi.mock("@pages/UserAuthPage/hooks/useAuth", () => ({
+  useAuth: () => ({
+    user: { id: "user-123" },
+  }),
+}));
 
 vi.mock("@services/activityService");
 
@@ -15,7 +22,9 @@ describe("usePurgeActivities", () => {
   beforeEach(() => {
     queryClient = new QueryClient();
     Wrapper = ({ children }) => (
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>{children}</MemoryRouter>
+      </QueryClientProvider>
     );
   });
 
@@ -24,7 +33,7 @@ describe("usePurgeActivities", () => {
       () => usePurgeActivities(mockSkillId, "Javascript"),
       {
         wrapper: Wrapper,
-      }
+      },
     );
 
     act(() => {
@@ -40,7 +49,7 @@ describe("usePurgeActivities", () => {
       () => usePurgeActivities(mockSkillId, "Javascript"),
       {
         wrapper: Wrapper,
-      }
+      },
     );
 
     act(() => {
@@ -58,7 +67,7 @@ describe("usePurgeActivities", () => {
       () => usePurgeActivities(mockSkillId, "Javascript"),
       {
         wrapper: Wrapper,
-      }
+      },
     );
 
     act(() => {
@@ -79,7 +88,7 @@ describe("usePurgeActivities", () => {
       () => usePurgeActivities(mockSkillId, "Javascript"),
       {
         wrapper: Wrapper,
-      }
+      },
     );
 
     act(() => {
@@ -94,7 +103,7 @@ describe("usePurgeActivities", () => {
 
     await waitFor(() => {
       expect(activityService.purgeActivitiesBySkill).toHaveBeenCalledWith(
-        mockSkillId
+        mockSkillId,
       );
     });
 
@@ -112,7 +121,7 @@ describe("usePurgeActivities", () => {
       () => usePurgeActivities(mockSkillId, "Javascript"),
       {
         wrapper: Wrapper,
-      }
+      },
     );
 
     act(() => {
@@ -134,7 +143,7 @@ describe("usePurgeActivities", () => {
   it("clears error when user edits input after failed submission", async () => {
     const { result } = renderHook(
       () => usePurgeActivities(mockSkillId, "Javascript"),
-      { wrapper: Wrapper }
+      { wrapper: Wrapper },
     );
 
     act(() => {

@@ -1,4 +1,3 @@
-// @mocks/handlers.js
 // Mock Supabase REST API responses for integration and UI tests using MSW.
 // Uses mutable in-memory stores for activities, skills, tracks, and skill links
 // to simulate realistic CRUD operations and maintain data consistency across tests.
@@ -6,26 +5,30 @@
 import { http, HttpResponse } from "msw";
 import {
   activitiesStore,
-  defaultSkills,
   skillLinksStore,
   skillsStore,
+  TEST_USER_ID,
   tracksStore,
 } from "./stores";
 
 export const SUPABASE_URL = "https://yuvgvsjlwwiobwpyaeff.supabase.co";
 
-// ✅ Helper: Extract and normalize user_id from Supabase query params
+// Helper: Extract and normalize user_id from Supabase query params
 // Supabase sends: user_id=eq.XXX → we strip "eq." prefix to get the raw UUID
 const extractUserId = (url) => {
   const rawUserId = new URL(url).searchParams.get("user_id");
   return rawUserId?.replace(/^eq\./, "") || null;
 };
 
-// ✅ Helper: Extract and normalize ID from Supabase query params (eq. or in. format)
+// Helper: Extract and normalize ID from Supabase query params (eq. or in. format)
 const extractId = (url, paramName) => {
   const rawValue = new URL(url).searchParams.get(paramName);
-  if (!rawValue) return null;
-  if (rawValue.startsWith("eq.")) return rawValue.slice(3);
+  if (!rawValue) {
+    return null;
+  }
+  if (rawValue.startsWith("eq.")) {
+    return rawValue.slice(3);
+  }
   if (rawValue.startsWith("in.(") && rawValue.endsWith(")")) {
     return rawValue
       .slice(4, -1)
@@ -34,6 +37,24 @@ const extractId = (url, paramName) => {
   }
   return rawValue;
 };
+
+// Generates mock daily activity data for the given number of days
+const generateMockDailyData = (days) =>
+  Array.from({ length: days }).map((_, i) => ({
+    day_date: `2026-04-${String(10 + i).padStart(2, "0")}`,
+    day_label: `Apr ${String(10 + i).padStart(2, "0")}`,
+    total_minutes: 60,
+    activities_count: 1,
+  }));
+
+// Generates mock weekly progress data for the given number of weeks
+const generateWeeklyData = (weeks) =>
+  Array.from({ length: weeks }).map((_, i) => ({
+    week_start: `2026-04-${String(1 + i * 7).padStart(2, "0")}`,
+    week_label: `Week ${i + 1}`,
+    total_minutes: 100,
+    activities_count: 2,
+  }));
 
 export const handlers = [
   // ============================================
@@ -71,18 +92,15 @@ export const handlers = [
   // ============================================
 
   http.get(`${SUPABASE_URL}/rest/v1/synapse_skills`, ({ request }) => {
-    const url = new URL(request.url);
     const userId = extractUserId(request.url);
     const skillIds = extractId(request.url, "skill_id");
 
     let data = skillsStore;
 
-    // Filter by user_id if provided
     if (userId) {
       data = data.filter((s) => s.user_id === userId);
     }
 
-    // Filter by skill_id(s) if provided (for enrichment queries)
     if (skillIds) {
       const ids = Array.isArray(skillIds) ? skillIds : [skillIds];
       data = data.filter((s) => ids.includes(s.skill_id));
@@ -96,8 +114,10 @@ export const handlers = [
     const skillWithId = {
       ...newSkill,
       skill_id: newSkill.skill_id || `skill-${Date.now()}`,
+      user_id: TEST_USER_ID,
     };
     skillsStore.push(skillWithId);
+
     return HttpResponse.json(skillWithId, { status: 201 });
   }),
 
@@ -153,7 +173,9 @@ export const handlers = [
     const skillId = extractId(request.url, "skill_id");
 
     let data = activitiesStore;
-    if (userId) data = data.filter((a) => a.user_id === userId);
+    if (userId) {
+      data = data.filter((a) => a.user_id === userId);
+    }
     if (skillId) {
       const ids = Array.isArray(skillId) ? skillId : [skillId];
       data = data.filter((a) => ids.includes(a.skill_id));
@@ -238,10 +260,12 @@ export const handlers = [
     const targetId = extractId(request.url, "target_skill_id");
 
     let filtered = skillLinksStore;
-    if (sourceId)
+    if (sourceId) {
       filtered = filtered.filter((l) => l.source_skill_id === sourceId);
-    if (targetId)
+    }
+    if (targetId) {
       filtered = filtered.filter((l) => l.target_skill_id === targetId);
+    }
 
     // Enrich with skill name if requested via select=skill(*)
     if (selectParam?.includes("skill:")) {
@@ -374,22 +398,7 @@ export const handlers = [
       );
 
       const dailyData =
-        userActivities.length > 0
-          ? [
-              {
-                day_date: "2026-04-09",
-                day_label: "Apr 09",
-                total_minutes: 60,
-                activities_count: 1,
-              },
-              {
-                day_date: "2026-04-10",
-                day_label: "Apr 10",
-                total_minutes: 90,
-                activities_count: 2,
-              },
-            ]
-          : [];
+        userActivities.length > 0 ? generateMockDailyData(daysBack) : [];
 
       return HttpResponse.json(dailyData);
     },
@@ -414,28 +423,7 @@ export const handlers = [
       }
 
       const weeklyData =
-        userActivities.length > 0
-          ? [
-              {
-                week_start: "2026-03-24",
-                week_label: "Mar 24",
-                total_minutes: 120,
-                activities_count: 2,
-              },
-              {
-                week_start: "2026-03-31",
-                week_label: "Mar 31",
-                total_minutes: 90,
-                activities_count: 1,
-              },
-              {
-                week_start: "2026-04-07",
-                week_label: "Apr 07",
-                total_minutes: 150,
-                activities_count: 3,
-              },
-            ]
-          : [];
+        userActivities.length > 0 ? generateWeeklyData(weeksBack) : [];
 
       return HttpResponse.json(weeklyData);
     },

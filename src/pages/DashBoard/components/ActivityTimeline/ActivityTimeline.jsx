@@ -28,9 +28,9 @@ const groupActivities = (activities, now = new Date()) => {
   for (const activity of activities) {
     const days = getDayDiff(activity.logged_at, now);
 
-    if (days === 0) groups.Today.push(activity);
-    else if (days === 1) groups.Yesterday.push(activity);
-    else groups.Earlier.push(activity);
+    if (days === 0) {groups.Today.push(activity);}
+    else if (days === 1) {groups.Yesterday.push(activity);}
+    else {groups.Earlier.push(activity);}
   }
 
   return groups;
@@ -41,7 +41,7 @@ const limitActivities = (grouped, max = 7) => {
   const result = {};
 
   for (const [group, activities] of Object.entries(grouped)) {
-    if (count >= max) break;
+    if (count >= max) {break;}
 
     const slice = activities.slice(0, max - count);
     if (slice.length) {
@@ -100,7 +100,7 @@ const ActivityTimeline = ({ data = [], isLoading, error, onActivityClick }) => {
 
       <div className="space-y-6">
         {Object.entries(limitedGroups).map(([group, activities]) => {
-          if (!activities.length) return null;
+          if (!activities.length) {return null;}
 
           return (
             <div key={group}>

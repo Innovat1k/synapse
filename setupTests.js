@@ -1,39 +1,10 @@
-// vi.mock("@react-aria/interactions", async (importOriginal) => {
-//   const actual = await importOriginal();
-//   return {
-//     ...actual,
-//     // Retourne un hook mocké qui ne tente pas de modifier HTMLElement
-//     useFocusVisible: () => ({ isFocusVisible: false }),
-//   };
-// });
-
-// // ✅ Mock @react-aria/focus aussi (souvent utilisé ensemble)
-// vi.mock("@react-aria/focus", async (importOriginal) => {
-//   const actual = await importOriginal();
-//   return {
-//     ...actual,
-//     useFocus: () => ({ focusProps: {} }),
-//     useFocusWithin: () => ({ focusWithinProps: {} }),
-//   };
-// });
-
 import "@testing-library/jest-dom";
 import { afterAll, afterEach, beforeAll, beforeEach, vi } from "vitest";
 import { server } from "@mocks/server";
 import { resetAllStores } from "./src/mocks/stores";
 
-// test/setup.js
-// if (!HTMLElement.prototype.focus) {
-//   HTMLElement.prototype.focus = function () {};
-// } else {
-//   // Some JSDOM versions define it as a getter — redefine it
-//   Object.defineProperty(HTMLElement.prototype, "focus", {
-//     value: function () {},
-//     writable: true,
-//   });
-// }
+// Vitest setup: MSW server, mock stores reset, and DOM API polyfills for consistent test environment
 
-// Clear mocks before test
 beforeEach(() => {
   vi.clearAllMocks();
 
@@ -76,7 +47,7 @@ class IntersectionObserverMock {
     this.callback = callback;
   }
 
-  observe = (element) => {
+  observe = () => {
     this.callback([{ isIntersecting: true }]);
   };
 

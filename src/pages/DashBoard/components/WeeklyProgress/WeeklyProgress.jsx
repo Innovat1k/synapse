@@ -78,7 +78,7 @@ const WeeklyProgress = ({
 
   // Tooltip
   const CustomTooltip = ({ active, payload }) => {
-    if (!active || !payload?.length) return null;
+    if (!active || !payload?.length) {return null;}
 
     const d = payload[0].payload;
 

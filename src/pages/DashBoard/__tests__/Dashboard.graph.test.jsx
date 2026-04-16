@@ -5,6 +5,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
 import { ReactFlowProvider } from "@xyflow/react";
 import Dashboard from "../DashBoard";
+import { TEST_USER_ID } from "@mocks/stores";
+
+vi.mock("@pages/UserAuthPage/hooks/useAuth", () => ({
+  useAuth: () => ({
+    user: { id: TEST_USER_ID, email: "user@mail.com" },
+    loader: { isInitialLoading: false },
+  }),
+}));
 
 const Wrapper = ({ children }) => (
   <MemoryRouter>
@@ -24,13 +32,19 @@ describe("Dashboard – Graph Rendering and Interaction", () => {
   it("loads skills and renders nodes in the graph", async () => {
     render(<Dashboard />, { wrapper: Wrapper });
 
-    await within(screen.getByTestId("skills-widget")).findByText("React JS");
-    await within(screen.getByTestId("skills-widget")).findByText("Java");
+    expect(await screen.findByText(/current focus/i)).toBeInTheDocument();
+    expect(await screen.findByTestId("skill-count-badge")).toHaveTextContent(
+      "03",
+    );
 
     const knowledgeGraph = screen.getByTestId("knowledge-graph-widget");
     expect(knowledgeGraph).toBeInTheDocument();
-    expect(within(knowledgeGraph).getByText("React JS")).toBeInTheDocument();
-    expect(within(knowledgeGraph).getByText("Java")).toBeInTheDocument();
+    expect(
+      await within(knowledgeGraph).findByText(/React JS/i),
+    ).toBeInTheDocument();
+    expect(
+      await within(knowledgeGraph).findByText(/Java/i),
+    ).toBeInTheDocument();
   });
 
   it("renders the full screen knowledge graph contents correctly", async () => {

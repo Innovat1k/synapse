@@ -4,14 +4,21 @@ import { useSkillLinkerForm } from "./useSkillLinkerForm";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as skillService from "@services/skillService";
 import * as skillLinksService from "@services/skillLinksService";
+import { MemoryRouter } from "react-router-dom";
+
+vi.mock("@pages/UserAuthPage/hooks/useAuth", () => ({
+  useAuth: () => ({
+    user: { id: "user-123" },
+  }),
+}));
 
 vi.mock("@services/skillService");
 vi.mock("@services/skillLinksService");
 
 const mockSkills = [
-  { name: "javascript", skill_id: "skill-a" },
-  { name: "react js", skill_id: "skill-b" },
-  { name: "node js", skill_id: "skill-c" },
+  { name: "javascript", skill_id: "skill-a", user_id: "user-123" },
+  { name: "react js", skill_id: "skill-b", user_id: "user-123" },
+  { name: "node js", skill_id: "skill-c", user_id: "user-123" },
 ];
 
 describe("useSkillLinkerForm", () => {
@@ -21,7 +28,9 @@ describe("useSkillLinkerForm", () => {
   beforeEach(() => {
     client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     QueryWrapper = ({ children }) => (
-      <QueryClientProvider client={client}>{children}</QueryClientProvider>
+      <QueryClientProvider client={client}>
+        <MemoryRouter>{children}</MemoryRouter>
+      </QueryClientProvider>
     );
   });
 
@@ -45,7 +54,7 @@ describe("useSkillLinkerForm", () => {
 
     expect(result.current.searchTerm).toBe("node");
     expect(result.current.skills).toEqual([
-      { name: "node js", skill_id: "skill-c" },
+      { name: "node js", skill_id: "skill-c", user_id: "user-123" },
     ]);
   });
 

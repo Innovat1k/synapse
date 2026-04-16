@@ -7,11 +7,6 @@ export const createQueryWrapper = () => {
       queries: {
         retry: false,
         gcTime: 0,
-        logger: {
-          log: console.log,
-          warn: console.warn,
-          error: () => {},
-        },
       },
     },
   });

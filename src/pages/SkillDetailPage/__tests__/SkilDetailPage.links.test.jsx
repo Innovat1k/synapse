@@ -1,22 +1,29 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import userEvent from "@testing-library/user-event";
+import { MOCK_SKILL_IDS, renderSkillDetailPage } from "./test-utils";
 import {
-  MOCK_SKILL_IDS,
-  mockSkills,
-  renderSkillDetailPage,
-} from "./test-utils";
-import { clearActivities, clearSkillLinks } from "@mocks/stores";
+  clearActivities,
+  clearSkillLinks,
+  skillsStore,
+  TEST_USER_ID,
+} from "@mocks/stores";
 import { http, HttpResponse } from "msw";
 import { server } from "@mocks/server";
 import { SUPABASE_URL } from "@services/supabase-client";
+
+vi.mock("@pages/UserAuthPage/hooks/useAuth", () => ({
+  useAuth: () => ({
+    user: { id: TEST_USER_ID },
+  }),
+}));
 
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
   return {
     ...actual,
     useParams: () => ({ skillId: MOCK_SKILL_IDS.REACT }),
-    useOutletContext: () => ({ skills: mockSkills }),
+    useOutletContext: () => ({ skills: skillsStore }),
   };
 });
 

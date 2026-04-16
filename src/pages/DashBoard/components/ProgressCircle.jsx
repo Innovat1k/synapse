@@ -6,13 +6,7 @@ const LEVEL_COLORS = {
   5: "#a855f7", // Purple - Expert/Master
 };
 
-const ProgressCircle = ({
-  value,
-  level = 1,
-  size = 100,
-  strokeWidth = 10,
-  showLabel = false,
-}) => {
+const ProgressCircle = ({ value, level = 1, size = 100, strokeWidth = 10 }) => {
   // Dynamic color depending on the level
   const color = LEVEL_COLORS[level] || LEVEL_COLORS[1];
 

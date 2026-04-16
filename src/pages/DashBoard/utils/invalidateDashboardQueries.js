@@ -6,7 +6,6 @@ export const invalidateDashboardQueries = async (
   const { includeSkills = false, includeTracks = false } = options;
 
   if (!userId) {
-    console.warn("[invalidateDashboardQueries] No userId provided");
     return;
   }
 

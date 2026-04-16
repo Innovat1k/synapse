@@ -1,4 +1,6 @@
 import { LuClock, LuLayers, LuZap } from "react-icons/lu";
+
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
 const MetricCardSkeleton = () => (
@@ -10,41 +12,45 @@ const MetricCardSkeleton = () => (
 );
 
 const MetricCard = ({
-  icon: Icon,
+  icon,
   label,
   value,
   sublabel,
   color = "text-teal-400",
   delay = 0,
   testid,
-}) => (
-  <motion.div
-    initial={{ opacity: 0, y: 10 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay, duration: 0.25 }}
-    whileHover={{ y: -2 }}
-    className="
+}) => {
+  const Icon = icon;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.25 }}
+      whileHover={{ y: -2 }}
+      className="
       p-4 rounded-xl bg-slate-900/50 border border-slate-800/50
       hover:border-slate-700/50 hover:bg-slate-900/70
       transition-all
     "
-    data-testid={testid}
-  >
-    <Icon className={`text-xl ${color} mb-2`} />
+      data-testid={testid}
+    >
+      <Icon className={`text-xl ${color} mb-2`} />
 
-    <div className="text-xl font-black text-slate-100 leading-tight">
-      {value}
-    </div>
+      <div className="text-xl font-black text-slate-100 leading-tight">
+        {value}
+      </div>
 
-    <div className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
-      {label}
-    </div>
+      <div className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
+        {label}
+      </div>
 
-    {sublabel && (
-      <div className="text-[10px] text-slate-500 mt-0.5">{sublabel}</div>
-    )}
-  </motion.div>
-);
+      {sublabel && (
+        <div className="text-[10px] text-slate-500 mt-0.5">{sublabel}</div>
+      )}
+    </motion.div>
+  );
+};
 
 const KeyMetrics = ({ data, isLoading, error }) => {
   if (isLoading) {

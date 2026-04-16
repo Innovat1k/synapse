@@ -2,15 +2,12 @@ import { useQueries } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { fetchSkills } from "@services/skillService";
 import { fetchTracks } from "@services/tracksService";
-import { useAtomValue } from "jotai";
-import { user_atom } from "@atoms/atoms";
 import { useAuth } from "@pages/UserAuthPage/hooks/useAuth";
 
 // Orchestrates dashboard data: skills, tracks, and links with dynamic filtering by track/category.
 // Computes view mode (global/track/category) and exposes actions to update selections.
 
 export const useDashboardData = () => {
-  // const user = useAtomValue(user_atom);
   const { user } = useAuth();
   const [selectedTrackId, setSelectedTrackId] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState("");

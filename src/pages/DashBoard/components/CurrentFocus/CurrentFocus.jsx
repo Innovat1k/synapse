@@ -62,7 +62,9 @@ const CurrentFocus = ({ data, isLoading, error, onLogActivity }) => {
   const progressPercent = Math.min((data?.skill_level / 5) * 100, 100);
   const duration = Math.round((data?.total_minutes / 60) * 10) / 10;
 
-  if (isLoading) return <FocusSkeleton />;
+  if (isLoading) {
+    return <FocusSkeleton />;
+  }
 
   if (error) {
     return (
@@ -89,8 +91,7 @@ const CurrentFocus = ({ data, isLoading, error, onLogActivity }) => {
 
         <button
           onClick={() => {
-            onLogActivity(null)
-             console.log("logged");
+            onLogActivity(null);
           }}
           className="group mt-4 flex items-center gap-2 px-4 py-2 bg-slate-800/50 hover:bg-slate-800
           border border-slate-700/50 hover:border-teal-500/50 rounded-lg text-xs font-medium
@@ -173,7 +174,9 @@ const CurrentFocus = ({ data, isLoading, error, onLogActivity }) => {
             const isMax = level === 5 && percent >= 100;
             const config = LEVEL_MESSAGES[level] || LEVEL_MESSAGES[1];
 
-            if (isMax) return config.complete;
+            if (isMax) {
+              return config.complete;
+            }
 
             const textFn =
               typeof config.notComplete === "function"

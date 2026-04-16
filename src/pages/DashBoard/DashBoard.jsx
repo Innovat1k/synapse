@@ -29,18 +29,7 @@ import { useKeyMetrics } from "./components/KeyMetrics/hooks/useKeyMetrics";
 import { useDailyActivity } from "./components/DailyActivity/hooks/useDailyActivity";
 
 import ActivityFormModal from "@shared/components/ActivityFormModal/ActivityFormModal";
-import SkillFormModal from "../../shared/components/SkillFormModal/SkillFormModal";
-
-import { user_atom, session_atom } from "@atoms/atoms";
-import { useAtomValue } from "jotai";
-
-// const ActivityFormModal = React.lazy(
-//   () => import("@shared/components/ActivityFormModal/ActivityFormModal"),
-// );
-
-// const SkillFormModal = React.lazy(
-//   () => import("@shared/components/SkillFormModal/SkillFormModal"),
-// );
+import SkillFormModal from "@shared/components/SkillFormModal/SkillFormModal";
 
 const DashboardGraph = React.lazy(() =>
   import("./components/DashboardGraph/DashboardGraph").then((module) => ({
@@ -65,7 +54,6 @@ const Dashboard = () => {
   });
 
   const { user, loader } = useAuth();
-  // const user = useAtomValue(user_atom);
 
   const currentFocus = useCurrentFocus(user?.id, { daysBack: 7 });
   const recentActivities = useRecentActivities(user?.id, { limit: 5 });
@@ -85,7 +73,6 @@ const Dashboard = () => {
 
   return (
     <>
-      {/* <Suspense> */}
       <ActivityFormModal
         mode={activityModal.modal.mode}
         isOpened={activityModal.modal.isOpened}
@@ -97,7 +84,6 @@ const Dashboard = () => {
         openSkillModal={skillModal.methods.openCreateModal}
         skill={activityModal.preselectedSkill}
       />
-      {/* </Suspense> */}
 
       <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-6">
         <div className="flex justify-between items-center mb-6">
@@ -306,7 +292,6 @@ const Dashboard = () => {
       </div>
 
       <AnimatePresence>
-        {/* <Suspense> */}
         {skillModal.modal.isModalOpen && (
           <SkillFormModal
             isOpened={true}
@@ -316,7 +301,6 @@ const Dashboard = () => {
             onSubmit={skillModal.methods.handleSaveSkill}
           />
         )}
-        {/* </Suspense> */}
 
         {isFullscreenGraph && (
           <Modal

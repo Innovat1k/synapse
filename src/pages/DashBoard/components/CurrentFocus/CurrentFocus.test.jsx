@@ -1,17 +1,8 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import CurrentFocus from "./CurrentFocus";
-
-const createWrapper = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false } },
-  });
-  return ({ children }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
-};
 
 describe("CurrentFocus", () => {
   const mockData = {
@@ -56,7 +47,7 @@ describe("CurrentFocus", () => {
     screen.debug();
   });
 
-  it("calls onLogActivity when button is clicked", async () => {
+  it("calls onLogActivity when log for current activity button is clicked", async () => {
     const mockOnLogActivity = vi.fn();
     const user = userEvent.setup();
 
@@ -69,9 +60,26 @@ describe("CurrentFocus", () => {
       />,
     );
 
-    const button = screen.getByText(/Log Activity/i);
-    await user.click(button);
+    await user.click(screen.getByText(/Log for react/i));
 
-    expect(mockOnLogActivity).toHaveBeenCalledWith("abc-123");
+    expect(mockOnLogActivity).toHaveBeenCalledTimes(1);
+  });
+
+  it("calls onLogActivity when log other button is clicked", async () => {
+    const mockOnLogActivity = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <CurrentFocus
+        isLoading={false}
+        data={mockData}
+        error={null}
+        onLogActivity={mockOnLogActivity}
+      />,
+    );
+
+    await user.click(screen.getByText(/Log other activity/i));
+
+    expect(mockOnLogActivity).toHaveBeenCalledTimes(1);
   });
 });

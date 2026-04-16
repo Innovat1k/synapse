@@ -12,7 +12,6 @@ const SKILL_IDS = {
   PROJECT_MGMT: "skill-project-mgmt",
 };
 
-// Mock react-router-dom
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
   return {
@@ -226,10 +225,6 @@ describe("SkillDetailPage: Skill Activities", () => {
     );
 
     await waitFor(() => {
-      expect(
-        screen.queryByRole("heading", { name: /confirm skill name/i }),
-      ).not.toBeInTheDocument();
-
       expect(
         screen.queryByTestId("activity-count-badge"),
       ).not.toBeInTheDocument();

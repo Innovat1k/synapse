@@ -48,8 +48,6 @@ export const useSkillModal = () => {
   };
 
   const handleSaveSkill = async (skillData) => {
-    console.log(skillData);
-
     setIsSubmitting(true);
     try {
       if (modalMode === "create") {

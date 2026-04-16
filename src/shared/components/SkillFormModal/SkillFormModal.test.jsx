@@ -4,13 +4,13 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 
 import SkillFormModal from "./SkillFormModal";
 import { useSkillForm } from "./hooks/useSkillForm";
-import { useTracks } from "../../../pages/Settings/app/tracks/hooks/useTracks";
+import { useTracks } from "@pages/Settings/app/tracks/hooks/useTracks";
 
 vi.mock("./hooks/useSkillForm", () => ({
   useSkillForm: vi.fn(),
 }));
 
-vi.mock("../../../pages/Settings/app/tracks/hooks/useTracks", () => ({
+vi.mock("@pages/Settings/app/tracks/hooks/useTracks", () => ({
   useTracks: vi.fn(),
 }));
 

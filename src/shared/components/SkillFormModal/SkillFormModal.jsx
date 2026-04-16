@@ -3,14 +3,9 @@ import { useSkillForm } from "./hooks/useSkillForm";
 import ButtonSpinner from "../ButtonSpinner";
 import React, { Suspense, useRef } from "react";
 import { TrackFormModal } from "../TrackFormModal/TrackFormModal";
-import { useTracks } from "../../../pages/Settings/app/tracks/hooks/useTracks";
+import { useTracks } from "@pages/Settings/app/tracks/hooks/useTracks";
 import SelectInput from "../ActivityFormModal/components/SelectInput";
 import { Modal } from "@shared/components/Modal/Modal";
-
-// const SelectInput = React.lazy(
-//   () => import("../ActivityFormModal/components/SelectInput"),
-// );
-// const ButtonSpinner = React.lazy(() => import("../ButtonSpinner"));
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
@@ -43,7 +38,7 @@ const SkillFormModal = ({
   const { status, createForm, actions } = useTracks();
   const skillNameRef = useRef(null);
 
-  const isDeleteMode = mode === "delete"
+  const isDeleteMode = mode === "delete";
 
   return (
     <>

@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { useAtomValue } from "jotai";
 import { purgeActivitiesBySkill } from "@services/activityService";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@shared/components/Toast/hooks/useToast";
 import { TOAST_MESSAGES } from "@shared/components/Toast/toastMessages";
 import invalidateDashboardQueries from "@pages/DashBoard/utils/invalidateDashboardQueries";
-import { user_atom } from "@atoms/atoms";
+import { useAuth } from "@pages/UserAuthPage/hooks/useAuth";
 
 export const usePurgeActivities = (skillId, skillName = "") => {
   const [modal, setModal] = useState({
@@ -17,7 +16,7 @@ export const usePurgeActivities = (skillId, skillName = "") => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasError, setHasError] = useState(false);
 
-  const user = useAtomValue(user_atom);
+  const { user } = useAuth();
   const queryClient = useQueryClient();
 
   const { showNotif } = useToast();

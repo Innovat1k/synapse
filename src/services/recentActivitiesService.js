@@ -26,11 +26,10 @@ export const fetchRecentActivities = async (userId, limit = 10) => {
     .limit(limit);
 
   if (error) {
-    console.error("Error fetching recent activities:", error);
     throw new Error(`Failed to load timeline data: ${error.message}`);
   }
 
-  if (!data) return [];
+  if (!data) {return [];}
 
   // Transform to flattened type for easier consumption
   return data.map((item) => ({

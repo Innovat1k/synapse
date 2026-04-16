@@ -62,7 +62,9 @@ describe("SkillsLayout", () => {
         await screen.findByTestId("skill-modal-content"),
       ).toBeInTheDocument();
 
-      await user.click(screen.getByRole("button", { name: /learning track/i }));
+      await user.click(
+        await screen.findByRole("button", { name: /learning track/i }),
+      );
       expect(
         await screen.findByRole("listbox", { name: /learning track/i }),
       ).toBeInTheDocument();

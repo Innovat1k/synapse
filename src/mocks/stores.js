@@ -1,7 +1,7 @@
 // Mutable in-memory stores for integration tests with reset/seed utilities
 
 // Unique mock user ID for all tests
-const TEST_USER_ID = "025af00a-1837-44e0-b03d-6150e1da4611";
+export const TEST_USER_ID = "025af00a-1837-44e0-b03d-6150e1da4611";
 
 export const defaultSkills = [
   {

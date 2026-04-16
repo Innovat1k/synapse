@@ -1,7 +1,5 @@
 import { fetchSkills } from "@services/skillService";
 import { useQuery } from "@tanstack/react-query";
-import { useAtomValue } from "jotai";
-import { user_atom } from "@atoms/atoms";
 import { useAuth } from "@pages/UserAuthPage/hooks/useAuth";
 
 /**
@@ -10,7 +8,6 @@ import { useAuth } from "@pages/UserAuthPage/hooks/useAuth";
  */
 
 export const useSkillsQuery = () => {
-  // const user = useAtomValue(user_atom);
   const { user } = useAuth();
   const { data: skills = [], isLoading } = useQuery({
     queryKey: ["skills", user?.id],
