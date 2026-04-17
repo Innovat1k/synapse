@@ -5,7 +5,6 @@ import { LuCirclePlus, LuBookOpen, LuMaximize2 } from "react-icons/lu";
 
 import { Modal } from "@shared/components/Modal/Modal";
 import ButtonSpinner from "@shared/components/ButtonSpinner";
-import { useInView } from "@shared/hooks/useInView ";
 
 import Card from "./components/Card";
 import CurrentFocus from "./components/CurrentFocus/CurrentFocus";
@@ -16,6 +15,7 @@ import DailyActivity from "./components/DailyActivity/DailyActivity";
 import { SkillsGrid } from "./components/SkillsGrid";
 import { TrackSelector } from "./components/TrackSelector";
 import { CategorySelector } from "./components/CategorySelector";
+import { DashboardGraph } from "./components/DashboardGraph/DashboardGraph";
 
 import { useActivityModal } from "@shared/components/ActivityFormModal/hooks/useActivityModal";
 import { useSkillModal } from "@shared/components/SkillFormModal/hooks/useSkillModal";
@@ -31,12 +31,6 @@ import { useDailyActivity } from "./components/DailyActivity/hooks/useDailyActiv
 import ActivityFormModal from "@shared/components/ActivityFormModal/ActivityFormModal";
 import SkillFormModal from "@shared/components/SkillFormModal/SkillFormModal";
 
-const DashboardGraph = React.lazy(() =>
-  import("./components/DashboardGraph/DashboardGraph").then((module) => ({
-    default: module.DashboardGraph,
-  })),
-);
-
 const Dashboard = () => {
   const [isFullscreenGraph, setIsFullscreenGraph] = useState(false);
 
@@ -44,14 +38,9 @@ const Dashboard = () => {
   const activityModal = useActivityModal();
   const skillModal = useSkillModal();
 
-  // Limit displayed skills - Full feature planned for Phase 5
+  // Limit displayed skills
   const FIXED_LIMIT = 5;
   const displayedSkills = filtered.skills.slice(0, FIXED_LIMIT);
-
-  // Load on scroll
-  const { ref, isInView } = useInView({
-    rootMargin: "200px",
-  });
 
   const { user, loader } = useAuth();
 
@@ -263,25 +252,8 @@ const Dashboard = () => {
                 </button>
               </div>
 
-              <div
-                ref={ref}
-                className="h-75 relative rounded-xl overflow-hidden bg-slate-950/40 border border-slate-800/50 shadow-inner"
-              >
-                {isInView && (
-                  <Suspense
-                    fallback={
-                      <div className="flex w-full h-full items-center justify-center">
-                        <ButtonSpinner
-                          label="Loading graph"
-                          labelColor="text-slate-400"
-                          color="text-teal-600"
-                        />
-                      </div>
-                    }
-                  >
-                    <DashboardGraph skills={data.skills} isCompact={true} />
-                  </Suspense>
-                )}
+              <div className="h-75 relative rounded-xl overflow-hidden bg-slate-950/40 border border-slate-800/50 shadow-inner">
+                <DashboardGraph skills={data.skills} isCompact={true} />
 
                 {/*Discreet overlay to invite action on hover */}
                 <div className="absolute inset-0 bg-teal-500/5 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-700" />
