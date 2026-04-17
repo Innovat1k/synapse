@@ -3,7 +3,6 @@ import { useAuth } from "@pages/UserAuthPage/hooks/useAuth";
 import { useAuthRedirect } from "@pages/UserAuthPage/hooks/useAuthRedirect";
 import Header from "@shared/components/Header/Header";
 import NavBar from "@shared/components/NavBar/NavBar";
-import ToastComponent from "@shared/components/Toast/ToastComponent";
 import Loader from "@shared/components/Loader";
 
 function App() {
@@ -22,7 +21,6 @@ function App() {
           <Outlet context={{ methods, user }} />
         </main>
       </div>
-      <ToastComponent />
     </div>
   );
 }

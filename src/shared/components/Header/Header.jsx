@@ -1,7 +1,16 @@
 import * as Avatar from "@radix-ui/react-avatar";
+import { useState } from "react";
+import { LuLogOut } from "react-icons/lu";
 import { Link } from "react-router-dom";
 
 function Header({ signOut, user }) {
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsSigningOut(true);
+    await signOut();
+  };
+
   return (
     <header className="sticky top-0 z-10 flex items-center justify-between px-4 md:px-6 py-4 border-b border-slate-800/50 bg-slate-900/60 backdrop-blur-sm">
       <Link
@@ -30,10 +39,25 @@ function Header({ signOut, user }) {
           </div>
 
           <button
-            onClick={signOut}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-1 rounded text-xs md:text-sm"
+            onClick={handleLogout}
+            disabled={isSigningOut}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all text-xs md:text-sm ${
+              isSigningOut
+                ? "bg-slate-700 text-slate-400 cursor-not-allowed"
+                : "bg-slate-800 text-slate-200 hover:bg-slate-700 cursor-pointer"
+            }`}
           >
-            Logout
+            {isSigningOut ? (
+              <>
+                <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+                <span>Signing out...</span>
+              </>
+            ) : (
+              <>
+                <LuLogOut size={18} />
+                <span>Logout</span>
+              </>
+            )}
           </button>
         </div>
       </div>

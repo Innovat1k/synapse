@@ -46,13 +46,17 @@ export const useAuth = () => {
 
     // Guard Timeout (5 secondes)
     timeoutId = setTimeout(() => {
-      if (isSubscribed) {setIsInitialLoading(false);}
+      if (isSubscribed) {
+        setIsInitialLoading(false);
+      }
     }, 5000);
 
     const setupListener = async () => {
       const supabase = await getSupabase();
       const authListener = supabase.auth.onAuthStateChange((_, session) => {
-        if (isSubscribed) {setUserSession(session);}
+        if (isSubscribed) {
+          setUserSession(session);
+        }
       });
       return authListener.data.subscription;
     };
@@ -65,13 +69,18 @@ export const useAuth = () => {
     return () => {
       isSubscribed = false;
       clearTimeout(timeoutId);
-      if (subscription) {subscription.unsubscribe();}
+      if (subscription) {
+        subscription.unsubscribe();
+      }
     };
   }, [setUserSession]);
 
   useEffect(() => {
-    if (userSession?.user) {setUser(userSession.user);}
-    else {setUser(null);}
+    if (userSession?.user) {
+      setUser(userSession.user);
+    } else {
+      setUser(null);
+    }
   }, [userSession, setUser]);
 
   const handleSignIn = async (e) => {
@@ -86,8 +95,12 @@ export const useAuth = () => {
         password: formData.password,
       });
 
-      if (error) {showNotif(TOAST_MESSAGES.AUTH.SIGN_IN_ERROR, "error");}
-      else {navigate("/dashboard");}
+      if (error) {
+        showNotif(TOAST_MESSAGES.AUTH.SIGN_IN_ERROR, "error");
+      } else {
+        resetForm();
+        navigate("/dashboard");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -105,28 +118,33 @@ export const useAuth = () => {
         password: formData.password,
       });
 
-      if (error) {showNotif(TOAST_MESSAGES.AUTH.SIGN_UP_ERROR, "error");}
-      else {navigate("/auth/check-email");}
+      if (error) {
+        showNotif(TOAST_MESSAGES.AUTH.SIGN_UP_ERROR, "error");
+      } else {
+        resetForm();
+        navigate("/auth/check-email");
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleSignOut = async () => {
-    setIsSigningOut(true);
-    setIsInitialLoading(true);
-
     try {
       const supabase = await getSupabase();
       const { error } = await supabase.auth.signOut();
-      if (error) {throw error;}
-
-      showNotif(TOAST_MESSAGES.AUTH.SIGN_OUT_SUCCESS, "success");
+      if (error) throw error;
       resetForm();
-      navigate("/auth");
+    } catch (error) {
+      navigate("/auth", { replace: true });
     } finally {
-      setIsSigningOut(false);
-      setIsInitialLoading(false);
+      setTimeout(() => {
+        setIsSigningOut(false);
+      }, 50);
+
+      setTimeout(() => {
+        showNotif(TOAST_MESSAGES.AUTH.SIGN_OUT_SUCCESS, "success");
+      }, 100);
     }
   };
 
