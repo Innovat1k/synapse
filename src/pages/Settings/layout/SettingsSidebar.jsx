@@ -1,47 +1,65 @@
-import { Link, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { SETTINGS_SECTIONS } from "../settingsConfig";
+import {
+  LuDatabase,
+  LuLayers,
+  LuShield,
+  LuSettings,
+  LuRoute,
+  LuTags,
+} from "react-icons/lu";
+
+const ICONS = {
+  LuShield,
+  LuDatabase,
+  LuSettings,
+  LuLayers,
+  LuRoute,
+  LuTags,
+};
 
 export const SettingsSidebar = ({ onAction }) => {
-  const location = useLocation();
-
   return (
-    <div className="flex flex-col" data-testid="settings-sidebar">
-      {SETTINGS_SECTIONS.map((group) => (
-        <div key={group.group} className="mb-8 last:mb-0">
-          <h3 className="text-[10px] uppercase font-bold tracking-widest text-slate-600 mb-3 px-3">
-            {group.group}
+    <nav className="space-y-6" data-testid="settings-sidebar">
+      {SETTINGS_SECTIONS.map((section) => (
+        <div key={section.group}>
+          <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 px-2">
+            {section.group}
           </h3>
-          <nav className="space-y-1">
-            {group.items.map((item) => {
-              const isActive = location.pathname === item.path;
+          <ul className="space-y-1">
+            {section.items.map((item) => {
+              const Icon = ICONS[item.icon];
+              const isReady = item.status === "ready";
 
               return (
-                <Link
-                  key={item.id}
-                  to={item.path}
-                  onClick={() => onAction?.()}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`group relative flex items-center px-3 py-2.5 rounded-xl text-sm transition-all duration-300 ${
-                    isActive
-                      ? "bg-teal-500/10 text-teal-400 font-semibold shadow-[inset_0_0_10px_rgba(45,212,191,0.05)]"
-                      : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/40"
-                  }`}
-                >
-                  {isActive && (
-                    <span className="absolute left-0 w-1 h-4 bg-teal-400 rounded-full shadow-[0_0_8px_rgba(45,212,191,0.6)]" />
-                  )}
-
-                  <span
-                    className={`${isActive ? "translate-x-2" : "group-hover:translate-x-1"} transition-transform duration-300`}
+                <li key={item.id}>
+                  <NavLink
+                    to={item.path}
+                    onClick={onAction}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
+                        isActive
+                          ? "bg-teal-500/10 text-teal-400 border-l-2 border-teal-400"
+                          : isReady
+                            ? "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
+                            : "text-slate-600 cursor-not-allowed"
+                      }`
+                    }
                   >
-                    {item.label}
-                  </span>
-                </Link>
+                    {Icon && <Icon size={18} />}
+                    <span className="text-sm font-medium flex-1">
+                      {item.label}
+                    </span>
+                    {!isReady && (
+                      <span className="text-[10px] text-slate-600">Soon</span>
+                    )}
+                  </NavLink>
+                </li>
               );
             })}
-          </nav>
+          </ul>
         </div>
       ))}
-    </div>
+    </nav>
   );
 };

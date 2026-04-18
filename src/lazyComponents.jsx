@@ -48,6 +48,10 @@ export const TracksPage = React.lazy(() =>
   })),
 );
 
+export const SettingsPage = React.lazy(
+  () => import("@pages/Settings/SettingsPage.jsx"),
+);
+
 export const FallbackComponent = React.lazy(
   () => import("@shared/components/FallBackComponent.jsx"),
 );

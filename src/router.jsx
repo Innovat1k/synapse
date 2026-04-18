@@ -14,12 +14,15 @@ import {
   TracksPage,
   UserAuthPage,
   FallbackComponent,
+  SettingsPage,
 } from "./lazyComponents.jsx";
 
 // Skeletons
 import DashboardSkeleton from "./pages/DashBoard/components/DashboardSkeleton.jsx";
 import SkillSkeleton from "./pages/SkillDetailPage/components/SkillSkeleton.jsx";
 import SkillsListSkeleton from "./pages/SkillsListPage/components/SkillsListSkeleton.jsx";
+import ComingSoonPage from "./pages/Settings/components/ComingSoonPage.jsx";
+import SettingsSkeleton from "./pages/Settings/components/SettingsSkeleton.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -79,9 +82,20 @@ export const router = createBrowserRouter([
         path: "/settings",
         element: <SettingsLayout />,
         children: [
-          { index: true, element: <Navigate to="app" replace /> },
+          {
+            index: true,
+            element: (
+              <Suspense fallback={<SettingsSkeleton />}>
+                <SettingsPage />
+              </Suspense>
+            ),
+          },
+          { path: "personal/data", element: <ComingSoonPage /> },
+          { path: "personal/account", element: <ComingSoonPage /> },
+          { path: "personal/general", element: <ComingSoonPage /> },
           { path: "app", element: <AppSettingsPage /> },
           { path: "app/tracks", element: <TracksPage /> },
+          { path: "app/categories", element: <ComingSoonPage /> },
         ],
       },
     ],
