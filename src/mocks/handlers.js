@@ -87,6 +87,36 @@ export const handlers = [
     return HttpResponse.json(trackWithId, { status: 201 });
   }),
 
+  http.delete(`${SUPABASE_URL}/rest/v1/synapse_tracks`, ({ request }) => {
+    const trackId =
+      extractId(request.url, "track_id") || extractId(request.url, "id");
+    const userId = extractUserId(request.url);
+
+    if (trackId) {
+      const ids = Array.isArray(trackId) ? trackId : [trackId];
+      for (let i = tracksStore.length - 1; i >= 0; i--) {
+        if (ids.includes(tracksStore[i].track_id)) {
+          tracksStore.splice(i, 1);
+        }
+      }
+      return HttpResponse.json(null, { status: 204 });
+    }
+
+    if (userId) {
+      for (let i = tracksStore.length - 1; i >= 0; i--) {
+        if (tracksStore[i].user_id === userId) {
+          tracksStore.splice(i, 1);
+        }
+      }
+      return HttpResponse.json(null, { status: 204 });
+    }
+
+    return HttpResponse.json(
+      { error: "Valid filter required (track_id or user_id)" },
+      { status: 400 },
+    );
+  }),
+
   // ============================================
   // SKILLS
   // ============================================
@@ -149,19 +179,29 @@ export const handlers = [
   http.delete(`${SUPABASE_URL}/rest/v1/synapse_skills`, ({ request }) => {
     const skillId =
       extractId(request.url, "skill_id") || extractId(request.url, "id");
-    if (!skillId) {
-      return HttpResponse.json(
-        { error: "Valid ID filter required" },
-        { status: 400 },
-      );
+    const userId = extractUserId(request.url);
+
+    if (skillId) {
+      const index = skillsStore.findIndex((s) => s.skill_id === skillId);
+      if (index !== -1) {
+        skillsStore.splice(index, 1);
+      }
+      return HttpResponse.json(null, { status: 204 });
     }
 
-    const index = skillsStore.findIndex((s) => s.skill_id === skillId);
-    if (index !== -1) {
-      skillsStore.splice(index, 1);
+    if (userId) {
+      for (let i = skillsStore.length - 1; i >= 0; i--) {
+        if (skillsStore[i].user_id === userId) {
+          skillsStore.splice(i, 1);
+        }
+      }
+      return HttpResponse.json(null, { status: 204 });
     }
 
-    return HttpResponse.json(null, { status: 204 });
+    return HttpResponse.json(
+      { error: "Valid filter required" },
+      { status: 400 },
+    );
   }),
 
   // ============================================
@@ -226,17 +266,9 @@ export const handlers = [
   ),
 
   http.delete(`${SUPABASE_URL}/rest/v1/synapse_activities`, ({ request }) => {
-    const skillId = extractId(request.url, "skill_id");
     const activityId = extractId(request.url, "id");
-
-    if (skillId) {
-      for (let i = activitiesStore.length - 1; i >= 0; i--) {
-        if (activitiesStore[i].skill_id === skillId) {
-          activitiesStore.splice(i, 1);
-        }
-      }
-      return HttpResponse.json(null, { status: 204 });
-    }
+    const skillId = extractId(request.url, "skill_id");
+    const userId = extractUserId(request.url);
 
     if (activityId) {
       const index = activitiesStore.findIndex((a) => a.id === activityId);
@@ -246,7 +278,29 @@ export const handlers = [
       return HttpResponse.json(null, { status: 204 });
     }
 
-    return HttpResponse.json({ error: "Filter required" }, { status: 400 });
+    if (skillId) {
+      const ids = Array.isArray(skillId) ? skillId : [skillId];
+      for (let i = activitiesStore.length - 1; i >= 0; i--) {
+        if (ids.includes(activitiesStore[i].skill_id)) {
+          activitiesStore.splice(i, 1);
+        }
+      }
+      return HttpResponse.json(null, { status: 204 });
+    }
+
+    if (userId) {
+      for (let i = activitiesStore.length - 1; i >= 0; i--) {
+        if (activitiesStore[i].user_id === userId) {
+          activitiesStore.splice(i, 1);
+        }
+      }
+      return HttpResponse.json(null, { status: 204 });
+    }
+
+    return HttpResponse.json(
+      { error: "Valid filter required (id, skill_id, or user_id)" },
+      { status: 400 },
+    );
   }),
 
   // ============================================

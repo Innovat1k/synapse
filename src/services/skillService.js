@@ -85,3 +85,17 @@ export const deleteSkill = async (id) => {
   }
   return true;
 };
+
+// Deletes all skills associated with a user ID from Supabase
+export const deleteUserSkills = async (userId) => {
+  if (!userId) return { error: new Error("No user_id provided") };
+
+  const supabase = await getSupabase();
+  const { error } = await supabase
+    .from("synapse_skills")
+    .delete()
+    .eq("user_id", userId);
+
+  if (error) throw error;
+  return { success: true };
+};

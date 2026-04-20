@@ -4,6 +4,7 @@ import { createTrack, fetchTracks, deleteTrack } from "@services/tracksService";
 import { useToast } from "@shared/components/Toast/hooks/useToast";
 import { useModal } from "@shared/components/Modal/hooks/useModal";
 import { TOAST_MESSAGES } from "@shared/components/Toast/toastMessages";
+import { useTracksQuery } from "@shared/hooks/useTracksQuery";
 
 // Manages tracks list data, creation flow, and UI state (form open/close, loading, errors).
 // Includes caching, toast feedback, and optional pagination prefetching.
@@ -23,17 +24,7 @@ export const useTracks = (skill = {}) => {
   const { showNotif } = useToast();
 
   //Data
-  const {
-    data: tracks = [],
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ["tracks"],
-    queryFn: fetchTracks,
-    staleTime: 5 * 60 * 1000,
-    cacheTime: 10 * 60 * 1000,
-  });
+  const { tracks = [], isLoading, isError, error } = useTracksQuery();
 
   const prefetchNextPage = (page) => {
     queryClient.prefetchQuery({

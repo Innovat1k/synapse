@@ -70,6 +70,7 @@ export const defaultActivities = [
 export const defaultTracks = [
   {
     track_id: "computer-science",
+    user_id: TEST_USER_ID,
     title: "Computer Science",
     description: null,
     category: "other",
@@ -80,6 +81,7 @@ export const defaultTracks = [
   },
   {
     track_id: "react-fundamentals",
+    user_id: TEST_USER_ID,
     title: "React Fundamentals",
     description: "Learn React from scratch",
     category: "frontend",

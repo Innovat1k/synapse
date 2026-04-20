@@ -1,0 +1,163 @@
+import { useState } from "react";
+import { LuDownload, LuTrash2, LuTriangleAlert } from "react-icons/lu";
+import { Modal } from "@shared/components/Modal/Modal";
+import { useDataExport } from "./hooks/useDataExport";
+import { useDataPurge } from "./hooks/useDataPurge";
+import ButtonSpinner from "@shared/components/ButtonSpinner";
+import { useSkillsQuery } from "@shared/hooks/useSkillsQuery/useSkillsQuery";
+import { useAllActivitiesQuery } from "@shared/hooks/useActivitiesQuery/useActivitiesQuery";
+import { useTracksQuery } from "@shared/hooks/useTracksQuery";
+
+// eslint-disable-next-line no-unused-vars
+import { AnimatePresence, motion } from "framer-motion";
+
+const DataPrivacyPage = () => {
+  const { isExporting, handleExport } = useDataExport();
+  const { isResetModalOpen, isDeleting, setIsResetModalOpen, handleReset } =
+    useDataPurge();
+
+  const { skills, isLoading: isLoadingSkills } = useSkillsQuery();
+  const { activities, isLoading: isLoadingActivities } =
+    useAllActivitiesQuery();
+  const { tracks, isLoading: isLoadingTracks } = useTracksQuery();
+
+  const isLoading = isLoadingSkills || isLoadingActivities || isLoadingTracks;
+
+  const isDataEmpty =
+    !isLoading &&
+    skills.length === 0 &&
+    activities.length === 0 &&
+    tracks.length === 0;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6"
+    >
+      {/* Header */}
+      <div>
+        <h2 className="text-2xl font-bold text-slate-100">Data & Privacy</h2>
+        <p className="text-slate-400 mt-1">
+          Manage your data, export or delete your account information.
+        </p>
+      </div>
+
+      {/* Export Data */}
+      <div className="p-6 bg-slate-900/50 rounded-xl border border-slate-800/50">
+        <div className="flex items-start gap-4">
+          <div className="p-3 bg-emerald-500/10 rounded-lg">
+            <LuDownload className="w-6 h-6 text-emerald-400" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-slate-100 mb-2">
+              Export Your Data
+            </h3>
+            <p className="text-slate-400 text-sm mb-4">
+              Download all your skills, activities, tracks, and progress as a
+              JSON file. This includes all your learning data and analytics.
+            </p>
+            <button
+              type="button"
+              onClick={handleExport}
+              disabled={isExporting}
+              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-800 text-white px-4 py-2 rounded-lg transition-all font-medium cursor-pointer"
+            >
+              {isExporting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Exporting...</span>
+                </>
+              ) : (
+                <>
+                  <LuDownload size={18} />
+                  <span>Download My Data</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Reset Data */}
+      <div className="p-6 bg-slate-900/50 rounded-xl border border-red-900/30">
+        <div className="flex items-start gap-4">
+          <div className="p-3 bg-red-500/10 rounded-lg">
+            <LuTrash2 className="w-6 h-6 text-red-400" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-red-400 mb-2">
+              Reset All Data
+            </h3>
+            <p className="text-slate-400 text-sm mb-4">
+              Permanently delete all your skills, activities, tracks, and
+              progress. This action cannot be undone and will reset your entire
+              learning history.
+            </p>
+            <button
+              type="button"
+              onClick={() => setIsResetModalOpen(true)}
+              disabled={isDataEmpty}
+              className={`flex items-center gap-2 text-white px-4 py-2 rounded-lg transition-all font-medium ${isDataEmpty ? "bg-slate-950 cursor-not-allowed" : "bg-red-600 hover:bg-red-500 "}`}
+            >
+              <LuTrash2 size={18} />
+              <span>Reset All Data</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Warning Card */}
+      <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+        <div className="flex items-start gap-3">
+          <LuTriangleAlert className="w-5 h-5 text-amber-400 mt-0.5" />
+          <div>
+            <h4 className="text-sm font-semibold text-amber-400 mb-1">
+              Important
+            </h4>
+            <p className="text-amber-200/80 text-sm">
+              Resetting your data will permanently delete everything. Make sure
+              to export your data first if you want to keep a backup.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Reset Confirmation Modal */}
+      <AnimatePresence>
+        {isResetModalOpen && (
+          <Modal
+            isOpened={isResetModalOpen}
+            onClose={() => setIsResetModalOpen(false)}
+            title="Reset All Data?"
+            description="This will permanently delete all your skills, activities, tracks, and progress. This action cannot be undone."
+          >
+            <div className="flex gap-3 justify-end mt-6">
+              <button
+                type="button"
+                onClick={() => setIsResetModalOpen(false)}
+                className="flex-1 px-2 py-2 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700 text-slate-200 rounded-lg transition-colors text-sm sm:text-base cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleReset}
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors font-medium cursor-pointer"
+              >
+                {isDeleting ? (
+                  <ButtonSpinner label="Deleting data..." />
+                ) : (
+                  "Yes, Reset Everything"
+                )}
+              </button>
+            </div>
+          </Modal>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
+
+export default DataPrivacyPage;

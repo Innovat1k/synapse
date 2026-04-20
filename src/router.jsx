@@ -15,6 +15,7 @@ import {
   UserAuthPage,
   FallbackComponent,
   SettingsPage,
+  DataPrivacyPage,
 } from "./lazyComponents.jsx";
 
 // Skeletons
@@ -90,7 +91,7 @@ export const router = createBrowserRouter([
               </Suspense>
             ),
           },
-          { path: "personal/data", element: <ComingSoonPage /> },
+          { path: "personal/data", element: <DataPrivacyPage /> },
           { path: "personal/account", element: <ComingSoonPage /> },
           { path: "personal/general", element: <ComingSoonPage /> },
           { path: "app", element: <AppSettingsPage /> },

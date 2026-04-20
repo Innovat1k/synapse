@@ -1,11 +1,12 @@
 import { getSupabase } from "./supabase-lazy";
 
 // Fetches all tracks from Supabase, ordered by title
-export const fetchTracks = async () => {
+export const fetchTracks = async (userId) => {
   const supabase = await getSupabase();
   const { data, error } = await supabase
     .from("synapse_tracks")
     .select("*")
+    .eq("user_id", userId)
     .order("title", { ascending: true });
 
   if (error) {
@@ -40,4 +41,18 @@ export const deleteTrack = async (trackId) => {
   if (error) {
     throw error;
   }
+};
+
+// Deletes all tracks associated with a user ID from Supabase
+export const deleteUserTracks = async (userId) => {
+  if (!userId) return { error: new Error("No user_id provided") };
+
+  const supabase = await getSupabase();
+  const { error } = await supabase
+    .from("synapse_tracks")
+    .delete()
+    .eq("user_id", userId);
+
+  if (error) throw error;
+  return { success: true };
 };

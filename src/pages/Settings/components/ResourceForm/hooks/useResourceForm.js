@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "@pages/UserAuthPage/hooks/useAuth";
 
 // Manages resource creation form state with auto-generated ID from title.
 // Includes category selection and validation (non-empty title required).
@@ -27,6 +28,8 @@ export const useResourceForm = ({ onSubmit }) => {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("other");
 
+  const { user } = useAuth();
+
   const resetForm = () => {
     setTitle("");
     setCategory("other");
@@ -42,6 +45,7 @@ export const useResourceForm = ({ onSubmit }) => {
         title: title.trim(),
         track_id: generateIdFromTitle(title),
         category,
+        user_id: user.id,
       });
     } finally {
       resetForm();

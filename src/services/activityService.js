@@ -22,6 +22,18 @@ export const fetchActivitiesBySkill = async (skillId) => {
   }
 };
 
+export const fetchActivities = async (userId) => {
+  const supabase = await getSupabase();
+  const { data, error } = await supabase
+    .from("synapse_activities")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return data || [];
+};
+
 // --- Adding activity ---
 export const createActivity = async (activityData) => {
   const supabase = await getSupabase();
@@ -71,4 +83,18 @@ export const purgeActivitiesBySkill = async (skillId) => {
     throw error;
   }
   return true;
+};
+
+// Deletes all activities associated with a user ID from Supabase
+export const deleteUserActivities = async (userId) => {
+  if (!userId) return { error: new Error("No user_id provided") };
+
+  const supabase = await getSupabase();
+  const { error } = await supabase
+    .from("synapse_activities")
+    .delete()
+    .eq("user_id", userId);
+
+  if (error) throw error;
+  return { success: true };
 };

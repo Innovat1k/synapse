@@ -52,6 +52,10 @@ export const SettingsPage = React.lazy(
   () => import("@pages/Settings/SettingsPage.jsx"),
 );
 
+export const DataPrivacyPage = React.lazy(
+  () => import("@pages/Settings/personal/data/DataPrivacyPage.jsx"),
+);
+
 export const FallbackComponent = React.lazy(
   () => import("@shared/components/FallBackComponent.jsx"),
 );

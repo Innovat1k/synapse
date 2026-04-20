@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { fetchTracks } from "@/services/tracksService";
 import { useToast } from "../../Toast/hooks/useToast";
 import {
@@ -7,6 +6,7 @@ import {
   useOutgoingSkillLinks,
 } from "@pages/SkillDetailPage/components/SkillLinks/hooks/useSkillLinks";
 import { useActivitiesQuery } from "../../../hooks/useActivitiesQuery/useActivitiesQuery";
+import { useTracksQuery } from "../../../hooks/useTracksQuery";
 
 const initialFormData = {
   name: "",
@@ -31,11 +31,7 @@ export const useSkillForm = ({
   const { showNotif } = useToast();
 
   // Load tracks
-  const { data: tracks = [], isLoading: isLoadingTracks } = useQuery({
-    queryKey: ["tracks"],
-    queryFn: fetchTracks,
-    staleTime: 5 * 60 * 1000,
-  });
+  const { tracks = [], isLoading: isLoadingTracks } = useTracksQuery();
 
   // Load associated data for warnings
   const { activities } = useActivitiesQuery(initialData?.skill_id);
