@@ -7,7 +7,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { server } from "@mocks/server";
 import { http, HttpResponse } from "msw";
 import { SUPABASE_URL } from "@services/supabase-client";
-import { clearTracks } from "@mocks/stores";
+import { clearTracks, TEST_USER_ID } from "@mocks/stores";
+
+vi.mock("@pages/UserAuthPage/hooks/useAuth", () => ({
+  useAuth: () => ({
+    user: { id: TEST_USER_ID },
+  }),
+}));
 
 const waitForLoadingToFinish = () =>
   waitFor(() => {

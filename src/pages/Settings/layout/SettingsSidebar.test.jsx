@@ -4,22 +4,6 @@ import { MemoryRouter } from "react-router-dom";
 import { SettingsSidebar } from "./SettingsSidebar";
 import { beforeEach, vi } from "vitest";
 
-vi.mock("./settingsConfig", () => ({
-  SETTINGS_SECTIONS: [
-    {
-      group: "Personal",
-      items: [
-        { id: "account", label: "Account", path: "/settings/account" },
-        { id: "general", label: "General", path: "/settings/general" },
-      ],
-    },
-    {
-      group: "Application",
-      items: [{ id: "tracks", label: "Tracks", path: "/settings/app/tracks" }],
-    },
-  ],
-}));
-
 const renderSidebar = (
   initialEntry = "/settings/account",
   onAction = vi.fn(),
@@ -80,7 +64,7 @@ describe("SettingsSidebar", () => {
       renderSidebar();
 
       const links = screen.getAllByRole("link");
-      expect(links).toHaveLength(4);
+      expect(links).toHaveLength(6);
 
       links.forEach((link) => {
         expect(link).toHaveAttribute("href");

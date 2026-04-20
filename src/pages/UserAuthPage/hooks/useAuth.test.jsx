@@ -180,8 +180,9 @@ describe("useAuth", () => {
     expect(mockNavigate).not.toHaveBeenCalledWith("/auth/check-email");
   });
 
-  it("handleSignOut: calls signOut and navigate to /auth", async () => {
+  it("handleSignOut: calls signOut and does NOT navigate on success", async () => {
     const { result } = renderHook(() => useAuth(), { wrapper: Wrapper });
+
     await waitFor(() =>
       expect(result.current.loader.isInitialLoading).toBe(false),
     );
@@ -191,8 +192,6 @@ describe("useAuth", () => {
     });
 
     expect(mockAuth.signOut).toHaveBeenCalled();
-    expect(mockNavigate).toHaveBeenCalledWith("/auth");
-    expect(result.current.loader.isSigningOut).toBe(false);
-    expect(result.current.loader.isInitialLoading).toBe(false);
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 });

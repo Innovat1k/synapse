@@ -2,8 +2,8 @@ import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import SkillListPage from "../SkillsListPage";
-import { renderComponent, mockSkills } from "./test-utils";
-import { clearTracks, skillsStore } from "@mocks/stores";
+import { renderComponent } from "./test-utils";
+import { clearTracks, skillsStore, TEST_USER_ID } from "@mocks/stores";
 
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
@@ -12,6 +12,12 @@ vi.mock("react-router-dom", async () => {
     useOutletContext: vi.fn(),
   };
 });
+
+vi.mock("@pages/UserAuthPage/hooks/useAuth", () => ({
+  useAuth: () => ({
+    user: { id: TEST_USER_ID },
+  }),
+}));
 
 describe("SkillListPage – Modal stacking (Skill + Track)", () => {
   let user;
@@ -22,14 +28,14 @@ describe("SkillListPage – Modal stacking (Skill + Track)", () => {
 
   it("stacks SkillFormModal and TrackFormModal", async () => {
     clearTracks();
-    renderComponent(<SkillListPage />, { skills: mockSkills });
+    renderComponent(<SkillListPage />, { skills: skillsStore });
 
     await user.click(screen.getByRole("button", { name: /add new skill/i }));
     expect(screen.getByTestId("skill-modal-content")).toBeInTheDocument();
 
     const skillModal = screen.getByTestId("skill-modal-content");
     await user.click(
-      within(skillModal).getByRole("button", { name: /create/i }),
+      await within(skillModal).findByRole("button", { name: /create/i }),
     );
 
     expect(screen.getByTestId("track-modal-content")).toBeInTheDocument();
@@ -38,7 +44,7 @@ describe("SkillListPage – Modal stacking (Skill + Track)", () => {
 
   it("traps focus in TrackFormModal when stacked over SkillFormModal", async () => {
     clearTracks();
-    renderComponent(<SkillListPage />, { skills: mockSkills });
+    renderComponent(<SkillListPage />, { skills: skillsStore });
 
     await user.click(screen.getByRole("button", { name: /add new skill/i }));
     const skillModal = screen.getByTestId("skill-modal-content");
@@ -57,7 +63,7 @@ describe("SkillListPage – Modal stacking (Skill + Track)", () => {
 
   it("closes TrackFormModal and keeps SkillFormModal open", async () => {
     clearTracks();
-    renderComponent(<SkillListPage />, { skills: mockSkills });
+    renderComponent(<SkillListPage />, { skills: skillsStore });
 
     await user.click(screen.getByRole("button", { name: /add new skill/i }));
     const skillModal = screen.getByTestId("skill-modal-content");
@@ -82,7 +88,7 @@ describe("SkillListPage – Modal stacking (Skill + Track)", () => {
 
   it("creates a track from SkillFormModal", async () => {
     clearTracks();
-    renderComponent(<SkillListPage />, { skills: mockSkills });
+    renderComponent(<SkillListPage />, { skills: skillsStore });
 
     await user.click(screen.getByRole("button", { name: /add new skill/i }));
     await user.click(screen.getByRole("button", { name: /create/i }));

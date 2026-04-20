@@ -9,6 +9,7 @@ import {
   seedActivities,
   defaultActivities,
   skillsStore,
+  TEST_USER_ID,
 } from "@mocks/stores";
 
 const SKILL_IDS = {
@@ -17,7 +18,12 @@ const SKILL_IDS = {
   PROJECT_MGMT: "skill-project-mgmt",
 };
 
-// Mock react-router-dom
+vi.mock("@pages/UserAuthPage/hooks/useAuth", () => ({
+  useAuth: () => ({
+    user: { id: TEST_USER_ID },
+  }),
+}));
+
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
   return {

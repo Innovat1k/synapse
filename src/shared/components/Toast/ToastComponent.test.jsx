@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect } from "vitest";
 import ToastComponent from "./ToastComponent";
-import { Toast } from "radix-ui";
+import * as Toast from "@radix-ui/react-toast";
 import { createStore, Provider } from "jotai";
 import { notification_atom } from "@atoms/atoms";
 
@@ -28,14 +28,14 @@ describe("ToastComponent", () => {
       mockNotification({
         message:
           "Invalid login credentials. Please check your email and password.",
-      })
+      }),
     );
 
     render(
       <Toast.Provider>
         <ToastComponent />
       </Toast.Provider>,
-      { wrapper: Wrapper }
+      { wrapper: Wrapper },
     );
     screen.debug();
     expect(screen.getByText(/error/i)).toBeInTheDocument();
@@ -47,14 +47,14 @@ describe("ToastComponent", () => {
       notification_atom,
       mockNotification({
         message: "Something went wrong. Please try again later.",
-      })
+      }),
     );
 
     render(
       <Toast.Provider>
         <ToastComponent />
       </Toast.Provider>,
-      { wrapper: Wrapper }
+      { wrapper: Wrapper },
     );
 
     expect(screen.getByText(/error/i)).toBeInTheDocument();
@@ -66,14 +66,14 @@ describe("ToastComponent", () => {
       notification_atom,
       mockNotification({
         message: "This email is already registered. Please sign in instead.",
-      })
+      }),
     );
 
     render(
       <Toast.Provider>
         <ToastComponent />
       </Toast.Provider>,
-      { wrapper: Wrapper }
+      { wrapper: Wrapper },
     );
 
     expect(screen.getByText(/error/i)).toBeInTheDocument();

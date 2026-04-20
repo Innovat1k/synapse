@@ -1,8 +1,15 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it } from "vitest";
 import { useTracks } from "./useTracks";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { clearTracks, seedTracks } from "@mocks/stores";
+import { clearTracks, seedTracks, TEST_USER_ID } from "@mocks/stores";
+
+vi.mock("@pages/UserAuthPage/hooks/useAuth", () => ({
+  useAuth: () => ({
+    user: { id: TEST_USER_ID },
+  }),
+}));
 
 describe("useTracks", () => {
   let client;
@@ -13,7 +20,9 @@ describe("useTracks", () => {
       defaultOptions: { queries: { retry: false } },
     });
     QueryWrapper = ({ children }) => (
-      <QueryClientProvider client={client}>{children}</QueryClientProvider>
+      <QueryClientProvider client={client}>
+        <MemoryRouter>{children}</MemoryRouter>
+      </QueryClientProvider>
     );
   });
 
@@ -37,7 +46,14 @@ describe("useTracks", () => {
   });
 
   it("fetches tracks on mount", async () => {
-    seedTracks([{ track_id: "1", title: "React", category: "frontend" }]);
+    seedTracks([
+      {
+        track_id: "1",
+        title: "React",
+        category: "frontend",
+        user_id: TEST_USER_ID,
+      },
+    ]);
 
     const { result } = renderHook(() => useTracks(), {
       wrapper: QueryWrapper,

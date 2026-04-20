@@ -2,6 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect } from "vitest";
 import { useSkillForm } from "./useSkillForm";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { MemoryRouter } from "react-router-dom";
 
 describe("useSkillForm", () => {
   let client;
@@ -10,7 +11,9 @@ describe("useSkillForm", () => {
   beforeEach(() => {
     client = new QueryClient();
     QueryWrapper = ({ children }) => (
-      <QueryClientProvider client={client}>{children}</QueryClientProvider>
+      <QueryClientProvider client={client}>
+        <MemoryRouter>{children}</MemoryRouter>
+      </QueryClientProvider>
     );
   });
 
