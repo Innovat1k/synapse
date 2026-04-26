@@ -24,26 +24,53 @@ import SkillSkeleton from "./pages/SkillDetailPage/components/SkillSkeleton.jsx"
 import SkillsListSkeleton from "./pages/SkillsListPage/components/SkillsListSkeleton.jsx";
 import ComingSoonPage from "./pages/Settings/components/ComingSoonPage.jsx";
 import SettingsSkeleton from "./pages/Settings/components/SettingsSkeleton.jsx";
+import { AnimatePresence } from "framer-motion";
+import PageTransition from "./shared/components/PageTransition.jsx";
+
+// Transition wrapper
+const AnimatedRoute = ({ children }) => (
+  <AnimatePresence mode="wait">
+    <PageTransition>{children}</PageTransition>
+  </AnimatePresence>
+);
 
 export const router = createBrowserRouter([
   {
     path: "/auth",
     element: (
-      <Suspense fallback={<Loader />}>
-        <AuthLayout />
-      </Suspense>
+      <AnimatedRoute>
+        <Suspense fallback={<Loader />}>
+          <AuthLayout />
+        </Suspense>
+      </AnimatedRoute>
     ),
     children: [
-      { index: true, element: <UserAuthPage /> },
-      { path: "check-email", element: <CheckEmailPage /> },
+      {
+        index: true,
+        element: (
+          <AnimatedRoute>
+            <UserAuthPage />
+          </AnimatedRoute>
+        ),
+      },
+      {
+        path: "check-email",
+        element: (
+          <AnimatedRoute>
+            <CheckEmailPage />
+          </AnimatedRoute>
+        ),
+      },
     ],
   },
   {
     path: "/",
     element: (
-      <Suspense fallback={<Loader />}>
-        <App />
-      </Suspense>
+      <AnimatedRoute>
+        <Suspense fallback={<Loader />}>
+          <App />
+        </Suspense>
+      </AnimatedRoute>
     ),
     errorElement: <FallbackComponent />,
     children: [
@@ -51,30 +78,40 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard",
         element: (
-          <Suspense fallback={<DashboardSkeleton />}>
-            <DashBoard />
-          </Suspense>
+          <AnimatedRoute>
+            <Suspense fallback={<DashboardSkeleton />}>
+              <DashBoard />
+            </Suspense>
+          </AnimatedRoute>
         ),
       },
       { path: "/auth/check-email", element: <CheckEmailPage /> },
       {
         path: "/skills",
-        element: <SkillsLayout />,
+        element: (
+          <AnimatedRoute>
+            <SkillsLayout />
+          </AnimatedRoute>
+        ),
         children: [
           {
             index: true,
             element: (
-              <Suspense fallback={<SkillsListSkeleton />}>
-                <SkillsListPage />
-              </Suspense>
+              <AnimatedRoute>
+                <Suspense fallback={<SkillsListSkeleton />}>
+                  <SkillsListPage />
+                </Suspense>
+              </AnimatedRoute>
             ),
           },
           {
             path: ":skillId",
             element: (
-              <Suspense fallback={<SkillSkeleton />}>
-                <SkillDetailPage />
-              </Suspense>
+              <AnimatedRoute>
+                <Suspense fallback={<SkillSkeleton />}>
+                  <SkillDetailPage />
+                </Suspense>
+              </AnimatedRoute>
             ),
           },
         ],
@@ -86,9 +123,11 @@ export const router = createBrowserRouter([
           {
             index: true,
             element: (
-              <Suspense fallback={<SettingsSkeleton />}>
-                <SettingsPage />
-              </Suspense>
+              <AnimatedRoute>
+                <Suspense fallback={<SettingsSkeleton />}>
+                  <SettingsPage />
+                </Suspense>
+              </AnimatedRoute>
             ),
           },
           { path: "personal/data", element: <DataPrivacyPage /> },
