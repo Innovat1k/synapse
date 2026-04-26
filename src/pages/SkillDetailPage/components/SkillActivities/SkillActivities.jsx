@@ -159,7 +159,7 @@ function SkillActivities({ skill, skills }) {
                         </div>
                         <div className="flex gap-3 shrink-0">
                           <button
-                            className="text-cyan-400"
+                            className="text-cyan-400 active:scale-95"
                             onClick={() => methods.openEditModal(activity)}
                             type="button"
                             aria-label={`Edit activity ${activity.id}`}
@@ -167,7 +167,7 @@ function SkillActivities({ skill, skills }) {
                             <LuPencil size={16} />
                           </button>
                           <button
-                            className="text-rose-400"
+                            className="text-rose-400 active:scale-95"
                             onClick={() => methods.openDeleteModal(activity)}
                             type="button"
                             aria-label={`Delete activity ${activity.id}`}

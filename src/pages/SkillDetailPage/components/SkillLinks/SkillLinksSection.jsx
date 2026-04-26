@@ -85,7 +85,7 @@ export const SkillLinksSection = ({ skillId, skill }) => {
               <button
                 onClick={() => openLinkerModal("incoming")}
                 disabled={isEditing}
-                className={`p-1.5 rounded-lg transition-colors cursor-pointer border ${
+                className={`p-1.5 rounded-lg transition-colors cursor-pointer border active:scale-95 ${
                   isEditing
                     ? "border-amber-300/20 bg-amber-300/5 text-amber-300/40 opacity-60"
                     : "border-amber-300/30 bg-amber-300/10 text-amber-300 hover:bg-amber-300/20"
@@ -131,7 +131,7 @@ export const SkillLinksSection = ({ skillId, skill }) => {
               <button
                 onClick={() => openLinkerModal("outgoing")}
                 disabled={isEditing}
-                className={`p-1.5 rounded-lg transition-colors cursor-pointer border ${
+                className={`p-1.5 rounded-lg transition-colors cursor-pointer border active:scale-95 ${
                   isEditing
                     ? "border-cyan-400/20 bg-cyan-400/5 text-cyan-400/40 opacity-60"
                     : "border-cyan-400/30 bg-cyan-400/10 text-cyan-400 hover:bg-cyan-400/20"

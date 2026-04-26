@@ -269,7 +269,7 @@ const Dashboard = () => {
                 </h2>
                 <button
                   onClick={() => setIsFullscreenGraph(true)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase tracking-widest 
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold capitalize tracking-widest 
                      text-slate-400 hover:text-cyan-400 
                      bg-slate-800/50 hover:bg-slate-800 
                      border border-slate-700/50 

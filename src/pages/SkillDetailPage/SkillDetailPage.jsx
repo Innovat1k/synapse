@@ -73,7 +73,7 @@ function SkillDetailPage() {
               <button
                 type="button"
                 onClick={openGraphModal}
-                className="flex-1 md:flex-none items-center justify-center gap-2 px-4 py-2.5 rounded-lg cursor-pointer hidden md:flex bg-[#1a2332] hover:bg-[#232d3f] border border-slate-800/50 hover:border-cyan-500/40 text-slate-200 transition-all duration-200 shadow-lg shadow-cyan-500/10 group"
+                className="flex-1 md:flex-none items-center active:scale-95 justify-center gap-2 px-4 py-2.5 rounded-lg cursor-pointer hidden md:flex bg-[#1a2332] hover:bg-[#232d3f] border border-slate-800/50 hover:border-cyan-500/40 text-slate-200 transition-all duration-200 shadow-lg shadow-cyan-500/10 group"
                 aria-label={`View knowledge graph for ${skill?.name}`}
               >
                 <LuBrainCircuit

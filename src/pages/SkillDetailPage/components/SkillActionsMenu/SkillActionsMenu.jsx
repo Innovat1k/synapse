@@ -23,7 +23,7 @@ function SkillActionsMenu({
         <button
           type="button"
           aria-label="Open skill actions"
-          className="p-2.5 rounded-lg border border-slate-800/50 bg-[#1a2332]/50 hover:border-cyan-500/40 hover:text-cyan-400 text-slate-400 transition-all duration-200 cursor-pointer active:scale-95"
+          className="p-2.5 rounded-lg border active:scale-95 border-slate-800/50 bg-[#1a2332]/50 hover:border-cyan-500/40 hover:text-cyan-400 text-slate-400 transition-all duration-200 cursor-pointer"
           onClick={actionsMenu.handleToggle}
         >
           <LuEllipsis size={20} aria-hidden="true" />
@@ -55,7 +55,7 @@ function SkillActionsMenu({
                 <button
                   type="button"
                   aria-label="Close actions menu"
-                  className="p-1 rounded-md text-slate-500 hover:text-slate-200 hover:bg-slate-800 transition-colors cursor-pointer"
+                  className="p-1 rounded-md text-slate-500 active:scale-95 hover:text-slate-200 hover:bg-slate-800 transition-colors cursor-pointer"
                   onClick={actionsMenu.handleToggle}
                 >
                   <LuX size={16} />
