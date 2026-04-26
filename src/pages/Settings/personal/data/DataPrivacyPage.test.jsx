@@ -61,12 +61,12 @@ describe("DataPrivacyPage", () => {
       screen.getByRole("button", { name: /Download My Data/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /Reset All Data/i }),
+      screen.getByRole("button", { name: /delete all data/i }),
     ).toBeInTheDocument();
 
     expect(screen.getByText("Important")).toBeInTheDocument();
     expect(
-      screen.getByText(/Resetting your data will permanently delete/i),
+      screen.getByText(/Deleting your data will permanently delete/i),
     ).toBeInTheDocument();
   });
 
@@ -82,19 +82,19 @@ describe("DataPrivacyPage", () => {
     expect(mockHandleExport).toHaveBeenCalledTimes(1);
   });
 
-  it("Reset button opens modal when clicked", async () => {
+  it("Delete button opens modal when clicked", async () => {
     useSkillsQuery.mockReturnValue({
       skills: [{ skill_id: "1" }],
       isLoading: false,
     });
     renderWithRouter(<DataPrivacyPage />);
 
-    await user.click(screen.getByRole("button", { name: /Reset All Data/i }));
+    await user.click(screen.getByRole("button", { name: /delete all data/i }));
 
     expect(mockSetIsResetModalOpen).toHaveBeenCalledWith(true);
   });
 
-  it("Reset button is disabled when isDataEmpty is true", () => {
+  it("Delete button is disabled when isDataEmpty is true", () => {
     useSkillsQuery.mockReturnValue({ skills: [], isLoading: false });
     useAllActivitiesQuery.mockReturnValue({ activities: [], isLoading: false });
     useTracksQuery.mockReturnValue({ tracks: [], isLoading: false });
@@ -102,12 +102,11 @@ describe("DataPrivacyPage", () => {
     renderWithRouter(<DataPrivacyPage />);
 
     expect(
-      screen.getByRole("button", { name: /Reset All Data/i }),
+      screen.getByRole("button", { name: /delete all data/i }),
     ).toBeDisabled();
   });
 
-  it("Reset button is enabled when data exists", () => {
-    // Mock with data
+  it("Delete button is enabled when data exists", () => {
     useSkillsQuery.mockReturnValue({
       skills: [{ skill_id: "1" }],
       isLoading: false,
@@ -118,7 +117,7 @@ describe("DataPrivacyPage", () => {
     renderWithRouter(<DataPrivacyPage />);
 
     expect(
-      screen.getByRole("button", { name: /Reset All Data/i }),
+      screen.getByRole("button", { name: /delete all data/i }),
     ).not.toBeDisabled();
   });
 
@@ -132,10 +131,12 @@ describe("DataPrivacyPage", () => {
 
     renderWithRouter(<DataPrivacyPage />);
 
-    expect(screen.getByText("Reset All Data?")).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /delete all data\?/i }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Cancel/i })).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /Yes, Reset Everything/i }),
+      screen.getByRole("button", { name: /Yes, delete Everything/i }),
     ).toBeInTheDocument();
   });
 
@@ -166,7 +167,7 @@ describe("DataPrivacyPage", () => {
 
     await user.click(
       screen.getByRole("button", {
-        name: /Yes, Reset Everything/i,
+        name: /Yes, delete Everything/i,
       }),
     );
 
@@ -196,6 +197,8 @@ describe("DataPrivacyPage", () => {
     renderWithRouter(<DataPrivacyPage />);
 
     expect(screen.getByText(/Deleting data.../i)).toBeInTheDocument();
-    expect(screen.queryByText("Yes, Reset Everything")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Yes, delete Everything"),
+    ).not.toBeInTheDocument();
   });
 });

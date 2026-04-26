@@ -38,7 +38,7 @@ const SkillFormModal = ({
       : mode === "edit"
         ? "Edit Skill"
         : "Confirm Deletion";
-  const modalSize = mode === "delete" ? "md" : "2xl";
+  const modalSize = mode === "delete" ? "md" : "xl";
 
   return (
     <>
@@ -71,6 +71,7 @@ const SkillFormModal = ({
             isSubmitting={isSubmitting}
             methods={methods}
             createForm={createForm}
+            onClose={onClose}
           />
         )}
       </Modal>

@@ -32,3 +32,57 @@
     display: none;
   }
 }
+
+/* ─────────────────────────────────────────────────────────
+   CSS VARIABLES (Pour les couleurs du thème)
+   ───────────────────────────────────────────────────────── */
+:root {
+  --color-primary: #0a0e1a;
+  --color-secondary: #0f1420;
+  --color-tertiary: #1a2332;
+  --color-border-subtle: rgba(30, 58, 95, 0.6);
+  --color-border-default: rgba(42, 74, 111, 0.7);
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #e2e8f0;
+  --color-text-tertiary: #94a3b8;
+  --color-accent-cyan: #22d3ee;
+  --color-accent-blue: #3b82f6;
+  --color-accent-purple: #a78bfa;
+  --color-danger: #fb7185;
+}
+
+/* ─────────────────────────────────────────────────────────
+   BASE (Ce que Tailwind ne fait pas)
+   ───────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-primary);
+  color: var(--color-text-primary);
+  font-family: system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 20, 32, 0.5);
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Text Selection */
+::selection {
+  background: rgba(34, 211, 238, 0.3);
+  color: #cffafe;
+}

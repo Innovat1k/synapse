@@ -1,5 +1,6 @@
 import {
   fireEvent,
+  queryByText,
   render,
   screen,
   waitFor,
@@ -97,6 +98,10 @@ describe("SkillsLayout", () => {
         await screen.findByTestId("list-layout-desktop"),
       );
 
+      await waitFor(() => {
+        expect(desktopLayout.queryByText(/loading/i)).not.toBeInTheDocument();
+      });
+
       await user.click(
         desktopLayout.getByRole("button", {
           name: /edit skill java/i,
@@ -142,6 +147,14 @@ describe("SkillsLayout", () => {
     it("SkillFormModal: removes a skill when delete button is confirmed", async () => {
       render(<LayoutWrapper initialEntries={["/skills"]} />);
 
+      const desktopLayout = within(
+        await screen.findByTestId("list-layout-desktop"),
+      );
+
+      await waitFor(() => {
+        expect(desktopLayout.queryByText(/loading/i)).not.toBeInTheDocument();
+      });
+
       await user.click(
         within(await screen.findByTestId("list-layout-desktop")).getByRole(
           "button",
@@ -166,12 +179,16 @@ describe("SkillsLayout", () => {
     it("navigates to the skill detail page if skill name is clicked", async () => {
       render(<LayoutWrapper initialEntries={["/skills"]} />);
 
-      const desktop_layout = within(
+      const desktopLayout = within(
         await screen.findByTestId("list-layout-desktop"),
       );
 
+      await waitFor(() => {
+        expect(desktopLayout.queryByText(/loading/i)).not.toBeInTheDocument();
+      });
+
       await user.click(
-        desktop_layout.getByRole("link", { name: /project management/i }),
+        desktopLayout.getByRole("link", { name: /project management/i }),
       );
 
       await waitFor(() => {
@@ -256,6 +273,14 @@ describe("SkillsLayout", () => {
   describe("Mobile layout", () => {
     it("redirects to SkillDetailPage if skill name is clicked", async () => {
       render(<LayoutWrapper initialEntries={["/skills"]} />);
+
+      const desktopLayout = within(
+        await screen.findByTestId("list-layout-desktop"),
+      );
+
+      await waitFor(() => {
+        expect(desktopLayout.queryByText(/loading/i)).not.toBeInTheDocument();
+      });
 
       const mobile_layout = within(
         await screen.findByTestId("list-layout-mobile"),

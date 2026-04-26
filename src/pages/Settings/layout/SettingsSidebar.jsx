@@ -20,10 +20,10 @@ const ICONS = {
 
 export const SettingsSidebar = ({ onAction }) => {
   return (
-    <nav className="space-y-6" data-testid="settings-sidebar">
+    <nav className="space-y-8" data-testid="settings-sidebar">
       {SETTINGS_SECTIONS.map((section) => (
         <div key={section.group}>
-          <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 px-2">
+          <h3 className="text-xs font-bold text-slate-600 uppercase tracking-widest mb-3 px-2">
             {section.group}
           </h3>
           <ul className="space-y-1">
@@ -37,9 +37,9 @@ export const SettingsSidebar = ({ onAction }) => {
                     to={item.path}
                     onClick={onAction}
                     className={({ isActive }) =>
-                      `flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
+                      `flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
                         isActive
-                          ? "bg-teal-500/10 text-teal-400 border-l-2 border-teal-400"
+                          ? "bg-cyan-500/10 text-cyan-300 border-l-2 border-cyan-400"
                           : isReady
                             ? "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
                             : "text-slate-600 cursor-not-allowed"
@@ -51,7 +51,9 @@ export const SettingsSidebar = ({ onAction }) => {
                       {item.label}
                     </span>
                     {!isReady && (
-                      <span className="text-[10px] text-slate-600">Soon</span>
+                      <span className="text-xs text-slate-600 font-medium">
+                        Soon
+                      </span>
                     )}
                   </NavLink>
                 </li>

@@ -27,32 +27,27 @@ export const SkillLinksSection = ({ skillId, skill }) => {
   const { linkerModal, openLinkerModal, closeLinkerModal } =
     useSkillLinkerModal();
 
-  const { isEditing, isLoading, unlinkingLink, methods } = useSkillLinkEditor(skillId);
+  const { isEditing, isLoading, unlinkingLink, methods } =
+    useSkillLinkEditor(skillId);
 
   const isLoadingAny = inLoading || outLoading;
 
-  if (isLoadingAny) {
-    return <SkillLinksSkeleton />;
-  }
-
-  if (inError || outError) {
-    return null;
-  }
+  if (isLoadingAny) return <SkillLinksSkeleton />;
+  if (inError || outError) return null;
 
   const noLinks = incomingLinks.length === 0 && outgoingLinks.length === 0;
 
-  const containerBg = `p-4 rounded-2xl backdrop-blur-md transition-all duration-300 border
-  ${
+  // Tertiary bg and border styling based on Neural theme
+  const containerBg = `p-6 rounded-lg backdrop-blur-md transition-all duration-300 border ${
     isEditing
-      ? "bg-slate-800/40 border-slate-500/50 shadow-[0_0_15px_rgba(0,0,0,0.3)] scale-[1.01]"
-      : "bg-slate-900/60 border-slate-800/50 shadow-none scale-100"
+      ? "bg-[#1a2332] border-cyan-400/50 shadow-lg shadow-cyan-500/20 scale-[1.01]"
+      : "bg-[#1a2332]/40 border-slate-800/50 shadow-none scale-100"
   }`;
 
   return (
     <section className="my-8">
-      {/* Header + Edit button */}
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-medium text-slate-200">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-lg font-semibold text-slate-50">
           Skill Connections
         </h3>
 
@@ -61,43 +56,40 @@ export const SkillLinksSection = ({ skillId, skill }) => {
           title={noLinks ? "No connections to edit" : ""}
           disabled={noLinks}
           onClick={methods.toggleEditing}
-          className={`
-            text-xs font-bold px-4 py-1.5 rounded-full transition-all border flex items-center justify-center min-w-16.25
-          ${
+          className={`text-xs font-bold px-4 py-1.5 rounded-full transition-all border flex items-center justify-center min-w-16.25 ${
             noLinks
-              ? "cursor-not-allowed opacity-30 grayscale-[0.5]"
+              ? "cursor-not-allowed opacity-30 grayscale"
               : "cursor-pointer active:scale-95"
-          }
-        ${
-          isEditing
-            ? "bg-red-500/10 border-red-500/40 text-red-400 shadow-[0_0_10px_rgba(239,68,68,0.1)]"
-            : "bg-slate-800/40 border-slate-700/50 text-slate-400 hover:enabled:text-slate-200 hover:enabled:border-slate-600 hover:enabled:bg-slate-800"
-        }`}
+          } ${
+            isEditing
+              ? "bg-rose-500/10 border-rose-400/40 text-rose-400 shadow-lg shadow-rose-500/20"
+              : "bg-[#1a2332] border-slate-800/50 text-slate-400 hover:enabled:text-slate-200 hover:enabled:border-slate-700"
+          }`}
         >
           {isEditing ? "Done" : "Edit"}
         </button>
       </div>
 
       <div
-        className={`flex flex-col md:flex-row gap-6 transition-opacity duration-300 ${isLoading ? "opacity-50 pointer-events-none" : "opacity-100"}`}
+        className={`flex flex-col md:flex-row gap-6 transition-opacity duration-300 ${
+          isLoading ? "opacity-50 pointer-events-none" : "opacity-100"
+        }`}
       >
-        {/* Section : Required to Master */}
         <div className="flex-1 min-w-0">
           <div className={containerBg}>
-            <div className="flex justify-between items-center mb-3">
-              <h4 className="text-sm font-semibold text-amber-500 flex items-center gap-1">
+            <div className="flex justify-between items-center mb-4">
+              <h4 className="text-sm font-semibold text-amber-300 flex items-center gap-2">
                 <LuCornerLeftUp size={16} />
                 Required to Master
               </h4>
               <button
                 onClick={() => openLinkerModal("incoming")}
                 disabled={isEditing}
-                className={`p-1.5 rounded-lg transition-colors cursor-pointer border
-                  ${
-                    isEditing
-                      ? "border-amber-500/20 bg-amber-500/5 text-amber-500/40 opacity-60"
-                      : "border-amber-500/30 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20"
-                  }`}
+                className={`p-1.5 rounded-lg transition-colors cursor-pointer border ${
+                  isEditing
+                    ? "border-amber-300/20 bg-amber-300/5 text-amber-300/40 opacity-60"
+                    : "border-amber-300/30 bg-amber-300/10 text-amber-300 hover:bg-amber-300/20"
+                }`}
                 aria-label={
                   isEditing
                     ? "Exit edit mode to add prerequisite links"
@@ -122,30 +114,28 @@ export const SkillLinksSection = ({ skillId, skill }) => {
                 ))}
               </div>
             ) : (
-              <p className="text-slate-500 text-sm italic">
+              <p className="text-slate-500 text-sm italic px-2">
                 No prerequisites defined yet.
               </p>
             )}
           </div>
         </div>
 
-        {/* Section : Enables mastery of */}
         <div className="flex-1 min-w-0">
           <div className={containerBg}>
-            <div className="flex justify-between items-center mb-3">
-              <h4 className="text-sm font-semibold text-cyan-400 flex items-center gap-1">
+            <div className="flex justify-between items-center mb-4">
+              <h4 className="text-sm font-semibold text-cyan-400 flex items-center gap-2">
                 <LuCornerRightUp size={16} />
                 Enables mastery of
               </h4>
               <button
                 onClick={() => openLinkerModal("outgoing")}
                 disabled={isEditing}
-                className={`p-1.5 rounded-lg transition-colors cursor-pointer border
-                  ${
-                    isEditing
-                      ? "border-cyan-400/20 bg-cyan-400/5 text-cyan-400/40 opacity-60"
-                      : "border-cyan-400/30 bg-cyan-400/10 text-cyan-400 hover:bg-cyan-400/20"
-                  }`}
+                className={`p-1.5 rounded-lg transition-colors cursor-pointer border ${
+                  isEditing
+                    ? "border-cyan-400/20 bg-cyan-400/5 text-cyan-400/40 opacity-60"
+                    : "border-cyan-400/30 bg-cyan-400/10 text-cyan-400 hover:bg-cyan-400/20"
+                }`}
                 aria-label={
                   isEditing
                     ? "Exit edit mode to add outgoing skill links"
@@ -170,7 +160,7 @@ export const SkillLinksSection = ({ skillId, skill }) => {
                 ))}
               </div>
             ) : (
-              <p className="text-slate-500 text-sm italic">
+              <p className="text-slate-500 text-sm italic px-2">
                 This skill doesn't unlock anything yet.
               </p>
             )}
@@ -178,7 +168,6 @@ export const SkillLinksSection = ({ skillId, skill }) => {
         </div>
       </div>
 
-      {/* Modals */}
       <SkillLinkerModal
         isOpened={linkerModal.isOpen}
         mode={linkerModal.mode}
@@ -189,21 +178,19 @@ export const SkillLinksSection = ({ skillId, skill }) => {
         onClose={closeLinkerModal}
       />
 
-      {
-        <AnimatePresence>
-          {unlinkingLink && (
-            <UnlinkConfirmModal
-              key="unlink-modal"
-              isOpened={!!unlinkingLink}
-              isLoading={isLoading}
-              link={unlinkingLink}
-              skill={skill}
-              onConfirm={methods.confirmRemoval}
-              onClose={methods.cancelRemoval}
-            />
-          )}
-        </AnimatePresence>
-      }
+      <AnimatePresence>
+        {unlinkingLink && (
+          <UnlinkConfirmModal
+            key="unlink-modal"
+            isOpened={!!unlinkingLink}
+            isLoading={isLoading}
+            link={unlinkingLink}
+            skill={skill}
+            onConfirm={methods.confirmRemoval}
+            onClose={methods.cancelRemoval}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 };

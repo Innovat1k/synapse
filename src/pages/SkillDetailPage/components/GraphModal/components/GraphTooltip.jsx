@@ -62,21 +62,21 @@ export const GraphTooltip = ({
       className="z-100 px-4 py-3 bg-slate-900/95 backdrop-blur-xl border border-slate-700/50 rounded-xl shadow-2xl min-w-55 max-w-70"
       style={getDynamicStyles()}
     >
-      <div className="flex justify-between items-center mb-1">
+      <div className="flex justify-between items-center mb-2">
         <span
-          className={`text-[10px] font-black uppercase tracking-tighter ${
-            node.status === "completed" ? "text-teal-400" : "text-slate-500"
+          className={`text-xs font-bold uppercase tracking-widest ${
+            node.status === "completed" ? "text-cyan-400" : "text-slate-500"
           }`}
         >
           Status: {node.status || "Available"}
         </span>
       </div>
 
-      <p className="text-base font-bold text-white leading-tight">
+      <p className="text-base font-bold text-slate-50 leading-tight">
         {node.label}
       </p>
 
-      <p className="text-[11px] text-slate-400 italic mt-2 border-t border-slate-800 pt-2">
+      <p className="text-xs text-slate-400 italic mt-2 border-t border-slate-800/50 pt-2">
         {getMessage()}
       </p>
 
@@ -86,7 +86,7 @@ export const GraphTooltip = ({
             e.stopPropagation();
             onComplete(node.id);
           }}
-          className="mt-3 w-full py-2 bg-teal-600 hover:bg-teal-500 rounded-lg text-white text-sm font-bold transition-all active:scale-95"
+          className="mt-3 w-full py-2 bg-cyan-600 hover:bg-cyan-500 rounded-lg text-white text-sm font-bold transition-all duration-200 cursor-pointer active:scale-95"
           type="button"
         >
           Mark as Completed

@@ -19,31 +19,24 @@ function SkillActivities({ skill, skills }) {
     skill.skill_id,
   );
 
-  // Prevent passing undefined skill
-  if (!skill) {
-    return null;
-  }
+  if (!skill) return null;
 
   return (
     <>
-      <div>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 md:mb-6">
-          <div className="flex flex-wrap items-center gap-3">
-            <h2 className="text-lg sm:text-xl font-semibold text-slate-100">
+      <div className="mt-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div className="flex flex-wrap items-center gap-4">
+            <h2 className="text-lg sm:text-xl font-semibold text-slate-50">
               Activity log
             </h2>
 
             {!isLoading && activities?.length > 0 && (
               <div
                 data-testid="activity-count-badge"
-                className="flex items-center gap-1.5 bg-slate-900/50 px-2 py-0.5 rounded-md border border-slate-800/40"
+                className="flex items-center gap-2 bg-[#1a2332] px-3 py-1 rounded-lg border border-slate-800/50 shadow-sm"
               >
-                <LuListChecks
-                  size={14}
-                  className="text-slate-500 shrink-0"
-                  aria-hidden="true"
-                />
-                <span className="text-sm font-medium text-slate-200 tabular-nums">
+                <LuListChecks size={14} className="text-cyan-400 shrink-0" />
+                <span className="text-sm font-bold text-slate-200 tabular-nums">
                   {activities.length}
                 </span>
               </div>
@@ -52,16 +45,16 @@ function SkillActivities({ skill, skills }) {
 
           <button
             type="button"
-            className="flex items-center justify-center gap-1.5 sm:gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg transition-colors text-xs sm:text-sm cursor-pointer"
+            className="flex items-center justify-center gap-2 bg-linear-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white px-6 py-2.5 rounded-xl shadow-lg shadow-cyan-500/30 transition-all duration-200 text-sm font-bold cursor-pointer active:scale-95"
             onClick={methods.openCreateModal}
           >
-            <LuAlarmClockPlus size={16} />
+            <LuAlarmClockPlus size={18} />
             <span>Log activity</span>
           </button>
         </div>
 
         {activities.length === 0 ? (
-          <div className="text-center py-6 sm:py-8 text-slate-400 bg-slate-900/60 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-slate-800/50 text-sm">
+          <div className="text-center py-10 text-slate-400 bg-[#0f1420]/60 backdrop-blur-sm rounded-xl border border-slate-800/50 text-sm">
             <p>You haven't logged any activity for this skill.</p>
           </div>
         ) : (
@@ -70,21 +63,28 @@ function SkillActivities({ skill, skills }) {
               <ButtonSpinner label="loading activities..." />
             ) : (
               <>
-                {" "}
                 {/* Desktop : full table */}
                 <div
                   className="hidden lg:block"
                   data-testid="list-layout-desktop"
                 >
-                  <div className="bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-slate-800/50 overflow-hidden">
+                  <div className="bg-[#0f1420]/60 backdrop-blur-sm rounded-xl border border-slate-800/50 overflow-hidden shadow-2xl">
                     <table className="w-full">
                       <thead>
-                        <tr className="text-left text-slate-400 border-b border-slate-800/50">
-                          <th className="py-3 px-4 min-w-35">Date</th>
-                          <th className="py-3 px-4 min-w-25">Duration</th>
-                          <th className="py-3 px-4 min-w-25">Type</th>
-                          <th className="py-3 px-4">Notes</th>
-                          <th className="py-3 px-4 text-right min-w-22.5">
+                        <tr className="text-left text-slate-400 border-b border-slate-800/50 bg-[#1a2332]/40">
+                          <th className="py-3 px-6 min-w-35 text-xs font-bold uppercase tracking-widest">
+                            Date
+                          </th>
+                          <th className="py-3 px-6 min-w-25 text-xs font-bold uppercase tracking-widest">
+                            Duration
+                          </th>
+                          <th className="py-3 px-6 min-w-25 text-xs font-bold uppercase tracking-widest">
+                            Type
+                          </th>
+                          <th className="py-3 px-6 text-xs font-bold uppercase tracking-widest">
+                            Notes
+                          </th>
+                          <th className="py-3 px-6 text-right min-w-22.5 text-xs font-bold uppercase tracking-widest">
                             Actions
                           </th>
                         </tr>
@@ -93,42 +93,42 @@ function SkillActivities({ skill, skills }) {
                         {activities.map((activity) => (
                           <tr
                             key={activity.id}
-                            className="border-b border-slate-800/50 hover:bg-slate-900/40 transition-colors"
+                            className="border-b border-slate-800/30 hover:bg-[#1a2332]/30 transition-colors"
                             data-testid={`activity-row-${activity.id}`}
                           >
-                            <td className="py-3 px-4 text-slate-100 whitespace-nowrap">
+                            <td className="py-3 px-6 text-slate-100 whitespace-nowrap">
                               {formatDateShort(activity.logged_at)}
                             </td>
-                            <td className="py-3 px-4">
-                              <span className="inline-block px-2.5 py-1 text-xs rounded-full bg-slate-800/50 text-slate-200">
+                            <td className="py-3 px-6">
+                              <span className="inline-block px-3 py-1 text-xs font-bold rounded-lg bg-slate-800/50 text-cyan-400 border border-slate-700/30">
                                 {formatDuration(activity.duration_minutes)}
                               </span>
                             </td>
-                            <td className="py-3 px-4 text-slate-300 capitalize">
+                            <td className="py-3 px-6 text-slate-300 capitalize text-sm">
                               {activity.activity_type}
                             </td>
-                            <td className="py-3 px-4 text-slate-400 first-letter:capitalize">
-                              {activity.notes ? activity.notes : "..."}
+                            <td className="py-3 px-6 text-slate-400 first-letter:capitalize text-sm">
+                              {activity.notes || "..."}
                             </td>
-                            <td className="py-3 px-4 text-right">
-                              <div className="flex justify-end gap-2">
+                            <td className="py-3 px-6 text-right">
+                              <div className="flex justify-end gap-3">
                                 <button
-                                  className="text-teal-400 hover:text-teal-300 transition-colors cursor-pointer"
-                                  aria-label={`Edit activity ${activity.id}`}
+                                  className="text-cyan-400 hover:text-cyan-300 transition-colors cursor-pointer"
                                   onClick={() =>
                                     methods.openEditModal(activity)
                                   }
                                   type="button"
+                                  aria-label={`Edit activity ${activity.id}`}
                                 >
                                   <LuPencil size={18} />
                                 </button>
                                 <button
-                                  className="text-red-400 hover:text-red-300 transition-colors cursor-pointer"
-                                  aria-label={`Delete activity ${activity.id}`}
+                                  className="text-rose-400 hover:text-rose-300 transition-colors cursor-pointer"
                                   onClick={() =>
                                     methods.openDeleteModal(activity)
                                   }
                                   type="button"
+                                  aria-label={`Delete activity ${activity.id}`}
                                 >
                                   <LuTrash2 size={18} />
                                 </button>
@@ -140,6 +140,7 @@ function SkillActivities({ skill, skills }) {
                     </table>
                   </div>
                 </div>
+
                 {/* Mobile + Tablet : cards */}
                 <div
                   className="lg:hidden space-y-3"
@@ -148,50 +149,46 @@ function SkillActivities({ skill, skills }) {
                   {activities.map((activity) => (
                     <div
                       key={activity.id}
-                      className="bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-800/50 p-3"
+                      className="bg-[#0f1420]/60 backdrop-blur-sm rounded-lg border border-slate-800/50 p-4"
                       data-testid={`activity-card-${activity.id}`}
                     >
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <div className="flex items-center gap-1.5 text-slate-400 text-xs">
-                            <LuCalendar size={12} className="shrink-0" />
-                            <span>{formatDateShort(activity.logged_at)}</span>
-                          </div>
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="flex items-center gap-1.5 text-slate-400 text-xs">
+                          <LuCalendar size={12} className="shrink-0" />
+                          <span>{formatDateShort(activity.logged_at)}</span>
                         </div>
-                        <div className="flex gap-1.5 shrink-0">
+                        <div className="flex gap-3 shrink-0">
                           <button
-                            className="text-teal-400 hover:text-teal-300 p-0.5 rounded"
-                            aria-label={`Edit activity ${activity.id}`}
+                            className="text-cyan-400"
                             onClick={() => methods.openEditModal(activity)}
                             type="button"
+                            aria-label={`Edit activity ${activity.id}`}
                           >
-                            <LuPencil size={14} />
+                            <LuPencil size={16} />
                           </button>
                           <button
-                            className="text-red-400 hover:text-red-300 p-0.5 rounded"
-                            aria-label={`Delete activity ${activity.id}`}
+                            className="text-rose-400"
                             onClick={() => methods.openDeleteModal(activity)}
                             type="button"
+                            aria-label={`Delete activity ${activity.id}`}
                           >
-                            <LuTrash2 size={14} />
+                            <LuTrash2 size={16} />
                           </button>
                         </div>
                       </div>
-
-                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                      <div className="flex flex-wrap items-center gap-2 mb-3">
                         <div className="flex items-center gap-1 text-slate-400 text-xs">
                           <LuClock size={12} />
-                          <span className="bg-slate-800/50 px-2 py-1 rounded text-slate-300">
+                          <span className="bg-[#1a2332] px-2 py-0.5 rounded border border-slate-700/30 text-cyan-400 font-bold text-xs">
                             {formatDuration(activity.duration_minutes)}
                           </span>
                         </div>
-                        <div className="text-slate-400 text-xs capitalize">
+                        <div className="text-slate-500 text-xs font-bold uppercase tracking-widest px-2 py-0.5 bg-slate-800/30 rounded">
                           {activity.activity_type}
                         </div>
                       </div>
-
                       <p className="text-slate-400 text-sm leading-relaxed first-letter:capitalize">
-                        {activity.notes ? activity.notes : "..."}
+                        {activity.notes || "..."}
                       </p>
                     </div>
                   ))}

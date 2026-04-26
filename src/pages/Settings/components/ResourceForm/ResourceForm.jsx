@@ -14,15 +14,15 @@ export const ResourceForm = ({
   ref,
 }) => {
   const inputBaseStyles =
-    "w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-slate-100 text-sm placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-teal-500/30 focus:border-teal-500/50 transition-all appearance-none group-hover:border-slate-700";
+    "w-full px-4 py-2 bg-slate-950/60 border border-slate-800/50 rounded-lg text-slate-100 text-sm placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 focus:border-transparent transition-all appearance-none group-hover:border-slate-700/50";
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5">
+    <form onSubmit={onSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Title */}
-        <div className="group space-y-1.5">
+        <div className="group space-y-2">
           <label
-            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-500 ml-0.5"
+            className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500"
             htmlFor="track-title"
           >
             <LuLayoutGrid size={12} />
@@ -42,9 +42,9 @@ export const ResourceForm = ({
         </div>
 
         {/* Category */}
-        <div className="group space-y-1.5">
+        <div className="group space-y-2">
           <label
-            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-500 ml-0.5"
+            className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500"
             htmlFor="track-category"
           >
             <LuTag size={12} />
@@ -68,7 +68,7 @@ export const ResourceForm = ({
                 </option>
               ))}
             </select>
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-600 group-focus-within:text-teal-500 transition-colors">
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-600 group-focus-within:text-cyan-400 transition-colors">
               <LuChevronDown size={16} />
             </div>
           </div>
@@ -76,12 +76,12 @@ export const ResourceForm = ({
       </div>
 
       {/* Footer & Submit */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-4 border-t border-slate-900/50 mt-2">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-6 border-t border-slate-800/50">
         <div className="flex flex-col items-center sm:items-start order-3 sm:order-1">
-          <span className="text-[9px] text-slate-600 uppercase font-bold tracking-tight">
+          <span className="text-xs text-slate-600 uppercase font-bold tracking-widest">
             Auto-generated ID
           </span>
-          <span className="text-[11px] text-teal-500/70 font-mono">
+          <span className="text-sm text-cyan-400/70 font-mono mt-1">
             {generatedId || "no-title-yet"}
           </span>
         </div>
@@ -90,11 +90,11 @@ export const ResourceForm = ({
           <button
             type="submit"
             disabled={isSubmitting || !title.trim()}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-teal-500 hover:bg-teal-400 text-slate-950 text-sm font-bold rounded-lg transition-all active:scale-[0.98] disabled:bg-slate-800 disabled:text-slate-500 sm:order-2 cursor-pointer"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-linear-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-sm font-bold rounded-lg transition-all duration-200 active:scale-95 disabled:bg-slate-800 disabled:text-slate-300 disabled:cursor-not-allowed cursor-pointer"
           >
             {isSubmitting ? (
               <ButtonSpinner
-                color="border-slate-500"
+                color="border-slate-100"
                 label={null}
                 inline={true}
               />
@@ -104,7 +104,7 @@ export const ResourceForm = ({
             <span>{isSubmitting ? "Creating..." : "Create Track"}</span>
           </button>
 
-          <div className="w-full sm:w-auto sm:order-1">{children}</div>
+          <div className="w-full sm:w-auto">{children}</div>
         </div>
       </div>
     </form>

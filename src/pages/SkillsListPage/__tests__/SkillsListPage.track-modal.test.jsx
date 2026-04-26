@@ -101,7 +101,7 @@ describe("SkillListPage – Modal stacking (Skill + Track)", () => {
     renderComponent(<SkillListPage />, { skills: [] });
 
     await waitFor(() => {
-      expect(screen.getByText(/No skills found/i)).toBeInTheDocument();
+      expect(screen.getByText(/No skills registered/i)).toBeInTheDocument();
     });
 
     await user.click(screen.getByRole("button", { name: /add new skill/i }));

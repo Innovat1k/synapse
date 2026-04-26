@@ -1,10 +1,10 @@
 const SkeletonPulse = ({ className }) => (
-  <div className={`animate-pulse bg-slate-800/60 rounded-md ${className}`} />
+  <div className={`animate-pulse bg-slate-800/60 rounded ${className}`} />
 );
 
 const CardSkeleton = ({ children, className = "" }) => (
   <div
-    className={`bg-slate-900/40 border border-slate-800/50 rounded-2xl p-6 ${className}`}
+    className={`bg-slate-900/40 border border-slate-800/50 rounded-xl p-6 ${className}`}
   >
     {children}
   </div>
@@ -19,22 +19,22 @@ const DashboardSkeleton = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 p-4 md:p-6 overflow-hidden">
+    <div className="min-h-screen bg-[#0a0e1a] p-6 md:p-8 overflow-hidden">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
-        <SkeletonPulse className="h-9 w-48" />
-        <SkeletonPulse className="h-10 w-32 rounded-lg" />
+        <SkeletonPulse className="h-8 w-48" />
+        <SkeletonPulse className="h-10 w-32 rounded-xl" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/*---Colomn 1 : Focus & Metrics ---*/}
-        <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/*--- Column 1: Focus & Metrics ---*/}
+        <div className="space-y-8">
           <CardSkeleton>
-            <SkeletonPulse className="h-6 w-32 mb-6" />
+            <SkeletonPulse className="h-5 w-32 mb-6" />
             <div className="flex items-center justify-between mb-8">
               <div className="relative h-24 w-24">
                 <div className="absolute inset-0 border-4 border-slate-800 rounded-full" />
-                <div className="absolute inset-0 border-4 border-teal-500/20 rounded-full animate-pulse" />
+                <div className="absolute inset-0 border-4 border-cyan-500/20 rounded-full animate-pulse" />
               </div>
               <div className="space-y-2">
                 <SkeletonPulse className="h-4 w-16 ml-auto" />
@@ -52,7 +52,7 @@ const DashboardSkeleton = () => {
           </CardSkeleton>
 
           <CardSkeleton>
-            <SkeletonPulse className="h-6 w-40 mb-4" />
+            <SkeletonPulse className="h-5 w-40 mb-4" />
             <div className="flex flex-wrap gap-2">
               {Array.from({ length: SKELETON_ITEMS.badges }).map((_, i) => (
                 <SkeletonPulse
@@ -64,26 +64,26 @@ const DashboardSkeleton = () => {
           </CardSkeleton>
         </div>
 
-        {/*---Colomn 2 : Skills Grid  ---*/}
-        <div className="space-y-6 lg:col-span-1">
+        {/*--- Column 2: Skills Grid ---*/}
+        <div className="space-y-8 lg:col-span-1">
           <CardSkeleton className="h-full">
             <div className="flex justify-between items-center mb-8">
-              <SkeletonPulse className="h-7 w-40" />
-              <SkeletonPulse className="h-10 w-28 rounded-lg" />
+              <SkeletonPulse className="h-6 w-40" />
+              <SkeletonPulse className="h-10 w-28 rounded-xl" />
             </div>
 
-            {/*Filters */}
+            {/* Filters */}
             <div className="flex gap-3 mb-8">
               <SkeletonPulse className="h-10 w-36 rounded-xl" />
               <SkeletonPulse className="h-10 w-36 rounded-xl" />
             </div>
 
-            {/*Skills Grid */}
+            {/* Skills Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {Array.from({ length: SKELETON_ITEMS.skills }).map((_, i) => (
                 <div
                   key={`skill-${i}`}
-                  className="p-4 border border-slate-800/50 rounded-xl space-y-4"
+                  className="p-4 border border-slate-800/50 rounded-lg space-y-4"
                 >
                   <div className="flex justify-between items-center">
                     <SkeletonPulse className="h-5 w-28" />
@@ -96,10 +96,10 @@ const DashboardSkeleton = () => {
           </CardSkeleton>
         </div>
 
-        {/* --- Colomn 3 : Timeline & Graph --- */}
-        <div className="space-y-6">
+        {/* --- Column 3: Timeline & Graph --- */}
+        <div className="space-y-8">
           <CardSkeleton>
-            <SkeletonPulse className="h-6 w-44 mb-6" />
+            <SkeletonPulse className="h-5 w-44 mb-6" />
             <div className="space-y-6">
               {Array.from({ length: SKELETON_ITEMS.timeline }).map((_, i) => (
                 <div key={`time-${i}`} className="flex gap-4">
@@ -116,10 +116,10 @@ const DashboardSkeleton = () => {
           {/* Graph Placeholder */}
           <CardSkeleton className="h-80 flex flex-col">
             <div className="flex justify-between mb-6">
-              <SkeletonPulse className="h-6 w-32" />
-              <SkeletonPulse className="h-6 w-10" />
+              <SkeletonPulse className="h-5 w-32" />
+              <SkeletonPulse className="h-5 w-10" />
             </div>
-            <div className="flex-1 bg-slate-950/40 rounded-xl border border-slate-800/30 flex items-center justify-center">
+            <div className="flex-1 bg-slate-950/40 rounded-lg border border-slate-800/30 flex items-center justify-center">
               <SkeletonPulse className="h-32 w-32 rounded-full opacity-10" />
             </div>
           </CardSkeleton>

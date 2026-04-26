@@ -41,11 +41,11 @@ export const TrackFormModal = ({
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="w-full sm:w-auto px-6 py-2.5 text-sm font-medium text-slate-500 
-             bg-slate-800/40 hover:bg-slate-800 
-             border border-slate-700/50 hover:border-slate-600
+            className="w-full sm:w-auto px-6 py-2.5 text-sm font-medium text-slate-400 
+             bg-slate-800/50 hover:bg-slate-800 
+             border border-slate-700/50 hover:border-slate-700
              rounded-lg transition-all duration-200
-             disabled:opacity-30 disabled:cursor-not-allowed
+             disabled:opacity-50 disabled:cursor-not-allowed
              hover:text-slate-200 cursor-pointer"
           >
             Cancel

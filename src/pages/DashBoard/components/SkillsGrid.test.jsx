@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { SkillsGrid } from "./SkillsGrid";
 
@@ -39,19 +39,23 @@ describe("SkillsGrid", () => {
   it("renders skills with correct data", () => {
     render(<SkillsGrid skills={mockSkills} />);
 
-    expect(screen.getByText("React JS")).toBeInTheDocument();
-    expect(screen.getByText("Level 4")).toBeInTheDocument();
-    expect(screen.getByText("frontend")).toBeInTheDocument();
-    expect(screen.getByText("ui")).toBeInTheDocument();
-    expect(screen.getByText("library")).toBeInTheDocument();
-    expect(screen.getByText("+1")).toBeInTheDocument();
+    const reactJsSkill = within(
+      screen.getByRole("link", { name: /React JS/i }),
+    );
 
-    expect(screen.getByText("Supabase")).toBeInTheDocument();
-    expect(screen.getByText("Level 3")).toBeInTheDocument();
-    expect(screen.getByText("backend")).toBeInTheDocument();
-    expect(screen.getByText("auth")).toBeInTheDocument();
-    expect(screen.getByText("database")).toBeInTheDocument();
-    expect(screen.queryByText("+")).not.toBeInTheDocument();
+    expect(reactJsSkill.getByText(/Lv 4/i)).toBeInTheDocument();
+    expect(reactJsSkill.getByText(/frontend/i)).toBeInTheDocument();
+    expect(reactJsSkill.getByText(/ui/i)).toBeInTheDocument();
+    expect(reactJsSkill.getByText(/library/i)).toBeInTheDocument();
+
+    const supabaseSkill = within(
+      screen.getByRole("link", { name: /supabase/i }),
+    );
+
+    expect(supabaseSkill.getByText(/Lv 3/i)).toBeInTheDocument();
+    expect(supabaseSkill.getByText(/backend/i)).toBeInTheDocument();
+    expect(supabaseSkill.getByText(/auth/i)).toBeInTheDocument();
+    expect(supabaseSkill.getByText(/database/i)).toBeInTheDocument();
   });
 
   it("renders links to skill detail pages", () => {

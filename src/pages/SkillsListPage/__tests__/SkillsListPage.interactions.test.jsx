@@ -23,10 +23,10 @@ describe("SkillsListPage interactions", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole("cell", { name: /react js/i })
+        screen.getByRole("cell", { name: /react js/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("cell", { name: /frontend/i })
+        screen.getByRole("cell", { name: /frontend/i }),
       ).toBeInTheDocument();
       expect(screen.getByRole("cell", { name: "4/5" })).toBeInTheDocument();
     });
@@ -40,7 +40,7 @@ describe("SkillsListPage interactions", () => {
     await user.type(searchBar, "Python");
 
     await waitFor(() => {
-      expect(screen.getByText(/no skills found/i)).toBeInTheDocument();
+      expect(screen.getByText(/no results for "python"/i)).toBeInTheDocument();
     });
   });
 
@@ -53,7 +53,7 @@ describe("SkillsListPage interactions", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole("cell", { name: /backend/i })
+        screen.getByRole("cell", { name: /backend/i }),
       ).toBeInTheDocument();
       expect(screen.getByRole("cell", { name: /java/i })).toBeInTheDocument();
       expect(screen.getByRole("cell", { name: "1/5" })).toBeInTheDocument();
@@ -65,10 +65,10 @@ describe("SkillsListPage interactions", () => {
       expect(
         screen.getByRole("cell", {
           name: /frontend/i,
-        })
+        }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("cell", { name: /react js/i })
+        screen.getByRole("cell", { name: /react js/i }),
       ).toBeInTheDocument();
       expect(screen.getByRole("cell", { name: "4/5" })).toBeInTheDocument();
     });
@@ -82,18 +82,18 @@ describe("SkillsListPage interactions", () => {
     await waitFor(() => {
       const desktop_layout = within(screen.getByTestId("list-layout-desktop"));
       expect(
-        desktop_layout.getByRole("cell", { name: /digital painting/i })
+        desktop_layout.getByRole("cell", { name: /digital painting/i }),
       ).toBeInTheDocument();
       expect(
         desktop_layout.getByRole("cell", {
           name: /project management/i,
-        })
+        }),
       ).toBeInTheDocument();
       expect(
-        desktop_layout.queryByRole("cell", { name: /react js/i })
+        desktop_layout.queryByRole("cell", { name: /react js/i }),
       ).not.toBeInTheDocument();
       expect(
-        desktop_layout.queryByRole("cell", { name: /java/i })
+        desktop_layout.queryByRole("cell", { name: /java/i }),
       ).not.toBeInTheDocument();
     });
   });
@@ -104,11 +104,7 @@ describe("SkillsListPage interactions", () => {
     await user.selectOptions(screen.getByRole("combobox"), "devOps");
 
     await waitFor(() => {
-      expect(
-        screen.getByText(
-          /no skills found. try adjusting your search or filters./i
-        )
-      ).toBeInTheDocument();
+      expect(screen.getByText(/no skills in "devops"/i)).toBeInTheDocument();
     });
   });
 });

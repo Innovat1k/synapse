@@ -36,14 +36,14 @@ export const TrackList = ({ tracks = [], onDelete }) => {
         return (
           <div
             key={track.track_id}
-            className="group flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-slate-900/40 border border-slate-800 hover:border-slate-700 rounded-2xl transition-all duration-300 gap-4"
+            className="group flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-slate-900/50 border border-slate-800/50 hover:border-slate-700/50 rounded-lg transition-all duration-200 gap-4"
             data-testid={`track-item-${track.track_id}`}
           >
-            {/*---SECTION INFOS ---*/}
-            <div className="flex items-center gap-4">
-              {/*Dynamic avatar with category color */}
+            {/* SECTION INFOS */}
+            <div className="flex items-center gap-4 min-w-0">
+              {/* Dynamic avatar with category color */}
               <div
-                className={`shrink-0 w-12 h-12 rounded-xl bg-slate-950 border ${cat.color.split(" ")[2]} flex items-center justify-center shadow-inner`}
+                className={`shrink-0 w-12 h-12 rounded-lg bg-slate-950/60 border ${cat.color.split(" ")[2]} flex items-center justify-center shadow-inner`}
               >
                 <span
                   className={`text-lg font-bold ${cat.color.split(" ")[1]}`}
@@ -52,51 +52,51 @@ export const TrackList = ({ tracks = [], onDelete }) => {
                 </span>
               </div>
 
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 mb-1">
                   <h3 className="font-bold text-slate-100 truncate">
                     {track.title}
                   </h3>
                   <span
-                    className={`hidden sm:inline-block text-[10px] px-2 py-0.5 rounded-md border font-medium ${cat.color}`}
+                    className={`hidden sm:inline-block text-xs px-2 py-0.5 rounded-lg border font-medium ${cat.color}`}
                     data-testid="desktop-track-category"
                   >
                     {cat.label}
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 font-mono tracking-tight truncate">
+                <p className="text-xs text-slate-600 font-mono tracking-tight truncate">
                   ID: {track.track_id}
                 </p>
               </div>
             </div>
 
-            {/*---SECTION STATS & ACTIONS ---*/}
-            <div className="flex items-center justify-between sm:justify-end gap-6 border-t sm:border-t-0 border-slate-800/50 pt-3 sm:pt-0">
-              {/*Category badge (only visible on mobile here) */}
+            {/* SECTION STATS & ACTIONS */}
+            <div className="flex items-center justify-between sm:justify-end gap-4 border-t sm:border-t-0 border-slate-800/50 pt-3 sm:pt-0">
+              {/* Category badge (only visible on mobile here) */}
               <span
-                className={`sm:hidden text-[10px] px-2 py-1 rounded-md border font-medium ${cat.color}`}
+                className={`sm:hidden text-xs px-2 py-1 rounded-lg border font-medium ${cat.color}`}
                 data-testid="mobile-track-category"
               >
                 {cat.label}
               </span>
 
               <div className="flex items-center gap-2">
-                {/*View button (Placeholder for future navigation) */}
+                {/* View button (Placeholder for future navigation) */}
                 <button
-                  className="p-2 text-slate-500 hover:text-teal-400 hover:bg-teal-400/10 rounded-lg transition-all"
+                  className="p-2 text-slate-500 hover:text-cyan-400 hover:bg-cyan-400/10 rounded-lg transition-all duration-200 cursor-pointer"
                   title="View Network"
                 >
                   <LuExternalLink size={18} />
                 </button>
 
-                {/*Delete button */}
+                {/* Delete button */}
                 {onDelete && (
                   <button
                     type="button"
                     onClick={() => {
                       onDelete(track.track_id, track.title);
                     }}
-                    className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all cursor-pointer"
+                    className="p-2 text-slate-500 hover:text-rose-400 hover:bg-rose-400/10 rounded-lg transition-all duration-200 cursor-pointer"
                     aria-label={`Delete track ${track.title}`}
                   >
                     <LuTrash2 size={18} />

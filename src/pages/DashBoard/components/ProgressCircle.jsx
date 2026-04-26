@@ -1,6 +1,6 @@
 const LEVEL_COLORS = {
   1: "#3b82f6", // Blue - Beginner
-  2: "#14b8a6", // Teal - Learning
+  2: "#06b6d4", // Cyan - Learning
   3: "#22c55e", // Green - Intermediate
   4: "#eab308", // Yellow - Advanced
   5: "#a855f7", // Purple - Expert/Master

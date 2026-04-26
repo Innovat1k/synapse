@@ -13,25 +13,25 @@ import { motion } from "framer-motion";
 
 const FocusSkeleton = () => (
   <div
-    className="p-5 space-y-6 animate-pulse"
+    className="p-6 space-y-6 animate-pulse"
     data-testid="current-focus-skeleton"
   >
     <div className="flex justify-between items-center">
-      <div className="h-5 w-32 bg-slate-800 rounded" />
-      <div className="h-4 w-16 bg-slate-800/50 rounded" />
+      <div className="h-5 w-32 bg-slate-800/60 rounded" />
+      <div className="h-4 w-16 bg-slate-800/40 rounded" />
     </div>
 
     <div className="flex flex-col items-center gap-4">
-      <div className="h-24 w-24 rounded-full bg-slate-800" />
-      <div className="h-4 w-20 bg-slate-800 rounded" />
+      <div className="h-24 w-24 rounded-full bg-slate-800/60" />
+      <div className="h-4 w-20 bg-slate-800/60 rounded" />
     </div>
 
     <div className="flex justify-center gap-6">
-      <div className="h-10 w-16 bg-slate-800 rounded" />
-      <div className="h-10 w-16 bg-slate-800 rounded" />
+      <div className="h-10 w-16 bg-slate-800/60 rounded" />
+      <div className="h-10 w-16 bg-slate-800/60 rounded" />
     </div>
 
-    <div className="h-10 w-full bg-slate-800 rounded-xl" />
+    <div className="h-10 w-full bg-slate-800/60 rounded-xl" />
   </div>
 );
 
@@ -68,7 +68,7 @@ const CurrentFocus = ({ data, isLoading, error, onLogActivity }) => {
 
   if (error) {
     return (
-      <div className="flex items-center gap-3 p-4 bg-red-500/5 border border-red-500/20 rounded-xl text-red-400 min-h-45">
+      <div className="flex items-center gap-3 p-4 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-400 min-h-48">
         <LuCircleAlert size={18} />
         <p className="text-sm">Unable to load current focus.</p>
       </div>
@@ -79,13 +79,13 @@ const CurrentFocus = ({ data, isLoading, error, onLogActivity }) => {
     return (
       <div className="flex flex-col items-center justify-center py-10 text-center text-slate-500 min-h-70">
         {/* Icon Container */}
-        <div className="p-3 bg-slate-900 rounded-full mb-3 ring-1 ring-slate-800">
-          <LuTarget size={24} className="opacity-40" />
+        <div className="p-3 bg-slate-800/40 rounded-full mb-4 ring-1 ring-slate-700/50">
+          <LuTarget size={24} className="text-slate-600" />
         </div>
 
         {/* Text */}
-        <p className="text-sm font-medium text-slate-400">No focus yet</p>
-        <p className="text-xs mt-1 opacity-60 max-w-50">
+        <p className="text-sm font-medium text-slate-300">No focus yet</p>
+        <p className="text-xs mt-2 text-slate-500 max-w-50">
           Start tracking an activity to see your progress
         </p>
 
@@ -93,9 +93,9 @@ const CurrentFocus = ({ data, isLoading, error, onLogActivity }) => {
           onClick={() => {
             onLogActivity(null);
           }}
-          className="group mt-4 flex items-center gap-2 px-4 py-2 bg-slate-800/50 hover:bg-slate-800
-          border border-slate-700/50 hover:border-teal-500/50 rounded-lg text-xs font-medium
-          text-slate-400 hover:text-teal-400 transition-all duration-200 cursor-pointer active:scale-95"
+          className="group mt-6 flex items-center gap-2 px-4 py-2 bg-slate-800/40 hover:bg-slate-800/60
+          border border-slate-700/50 hover:border-cyan-500/40 rounded-lg text-xs font-medium
+          text-slate-400 hover:text-cyan-300 transition-all duration-200 cursor-pointer active:scale-95"
         >
           <LuPlus
             size={14}
@@ -115,35 +115,35 @@ const CurrentFocus = ({ data, isLoading, error, onLogActivity }) => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="p-5 flex flex-col h-full rounded-2xl bg-linear-to-b from-slate-900 to-slate-950 border border-slate-800/60"
+      className="p-6 flex flex-col h-full rounded-xl bg-linear-to-b from-[#0f1420] to-[#0a0e1a] border border-slate-800/50"
     >
       {/* HEADER */}
       <div className="flex items-center justify-between mb-6 group relative">
         <div className="flex items-center gap-2">
-          <LuFlame className="text-teal-400" size={16} />
-          <h2 className="text-xs font-bold uppercase tracking-widest text-slate-100">
+          <LuFlame className="text-cyan-400" size={16} />
+          <h2 className="text-sm font-bold capitalize tracking-widest text-slate-100">
             Current Focus
           </h2>
         </div>
 
-        <div className="flex items-center gap-1 px-2 py-1 bg-slate-800/70 rounded-md text-[10px] text-slate-400">
+        <div className="flex items-center gap-2 px-3 py-1 bg-slate-800/50 border border-slate-700/50 rounded-lg text-xs text-slate-400">
           <LuClock size={12} />
           Last 7 days
         </div>
 
-        <div className="absolute top-full left-0 mt-2 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap shadow-xl">
+        <div className="absolute top-full left-0 mt-2 px-3 py-2 bg-slate-900/80 border border-slate-700/50 rounded-lg text-xs text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap shadow-xl">
           🔥 Your most practiced skill this week
         </div>
       </div>
 
       {/* SKILL */}
       <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold text-white capitalize">
+        <h3 className="text-lg font-semibold text-slate-50 capitalize">
           {data.skill_name}
         </h3>
 
         {data.track_title && data.track_title !== "No Track" && (
-          <span className="text-[10px] text-slate-400 uppercase tracking-wide">
+          <span className="text-xs text-slate-500 uppercase tracking-widest">
             {data.track_title}
           </span>
         )}
@@ -159,9 +159,9 @@ const CurrentFocus = ({ data, isLoading, error, onLogActivity }) => {
         />
 
         {/* LEVEL BELOW */}
-        <div className="px-3 py-1 bg-slate-800/60 border border-slate-700/40 rounded-full">
+        <div className="px-3 py-1 bg-slate-800/40 border border-slate-700/50 rounded-full">
           <span className="text-xs text-slate-400 uppercase">Level</span>
-          <span className="ml-1 text-sm font-bold text-teal-400">
+          <span className="ml-1 text-sm font-bold text-cyan-400">
             {data.skill_level}/5
           </span>
         </div>
@@ -190,15 +190,17 @@ const CurrentFocus = ({ data, isLoading, error, onLogActivity }) => {
         {/* STATS */}
         <div className="flex items-center gap-6 text-center">
           <div>
-            <p className="text-lg font-bold text-white">{duration}h</p>
-            <span className="text-[10px] text-slate-500 uppercase">logged</span>
+            <p className="text-lg font-bold text-slate-100">{duration}h</p>
+            <span className="text-xs text-slate-500 uppercase tracking-widest">
+              logged
+            </span>
           </div>
 
           <div>
-            <p className="text-lg font-bold text-white">
+            <p className="text-lg font-bold text-slate-100">
               {data.activities_count}
             </p>
-            <span className="text-[10px] text-slate-500 uppercase">
+            <span className="text-xs text-slate-500 uppercase tracking-widest">
               sessions
             </span>
           </div>
@@ -214,10 +216,11 @@ const CurrentFocus = ({ data, isLoading, error, onLogActivity }) => {
             whileTap={{ scale: 0.97 }}
             onClick={() => onLogActivity(data)}
             className="w-full flex items-center justify-center gap-2 
-                 bg-linear-to-r from-teal-500 to-emerald-400 
-                 text-slate-900 px-4 py-3 rounded-xl 
-                 text-sm font-bold shadow-md shadow-teal-500/20 
-                 hover:shadow-lg transition-all cursor-pointer"
+                 bg-linear-to-r from-cyan-500 to-blue-600 
+                 text-white px-6 py-3 rounded-xl 
+                 text-sm font-bold shadow-lg shadow-cyan-500/20
+                 hover:from-cyan-400 hover:to-blue-500 hover:shadow-lg hover:shadow-cyan-500/30 
+                 transition-all duration-200 cursor-pointer active:scale-95"
           >
             <LuPlus size={16} />
             Log for {data?.skill_name}
@@ -226,8 +229,8 @@ const CurrentFocus = ({ data, isLoading, error, onLogActivity }) => {
           {/* Secondary button: Log for another */}
           <button
             onClick={() => onLogActivity(null)}
-            className="w-full text-xs text-slate-500 hover:text-teal-400 
-                 font-medium text-center py-2 mt-2 transition-colors cursor-pointer"
+            className="w-full text-xs text-slate-500 hover:text-cyan-300 
+                 font-medium text-center py-3 mt-2 transition-colors duration-200 cursor-pointer uppercase"
           >
             Log other activity →
           </button>

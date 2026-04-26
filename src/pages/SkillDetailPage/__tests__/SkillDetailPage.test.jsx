@@ -58,7 +58,7 @@ describe("SkillDetailPage", () => {
     });
 
     expect(screen.getByText(/level 3/i)).toBeInTheDocument();
-    expect(screen.getByText(/category: other/i)).toBeInTheDocument();
+    expect(screen.getByText(/other/i)).toBeInTheDocument();
     expect(
       await screen.findByText(/track: computer science/i),
     ).toBeInTheDocument();

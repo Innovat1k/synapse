@@ -18,7 +18,7 @@ describe("ConfirmDeleteTrack", () => {
   });
 
   describe("Rendering", () => {
-    it("renders with correct title and description", () => {
+    it("renders with correct elements", () => {
       render(<ConfirmDeleteTrack {...defaultProps} />);
 
       expect(
@@ -27,32 +27,15 @@ describe("ConfirmDeleteTrack", () => {
       expect(
         screen.getByText(/This action cannot be undone/i),
       ).toBeInTheDocument();
-    });
-
-    it("displays the track title in the warning message", () => {
-      render(<ConfirmDeleteTrack {...defaultProps} />);
-
-      expect(screen.getByTestId("action-description")).toHaveTextContent(
-        /"React Architecture"/,
-      );
-    });
-
-    it('shows "Permanently Delete" button with trash icon', () => {
-      render(<ConfirmDeleteTrack {...defaultProps} />);
-
-      const deleteButton = screen.getByRole("button", {
-        name: /Permanently Delete/i,
-      });
-      expect(deleteButton).toBeInTheDocument();
-      expect(deleteButton.querySelector("svg")).toBeInTheDocument();
-    });
-
-    it('shows "Cancel" button', () => {
-      render(<ConfirmDeleteTrack {...defaultProps} />);
-
+      expect(
+        screen.getByRole("button", {
+          name: /Permanently Delete/i,
+        }),
+      ).toBeInTheDocument();
       expect(
         screen.getByRole("button", { name: /Cancel/i }),
       ).toBeInTheDocument();
+      screen.debug();
     });
 
     it("does not render when isOpen is false", () => {

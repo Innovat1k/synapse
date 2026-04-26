@@ -1,27 +1,35 @@
 export default function SkillLinksSkeleton() {
   return (
     <section className="my-8" data-testid="skill-links-skeleton">
-      <h3 className="text-lg font-medium text-slate-200 mb-3">
-        Skill Connections
-      </h3>
+      {/* Label Squelette */}
+      <div className="h-5 bg-slate-800/60 rounded w-32 mb-4 animate-pulse" />
+
       <div className="flex flex-col md:flex-row gap-6">
-        {/* Column 1 */}
+        {/* Column 1 - Incoming Links Skeleton */}
         <div className="flex-1 min-w-0">
-          <div className="p-4 bg-slate-900/30 rounded-xl border border-slate-800/30 animate-pulse">
-            <div className="h-4 bg-slate-700 rounded w-1/3 mb-2"></div>
+          <div className="p-5 bg-slate-900/40 rounded-xl border border-slate-800/50 animate-pulse">
+            {/* Title placeholder */}
+            <div className="h-3 bg-slate-700/50 rounded w-1/3 mb-4"></div>
+
+            {/* Pills placeholders */}
             <div className="flex flex-wrap gap-2">
-              <div className="h-6 w-20 bg-slate-800/50 rounded-full"></div>
-              <div className="h-6 w-24 bg-slate-800/50 rounded-full"></div>
+              <div className="h-7 w-24 bg-slate-800/40 rounded-lg border border-slate-700/20"></div>
+              <div className="h-7 w-32 bg-slate-800/40 rounded-lg border border-slate-700/20"></div>
+              <div className="h-7 w-20 bg-slate-800/40 rounded-lg border border-slate-700/20"></div>
             </div>
           </div>
         </div>
 
-        {/* Column 2 */}
+        {/* Column 2 - Outgoing Links Skeleton */}
         <div className="flex-1 min-w-0">
-          <div className="p-4 bg-slate-900/30 rounded-xl border border-slate-800/30 animate-pulse">
-            <div className="h-4 bg-slate-700 rounded w-1/2 mb-2"></div>
+          <div className="p-5 bg-slate-900/40 rounded-xl border border-slate-800/50 animate-pulse">
+            {/* Title placeholder */}
+            <div className="h-3 bg-slate-700/50 rounded w-1/2 mb-4"></div>
+
+            {/* Pills placeholders */}
             <div className="flex flex-wrap gap-2">
-              <div className="h-6 w-28 bg-slate-800/50 rounded-full"></div>
+              <div className="h-7 w-28 bg-slate-800/40 rounded-lg border border-slate-700/20"></div>
+              <div className="h-7 w-24 bg-slate-800/40 rounded-lg border border-slate-700/20"></div>
             </div>
           </div>
         </div>

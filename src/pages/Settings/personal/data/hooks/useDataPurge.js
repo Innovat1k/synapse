@@ -31,11 +31,11 @@ export const useDataPurge = () => {
       await invalidateDashboardQueries(queryClient, user.id);
       await queryClient.invalidateQueries({ queryKey: ["tracks"] });
     } catch (error) {
-      showNotif("Failed to reset data", "error");
+      showNotif("Failed to delete data", "error");
     } finally {
       setIsDeleting(false);
       setIsResetModalOpen(false);
-      showNotif("All data has been reset", "success");
+      showNotif("All data has been deleted", "success");
       navigate("/dashboard");
     }
   };

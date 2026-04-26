@@ -1,4 +1,3 @@
-// Skill Detail Skeleton UI
 function SkillSkeleton() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 px-4 sm:px-5 md:px-6 py-4">

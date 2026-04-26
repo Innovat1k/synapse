@@ -15,13 +15,13 @@ const ControlButton = ({
       onClick={onClick}
       disabled={disabled}
       className={`${isMobile ? "w-9 h-9" : "w-10 h-10"}
-        rounded-xl flex items-center justify-center 
-        transition-all duration-300 cursor-pointer active:scale-90 select-none
-        border backdrop-blur-md shadow-2xl
+        rounded-lg flex items-center justify-center 
+        transition-all duration-200 cursor-pointer active:scale-90 select-none
+        border backdrop-blur-md shadow-lg
         ${
           disabled
-            ? "bg-slate-900/40 text-slate-700 border-slate-800/30 cursor-not-allowed shadow-none"
-            : `bg-slate-950/90 text-slate-400 border-slate-800 hover:text-teal-400 hover:border-teal-500/40 hover:shadow-[0_0_15px_rgba(45,212,191,0.15)]`
+            ? "bg-slate-900/40 text-slate-700 border-slate-800/30 cursor-not-allowed shadow-none opacity-50"
+            : `bg-slate-950/90 text-slate-400 border-slate-800 hover:text-cyan-400 hover:border-cyan-500/40 hover:shadow-[0_0_15px_rgba(34,211,238,0.15)]`
         }
       `}
       aria-label={ariaLabel}

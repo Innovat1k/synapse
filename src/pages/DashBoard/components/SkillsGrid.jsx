@@ -19,8 +19,8 @@ export const SkillsGrid = ({ skills = [], isLoading = false }) => {
   if (skills.length === 0) {
     return (
       <div className="text-center py-8 text-slate-400">
-        <p>No skills found for this track.</p>
-        <p className="text-sm mt-1">Add your first skill to get started.</p>
+        <p className="text-sm">No skills found for this track.</p>
+        <p className="text-xs mt-1">Add your first skill to get started.</p>
       </div>
     );
   }
@@ -31,36 +31,36 @@ export const SkillsGrid = ({ skills = [], isLoading = false }) => {
         <Link
           key={skill.skill_id}
           to={`/skills/${skill.skill_id}`}
-          className="block p-3 bg-slate-900/50 hover:bg-slate-800/50 border border-slate-800/40 rounded-lg transition-colors group"
+          className="block p-4 bg-slate-900/50 hover:bg-slate-800/50 border border-slate-800/40 rounded-lg transition-colors duration-200 group"
           aria-label={`View details for ${skill.name}`}
         >
-          <div className="flex justify-between items-start">
-            <h3 className="font-medium text-slate-100 group-hover:text-teal-400 transition-colors">
+          <div className="flex justify-between items-start gap-2">
+            <h3 className="font-medium text-slate-100 group-hover:text-cyan-400 transition-colors">
               {skill.name}
             </h3>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 shrink-0">
               <LuLayers size={12} className="text-slate-500" />
               <span className="text-xs font-medium text-slate-400">
-                Level {skill.level}
+                Lv {skill.level}
               </span>
             </div>
           </div>
 
           <div className="mt-2 flex flex-wrap gap-1.5">
-            <span className="inline-flex items-center gap-1 text-[10px] text-slate-400 bg-slate-800/40 px-1.5 py-0.5 rounded">
-              <LuTag size={8} />
+            <span className="inline-flex items-center gap-1 text-xs text-slate-400 bg-slate-800/40 px-2 py-0.5 rounded">
+              <LuTag size={10} />
               {skill.category}
             </span>
             {skill.tags?.slice(0, 2).map((tag) => (
               <span
                 key={tag}
-                className="inline-flex items-center gap-1 text-[10px] text-slate-400 bg-slate-800/40 px-1.5 py-0.5 rounded"
+                className="inline-flex items-center gap-1 text-xs text-slate-400 bg-slate-800/40 px-2 py-0.5 rounded"
               >
                 {tag}
               </span>
             ))}
             {skill.tags?.length > 2 && (
-              <span className="text-[10px] text-slate-500">
+              <span className="text-xs text-slate-500">
                 +{skill.tags.length - 2}
               </span>
             )}

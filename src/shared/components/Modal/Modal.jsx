@@ -44,7 +44,7 @@ export const Modal = ({
     return null;
   }
 
-  //Full mode detection for space adjustments
+  // Full mode detection for space adjustments
   const isFull = size === "full";
 
   // Size mapping
@@ -76,38 +76,38 @@ export const Modal = ({
         data-modal="true"
         className={`relative w-full ${sizeClasses[size]} 
           ${isFull ? "h-[96vh] max-h-[96vh]" : "max-h-[90vh]"} 
-          bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden`}
+          bg-slate-900 border border-slate-800/50 rounded-xl shadow-2xl flex flex-col overflow-hidden`}
         initial={{ scale: 0.98, opacity: 0, y: 10 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.98, opacity: 0, y: 10 }}
         transition={{ type: "spring", damping: 25, stiffness: 400 }}
         data-testid={`${dataTestId}-content`}
       >
-        {/*Header -Compacted if Full mode */}
+        {/* Header - Compacted if Full mode */}
         <div
-          className={`flex items-start justify-between border-b border-slate-800/50 bg-slate-900/50 
-          ${isFull ? "p-3 md:p-4 px-5" : "p-4 md:p-5"}`}
+          className={`flex items-start justify-between border-b border-slate-800/50 bg-slate-900/40 
+          ${isFull ? "p-4 px-6" : "p-6"}`}
         >
-          <div className="flex gap-3 items-center">
+          <div className="flex gap-3 items-center min-w-0">
             {IconComponent && (
               <div
-                className="shrink-0 p-2 bg-teal-500/10 rounded-lg h-fit"
+                className="shrink-0 p-2.5 bg-cyan-500/10 rounded-lg h-fit ring-1 ring-cyan-500/20"
                 data-testid="modal-icon"
               >
                 <IconComponent
-                  className="text-teal-400"
+                  className="text-cyan-400"
                   size={isFull ? 16 : 18}
                 />
               </div>
             )}
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <h2
                 className={`text-slate-100 font-bold leading-tight truncate
-                ${isFull ? "text-sm md:text-base" : "text-base md:text-lg"}`}
+                ${isFull ? "text-base md:text-lg" : "text-lg md:text-xl"}`}
               >
                 {title}
               </h2>
-              {/*Hide the description in Full mode to maximize graph space */}
+              {/* Hide the description in Full mode to maximize graph space */}
               {description && (!isFull || showDescriptionInFull) && (
                 <p className="text-slate-500 text-xs mt-1 leading-relaxed">
                   {description}
@@ -121,7 +121,7 @@ export const Modal = ({
             aria-label="Close modal"
             onClick={onClose}
             type="button"
-            className="shrink-0 p-1.5 rounded-lg hover:bg-slate-800 text-slate-500 hover:text-slate-200 transition-colors cursor-pointer"
+            className="shrink-0 p-2 rounded-lg hover:bg-slate-800/50 text-slate-500 hover:text-slate-300 transition-colors duration-200 cursor-pointer"
           >
             <LuX size={isFull ? 18 : 20} />
           </button>
@@ -130,7 +130,7 @@ export const Modal = ({
         {/* Body */}
         <div
           className={`flex-1 overflow-y-auto custom-scrollbar 
-          ${isFull ? "p-0" : "p-4 md:p-6"}`}
+          ${isFull ? "p-0" : "p-6"}`}
         >
           {children}
         </div>

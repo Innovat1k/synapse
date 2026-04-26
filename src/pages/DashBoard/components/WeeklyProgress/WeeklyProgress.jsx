@@ -44,7 +44,7 @@ const WeeklyProgress = ({
         style={{ height }}
         data-testid="weekly-progress-skeleton"
       >
-        <div className="h-full bg-slate-800/40 rounded-xl" />
+        <div className="h-full bg-slate-800/40 rounded-lg" />
       </div>
     );
   }
@@ -78,13 +78,15 @@ const WeeklyProgress = ({
 
   // Tooltip
   const CustomTooltip = ({ active, payload }) => {
-    if (!active || !payload?.length) {return null;}
+    if (!active || !payload?.length) {
+      return null;
+    }
 
     const d = payload[0].payload;
 
     return (
       <div className="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 shadow-lg">
-        <p className="text-sm font-bold text-teal-400">{d.hours}h</p>
+        <p className="text-sm font-bold text-cyan-400">{d.hours}h</p>
         <p className="text-xs text-slate-500">
           {d.activities_count} session{d.activities_count > 1 && "s"}
         </p>
@@ -135,7 +137,7 @@ const WeeklyProgress = ({
 
           <Tooltip
             content={<CustomTooltip />}
-            cursor={{ fill: "rgba(20,184,166,0.08)" }}
+            cursor={{ fill: "rgba(34,211,238,0.08)" }}
           />
 
           {/* Bars */}
@@ -146,7 +148,7 @@ const WeeklyProgress = ({
               return (
                 <Cell
                   key={index}
-                  fill={isBest ? "#14b8a6" : "#0f766e"}
+                  fill={isBest ? "#06b6d4" : "#0d9488"}
                   opacity={isBest ? 1 : 0.6}
                   style={{
                     transition: "all 0.25s ease",

@@ -15,7 +15,7 @@ describe("SkillsListPage", () => {
       renderComponent(<SkillsListPage />, { skills: [] });
 
       await waitFor(() => {
-        expect(screen.getByText(/no skills found/i)).toBeInTheDocument();
+        expect(screen.getByText(/no skills registered/i)).toBeInTheDocument();
       });
     });
 

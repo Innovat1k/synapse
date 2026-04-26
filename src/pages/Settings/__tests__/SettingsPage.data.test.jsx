@@ -64,16 +64,16 @@ describe("DataPrivacyPage Integration (MSW)", () => {
     renderWithProviders(<DataPrivacyPage />);
 
     await user.click(
-      await screen.findByRole("button", { name: /Reset All Data/i }),
+      await screen.findByRole("button", { name: /delete all data/i }),
     );
 
     await user.click(
-      screen.getByRole("button", { name: /Yes, Reset Everything/i }),
+      screen.getByRole("button", { name: /Yes, delete everything/i }),
     );
 
     await waitFor(() => {
       expect(
-        screen.queryByText(/Yes, Reset Everything/i),
+        screen.queryByText(/Yes, delete everything/i),
       ).not.toBeInTheDocument();
     });
 
@@ -94,7 +94,7 @@ describe("DataPrivacyPage Integration (MSW)", () => {
     expect(remainingTracks).toHaveLength(0);
 
     expect(mockShowNotif).toHaveBeenCalledWith(
-      "All data has been reset",
+      "All data has been deleted",
       "success",
     );
 

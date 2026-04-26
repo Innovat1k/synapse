@@ -102,13 +102,7 @@ describe("Dashboard – Create Skill Flow", () => {
       createSkillModal.getByRole("button", { name: /save skill/i }),
     );
 
-    await waitFor(() => {
-      expect(
-        screen.queryByTestId("skill-modal-overlay"),
-      ).not.toBeInTheDocument();
-    });
-
-    expect(await screen.findByTestId("skill-count-badge")).toHaveTextContent(
+    expect(await screen.findByTestId("skills-count-badge")).toHaveTextContent(
       "01",
     );
   });

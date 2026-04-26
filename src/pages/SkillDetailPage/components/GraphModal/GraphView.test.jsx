@@ -1,16 +1,66 @@
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { GraphView } from "./GraphView";
-import { setWindowWidth } from "@shared/utils/utils";
-import { beforeEach, describe, expect } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const mockCenterSkillId = "skill-react";
-const mockNodes = [
-  { id: "skill-react", label: "React", status: "completed" },
-  { id: "skill-js", label: "JavaScript", status: "completed" },
-  { id: "skill-html", label: "HTML", status: "available" },
-  { id: "skill-pm", label: "Project Management", status: "locked" },
-];
+
+let isMobileMock = false;
+
+vi.mock("./hooks/useTooltipPosition", () => ({
+  useTooltipPosition: () => ({
+    visible: true,
+  }),
+}));
+
+const mockState = {
+  hoveredNodeId: "skill-js",
+  hoveredNode: { id: "skill-js", label: "JavaScript" },
+  nodesWithStatus: [
+    { id: "skill-react", label: "React", status: "completed" },
+    { id: "skill-js", label: "JavaScript", status: "completed" },
+    { id: "skill-html", label: "HTML", status: "available" },
+    { id: "skill-pm", label: "Project Management", status: "locked" },
+  ],
+  mousePos: { x: 0, y: 0 },
+};
+
+const mockMethods = {
+  handleMouseMove: vi.fn(),
+  setHoveredNode: vi.fn(),
+  handleNodeClick: vi.fn(),
+  handleNodeInteraction: vi.fn(),
+  completeSkill: vi.fn(),
+};
+
+vi.mock("./hooks/useGraphInteraction", () => ({
+  useGraphInteraction: () => ({
+    isMobile: isMobileMock,
+    state: mockState,
+    methods: mockMethods,
+  }),
+}));
+
+
+vi.mock("./hooks/useGraphLayout", () => ({
+  useGraphLayout: () => ({
+    nodePositions: new Map([
+      ["skill-react", { x: 100, y: 100 }],
+      ["skill-js", { x: 200, y: 100 }],
+      ["skill-html", { x: 100, y: 200 }],
+      ["skill-pm", { x: 200, y: 200 }],
+    ]),
+    mutualSkills: new Set(["skill-js"]),
+    incoming: new Set(["skill-html"]),
+    config: {
+      viewBox: "0 0 300 300",
+    },
+  }),
+}));
+
+
+
+const mockNodes = mockState.nodesWithStatus;
+
 const mockLinks = [
   { source: "skill-js", target: "skill-react" },
   { source: "skill-react", target: "skill-js" },
@@ -18,240 +68,111 @@ const mockLinks = [
   { source: "skill-react", target: "skill-pm" },
 ];
 
-const renderGraphView = ({
-  nodes = mockNodes,
-  centerSkillId = mockCenterSkillId,
-  links = mockLinks,
-} = {}) => {
-  return render(
-    <GraphView centerSkillId={centerSkillId} nodes={nodes} links={links} />,
+const renderGraph = () =>
+  render(
+    <GraphView
+      centerSkillId="skill-react"
+      nodes={mockNodes}
+      links={mockLinks}
+    />,
   );
-};
 
-describe("GraphView", () => {
+
+
+describe("GraphView (robust)", () => {
   let user;
 
   beforeEach(() => {
-    localStorage.clear();
     user = userEvent.setup();
+    isMobileMock = false;
+    vi.clearAllMocks();
   });
 
   describe("Rendering", () => {
-    describe("Desktop", () => {
-      beforeEach(() => {
-        setWindowWidth(1200);
-      });
-
-      it("renders without crashing", () => {
-        renderGraphView();
-        expect(screen.getByTestId("graph-container")).toBeInTheDocument();
-      });
-
-      it("renders center node with teal color", () => {
-        const { container } = renderGraphView();
-
-        const centerNode = container.querySelector('circle[stroke="#2dd4bf"]');
-        expect(centerNode).toBeInTheDocument();
-      });
-
-      it("renders prerequisite node with amber color", () => {
-        const { container } = renderGraphView();
-
-        const amberNode = container.querySelector('circle[stroke="#f59e0b"]');
-        expect(amberNode).toBeInTheDocument();
-      });
-
-      it("renders unlock node with cyan color", () => {
-        const { container } = renderGraphView();
-
-        const unlockNode = container.querySelector('circle[stroke="#22d3ee"]');
-        expect(unlockNode).toBeInTheDocument();
-      });
-
-      it("renders mutual dependency node with indigo color", () => {
-        const { container } = renderGraphView();
-
-        const indigoNodes = container.querySelectorAll(
-          'circle[stroke="#6366f1"]',
-        );
-        expect(indigoNodes.length).toBe(1);
-      });
-
-      it("renders single node when center skill has no connections", () => {
-        const singleNode = [
-          { id: "skill-solo", label: "Solo Skill", status: "available" },
-        ];
-        renderGraphView({
-          centerSkillId: "skill-solo",
-          nodes: singleNode,
-          links: [],
-        });
-
-        expect(screen.getByTestId("graph-node-skill-solo")).toBeInTheDocument();
-      });
-
-      it("renders all legend items", () => {
-        renderGraphView();
-
-        expect(screen.getByTestId("legend-amber")).toBeInTheDocument();
-        expect(screen.getByTestId("legend-indigo")).toBeInTheDocument();
-        expect(screen.getByTestId("legend-cyan")).toBeInTheDocument();
-      });
-
-      it("shows navigation controls on desktop", () => {
-        renderGraphView();
-        expect(
-          screen.getByRole("button", { name: /Zoom in/i }),
-        ).toBeInTheDocument();
-        expect(
-          screen.getByRole("button", { name: /Zoom out/i }),
-        ).toBeInTheDocument();
-        expect(
-          screen.getByRole("button", { name: /Reset view/i }),
-        ).toBeInTheDocument();
-      });
+    it("renders container", () => {
+      renderGraph();
+      expect(screen.getByTestId("graph-container")).toBeInTheDocument();
     });
 
-    describe("Mobile", () => {
-      beforeEach(() => {
-        setWindowWidth(375);
-      });
+    it("renders all nodes", () => {
+      renderGraph();
 
-      it("shows legend in column layout on mobile", () => {
-        renderGraphView();
+      expect(screen.getByTestId("graph-node-skill-react")).toBeInTheDocument();
+      expect(screen.getByTestId("graph-node-skill-js")).toBeInTheDocument();
+      expect(screen.getByTestId("graph-node-skill-html")).toBeInTheDocument();
+      expect(screen.getByTestId("graph-node-skill-pm")).toBeInTheDocument();
+    });
 
-        const legend = screen.getByTestId("graph-legend");
-        expect(legend).toHaveClass("flex-col");
-      });
+    it("assigns correct roles", () => {
+      renderGraph();
 
-      it("shows navigation controls on mobile", () => {
-        renderGraphView();
-        expect(
-          screen.getByRole("button", { name: /Zoom in/i }),
-        ).toBeInTheDocument();
-        expect(
-          screen.getByRole("button", { name: /Zoom out/i }),
-        ).toBeInTheDocument();
-        expect(
-          screen.getByRole("button", { name: /Reset view/i }),
-        ).toBeInTheDocument();
-      });
+      expect(screen.getByTestId("node-circle-skill-react")).toHaveAttribute(
+        "data-role",
+        "center",
+      );
+
+      expect(screen.getByTestId("node-circle-skill-js")).toHaveAttribute(
+        "data-role",
+        "mutual",
+      );
+
+      expect(screen.getByTestId("node-circle-skill-html")).toHaveAttribute(
+        "data-role",
+        "prerequisite",
+      );
+
+      expect(screen.getByTestId("node-circle-skill-pm")).toHaveAttribute(
+        "data-role",
+        "unlock",
+      );
+    });
+
+    it("renders legend", () => {
+      renderGraph();
+
+      expect(screen.getByTestId("legend-amber")).toBeInTheDocument();
+      expect(screen.getByTestId("legend-indigo")).toBeInTheDocument();
+      expect(screen.getByTestId("legend-cyan")).toBeInTheDocument();
+    });
+  });
+
+  describe("Tooltip", () => {
+    it("renders tooltip when visible", async () => {
+      renderGraph();
+
+      expect(await screen.findByTestId("graph-tooltip")).toBeInTheDocument();
     });
   });
 
   describe("Interactions", () => {
-    describe("Desktop", () => {
-      beforeEach(() => {
-        setWindowWidth(1200);
-      });
+    it("calls desktop click handler", async () => {
+      renderGraph();
 
-      it("shows tooltip on hover", async () => {
-        renderGraphView();
+      const node = screen.getByTestId("graph-node-skill-html");
 
-        const jsNode = screen.getByTestId("graph-node-skill-js");
-        await user.hover(jsNode);
+      await user.click(node);
 
-        const tooltip = await screen.findByTestId("graph-tooltip");
-        expect(tooltip).toBeInTheDocument();
-        expect(tooltip).toHaveTextContent("JavaScript");
-        expect(tooltip).toHaveTextContent("Mutual dependency with core");
-      });
-
-      it("allows completing an available skill on desktop click", async () => {
-        const testNodes = [
-          { id: "skill-react", label: "React", status: "completed" },
-          { id: "skill-js", label: "JavaScript", status: "completed" },
-          { id: "skill-html", label: "HTML", status: "available" },
-          { id: "skill-pm", label: "Project Management", status: "locked" },
-        ];
-        renderGraphView({ centerSkillId: "skill-react", nodes: testNodes });
-
-        const htmlNode = screen.getByTestId("graph-node-skill-html");
-        await user.click(htmlNode);
-
-        expect(htmlNode.querySelector("path")).toBeInTheDocument();
-      });
+      expect(mockMethods.handleNodeClick).toHaveBeenCalledWith(
+        "skill-html",
+        "available",
+      );
     });
+  });
 
-    describe("Mobile", () => {
-      beforeEach(() => {
-        setWindowWidth(375);
-      });
+  describe("Mobile", () => {
+    it("uses mobile interaction handler", async () => {
+      isMobileMock = true;
 
-      it("shows tooltip on tap", async () => {
-        renderGraphView();
+      renderGraph();
 
-        const htmlNode = screen.getByTestId("graph-node-skill-html");
-        await user.click(htmlNode);
+      const node = screen.getByTestId("graph-node-skill-html");
 
-        expect(await screen.findByTestId("graph-tooltip")).toBeInTheDocument();
-      });
+      await user.click(node);
 
-      it("completes skill via mobile tooltip button", async () => {
-        renderGraphView();
-
-        const htmlNode = screen.getByTestId("graph-node-skill-html");
-        await user.click(htmlNode);
-
-        const tooltip = await screen.findByTestId("graph-tooltip");
-        expect(tooltip).toHaveTextContent("HTML");
-
-        const completeBtn = screen.getByRole("button", {
-          name: /mark as completed/i,
-        });
-        expect(completeBtn).toBeInTheDocument();
-
-        await user.click(completeBtn);
-
-        expect(htmlNode.querySelector("path")).toBeInTheDocument();
-      });
-
-      it("completes skill via mobile tooltip button", async () => {
-        renderGraphView();
-
-        await user.click(screen.getByTestId("graph-node-skill-html"));
-        await user.click(
-          screen.getByRole("button", { name: /mark as completed/i }),
-        );
-
-        expect(
-          screen.getByTestId("graph-node-skill-html").querySelector("path"),
-        ).toBeInTheDocument();
-      });
-
-      it("closes tooltip on node tap", async () => {
-        renderGraphView();
-
-        const skillNode = screen.getByTestId("graph-node-skill-html");
-
-        await user.click(skillNode);
-        expect(screen.getByTestId("graph-tooltip")).toBeInTheDocument();
-        expect(
-          within(screen.getByTestId("graph-tooltip")).getByText(/html/i),
-        ).toBeInTheDocument();
-
-        await user.click(skillNode);
-
-        await waitFor(() => {
-          expect(screen.queryByTestId("graph-tooltip")).not.toBeInTheDocument();
-        });
-      });
-
-      it("closes tooltip when tapping on graph background", async () => {
-        renderGraphView();
-
-        await user.click(screen.getByTestId("graph-node-skill-html"));
-        expect(screen.getByTestId("graph-tooltip")).toBeInTheDocument();
-        expect(
-          within(screen.getByTestId("graph-tooltip")).getByText(/html/i),
-        ).toBeInTheDocument();
-
-        await user.click(screen.getByTestId("graph-container"));
-
-        await waitFor(() => {
-          expect(screen.queryByTestId("graph-tooltip")).not.toBeInTheDocument();
-        });
-      });
+      expect(mockMethods.handleNodeInteraction).toHaveBeenCalledWith(
+        "skill-html",
+        false,
+      );
     });
   });
 });

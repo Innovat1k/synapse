@@ -120,7 +120,7 @@ describe("useDataPurge", () => {
     await result.current.handleReset();
 
     expect(mockShowNotif).toHaveBeenCalledWith(
-      "All data has been reset",
+      "All data has been deleted",
       "success",
     );
 
@@ -148,7 +148,7 @@ describe("useDataPurge", () => {
 
     await result.current.handleReset();
 
-    expect(mockShowNotif).toHaveBeenCalledWith("Failed to reset data", "error");
+    expect(mockShowNotif).toHaveBeenCalledWith("Failed to delete data", "error");
     expect(result.current.isDeleting).toBe(false);
   });
 });

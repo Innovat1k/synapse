@@ -9,8 +9,8 @@ const ComingSoonPage = () => {
       transition={{ duration: 0.3 }}
       className="flex flex-col items-center justify-center min-h-100 text-center"
     >
-      <div className="p-4 bg-slate-800/50 rounded-2xl mb-4">
-        <LuClock className="w-8 h-8 text-slate-500" />
+      <div className="p-4 bg-slate-800/40 rounded-xl mb-4 ring-1 ring-slate-700/50">
+        <LuClock className="w-8 h-8 text-slate-600" />
       </div>
       <h3 className="text-lg font-semibold text-slate-200 mb-2">Coming Soon</h3>
       <p className="text-slate-500 text-sm max-w-sm">

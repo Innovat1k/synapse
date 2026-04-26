@@ -83,7 +83,7 @@ function ActivityFormModal({
           <div className="flex justify-center mb-4">
             <LuTriangleAlert className="text-amber-400 w-8 h-8 animate-pulse" />
           </div>
-          <p className="text-xl text-slate-100 mb-4 animate-pulse">
+          <p className="text-lg font-semibold text-slate-100 mb-4">
             Cannot log activity
           </p>
           <p className="text-slate-400 mb-6">
@@ -92,7 +92,7 @@ function ActivityFormModal({
           <button
             type="button"
             onClick={createFirstSkill}
-            className="px-4 py-2 bg-teal-600 hover:bg-teal-700 rounded-lg text-white transition-colors cursor-pointer"
+            className="px-6 py-2.5 bg-linear-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 rounded-lg text-white font-bold transition-all duration-200 cursor-pointer active:scale-95"
           >
             Create my first skill
           </button>
@@ -109,14 +109,14 @@ function ActivityFormModal({
                 <div>
                   <div
                     id="skill-label"
-                    className="block text-sm font-medium text-slate-400 mb-1.5"
+                    className="block text-sm font-bold text-slate-500 mb-2 uppercase tracking-widest"
                   >
                     Skill
                   </div>
                   <div
                     aria-labelledby="skill-label"
                     aria-readonly="true"
-                    className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-100 opacity-70"
+                    className="w-full px-4 py-2.5 bg-slate-800/40 border border-slate-700/50 rounded-lg text-slate-300 opacity-70"
                   >
                     {skill.name}
                   </div>
@@ -144,11 +144,12 @@ function ActivityFormModal({
               <AnimatePresence>
                 {errors.skill && (
                   <motion.p
-                    className="flex items-center text-sm text-red-500 mt-1 space-x-2"
+                    className="flex items-center text-xs text-rose-500 mt-2 gap-2"
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
                   >
+                    <LuCircleAlert className="w-4 h-4 shrink-0" />
                     {errors.skill}
                   </motion.p>
                 )}
@@ -170,7 +171,7 @@ function ActivityFormModal({
             {/* Duration */}
             <div>
               <label
-                className="block text-sm font-medium text-slate-400 mb-1.5"
+                className="block text-sm font-bold text-slate-500 mb-2 uppercase tracking-widest"
                 htmlFor="duration"
               >
                 Duration
@@ -188,9 +189,9 @@ function ActivityFormModal({
                   max="24"
                   value={durationData.hours}
                   onChange={methods.handleChangeDuration}
-                  className="w-16 px-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-400/50 transition"
+                  className="w-16 px-3 py-2.5 bg-slate-800/40 border border-slate-700/50 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 focus:border-transparent transition-all"
                 />
-                <span className="text-slate-400">h</span>
+                <span className="text-slate-500">h</span>
 
                 <label htmlFor="minutes" className="sr-only">
                   Minutes
@@ -203,19 +204,19 @@ function ActivityFormModal({
                   max="59"
                   value={durationData.minutes}
                   onChange={methods.handleChangeDuration}
-                  className="w-16 px-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-400/50 transition"
+                  className="w-16 px-3 py-2.5 bg-slate-800/40 border border-slate-700/50 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 focus:border-transparent transition-all"
                 />
-                <span className="text-slate-400">min</span>
+                <span className="text-slate-500">min</span>
               </div>
               <AnimatePresence>
                 {errors.duration && (
                   <motion.p
-                    className="flex items-center text-sm text-red-500 mt-1 space-x-2"
+                    className="flex items-center text-xs text-rose-500 mt-2 gap-2"
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
                   >
-                    <LuCircleAlert className="w-4 h-4 text-red-500 shrink-0" />
+                    <LuCircleAlert className="w-4 h-4 shrink-0" />
                     <span>{errors.duration}</span>
                   </motion.p>
                 )}
@@ -241,7 +242,7 @@ function ActivityFormModal({
 
             <div>
               <label
-                className="block text-sm font-medium text-slate-400 mb-1.5"
+                className="block text-sm font-bold text-slate-500 mb-2 uppercase tracking-widest"
                 htmlFor="notes"
               >
                 Notes
@@ -249,7 +250,7 @@ function ActivityFormModal({
               <textarea
                 id="notes"
                 placeholder="Describe what you did..."
-                className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-100 placeholder-slate-500/60 focus:outline-none focus:ring-2 focus:ring-teal-400/50 transition first-letter:capitalize"
+                className="w-full px-4 py-2.5 bg-slate-800/40 border border-slate-700/50 rounded-lg text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 focus:border-transparent transition-all"
                 rows={6}
                 value={activityData?.notes}
                 onChange={methods.handleChange}
@@ -257,19 +258,19 @@ function ActivityFormModal({
             </div>
           </div>
 
-          <div className="md:col-span-2 flex flex-col sm:flex-row sm:justify-end gap-3 pt-4">
+          <div className="md:col-span-2 flex flex-col sm:flex-row sm:justify-end gap-3 pt-6 border-t border-slate-800/50">
             <button
               type="button"
               disabled={isSubmitting}
               onClick={closeModal}
-              className="px-4 py-2.5 border border-slate-700 text-slate-300 rounded-lg hover:bg-slate-800/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto cursor-pointer"
+              className="px-6 py-2.5 border border-slate-700/50 text-slate-300 rounded-lg hover:bg-slate-800/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto cursor-pointer font-medium"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={!isFormValid || isSubmitting}
-              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed shadow-[0_0_12px_rgba(16,185,129,0.4)] w-full sm:w-auto cursor-pointer"
+              className="px-6 py-2.5 bg-linear-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-lg transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-cyan-500/20 w-full sm:w-auto cursor-pointer font-bold active:scale-95"
             >
               {isSubmitting ? (
                 <ButtonSpinner
@@ -289,3 +290,4 @@ function ActivityFormModal({
 }
 
 export default ActivityFormModal;
+

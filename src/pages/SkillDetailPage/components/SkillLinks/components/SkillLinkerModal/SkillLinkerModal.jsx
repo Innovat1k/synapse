@@ -9,8 +9,6 @@ import {
 import { Modal } from "@shared/components/Modal/Modal";
 import { useSkillLinkerForm } from "./hooks/useSkillLinkerForm";
 import ButtonSpinner from "@shared/components/ButtonSpinner";
-
-// eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
 
 export const SkillLinkerModal = ({
@@ -62,30 +60,38 @@ export const SkillLinkerModal = ({
           initialFocusRef={searchInputRef}
           dataTestId="skill-linker-modal"
         >
-          <div className="p-5.">
-            <div className="relative mb-4">
-              <label htmlFor="skill-search" className="sr-only">
+          {/* Main Container with Standard Spacing */}
+          <div className="p-6">
+            {/* Search Input Section */}
+            <div className="relative mb-6">
+              <label
+                htmlFor="skill-search"
+                className="block text-sm font-bold text-slate-500 mb-2 uppercase tracking-widest"
+              >
                 Search skills
               </label>
-              <LuSearch
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
-                size={16}
-                aria-hidden="true"
-              />
-              <input
-                id="skill-search"
-                ref={searchInputRef}
-                type="text"
-                value={searchTerm}
-                onChange={methods.handleChange}
-                placeholder="Search skills..."
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
-              />
+              <div className="relative">
+                <LuSearch
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+                  size={16}
+                  aria-hidden="true"
+                />
+                <input
+                  id="skill-search"
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchTerm}
+                  onChange={methods.handleChange}
+                  placeholder="Search skills..."
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-900/40 border border-slate-700/50 rounded-lg text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 focus:border-transparent transition-all duration-200"
+                />
+              </div>
             </div>
 
-            <div className="max-h-60 overflow-y-auto space-y-1.5">
+            {/* Skills List */}
+            <div className="max-h-60 overflow-y-auto space-y-2 pr-1">
               {skills.length === 0 ? (
-                <p className="text-slate-500 text-sm italic">
+                <p className="text-slate-500 text-sm italic py-4">
                   No skills found.
                 </p>
               ) : (
@@ -95,67 +101,75 @@ export const SkillLinkerModal = ({
                     type="button"
                     aria-selected={selectedSkill?.id === skill.skill_id}
                     onClick={() => methods.handleSelectSkill(skill)}
-                    className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex justify-between items-center cursor-pointer ${
+                    className={`w-full text-left px-4 py-2.5 rounded-lg transition-all duration-200 flex justify-between items-center cursor-pointer border ${
                       selectedSkill?.id === skill.skill_id
-                        ? "bg-slate-700/60 border border-slate-600/60"
-                        : "bg-slate-800/20 hover:bg-slate-800/40"
+                        ? "bg-cyan-500/10 border-cyan-500/40"
+                        : "bg-slate-800/20 border-transparent hover:bg-slate-800/40 hover:border-slate-700/30"
                     }`}
                   >
                     <div>
-                      <span className="text-slate-200">{skill.name}</span>
-                      <span className="text-xs text-slate-500 ml-2">
+                      <span
+                        className={`font-medium ${selectedSkill?.id === skill.skill_id ? "text-cyan-400" : "text-slate-200"}`}
+                      >
+                        {skill.name}
+                      </span>
+                      <span className="text-xs font-bold uppercase text-slate-500 ml-3 tracking-wide">
                         Level {skill.level}
                       </span>
                     </div>
 
                     {selectedSkill?.id === skill.skill_id && (
-                      <>
+                      <motion.div
+                        initial={{ scale: 0.5, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                      >
                         {link.linkType === "prerequisite" ? (
                           <LuCornerLeftUp className="w-4 h-4 text-amber-400" />
                         ) : (
                           <LuCornerRightUp className="w-4 h-4 text-cyan-400" />
                         )}
-                      </>
+                      </motion.div>
                     )}
                   </button>
                 ))
               )}
             </div>
 
+            {/* Connection Type Selection */}
             {selectedSkill && (
-              <div className="mt-5 pt-4 border-t border-slate-800/50">
-                <h3 className="text-sm font-medium text-slate-300 mb-2">
+              <div className="mt-6 pt-6 border-t border-slate-800/50">
+                <label className="block text-sm font-bold text-slate-500 mb-3 uppercase tracking-widest">
                   Connection type
-                </h3>
+                </label>
                 <div className="flex gap-3">
                   <button
                     type="button"
                     onClick={() => methods.handleChangeLinkType("prerequisite")}
-                    className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                    className={`flex-1 py-2.5 px-4 rounded-lg text-xs font-bold uppercase tracking-widest transition-all duration-200 cursor-pointer border active:scale-95 ${
                       link.linkType === "prerequisite"
-                        ? "bg-amber-500/20 text-amber-400 border border-amber-500/40"
-                        : "bg-slate-800/50 text-slate-400 hover:bg-slate-800"
+                        ? "bg-amber-500/10 text-amber-400 border-amber-500/40 shadow-lg shadow-amber-500/10"
+                        : "bg-slate-800/50 text-slate-400 border-slate-700/50 hover:bg-slate-800 hover:text-slate-300"
                     }`}
                   >
-                    <LuCornerLeftUp size={14} className="inline mr-1" />
+                    <LuCornerLeftUp size={14} className="inline mr-2 mb-0.5" />
                     Prerequisite
                   </button>
                   <button
                     type="button"
                     onClick={() => methods.handleChangeLinkType("support")}
-                    className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                    className={`flex-1 py-2.5 px-4 rounded-lg text-xs font-bold uppercase tracking-widest transition-all duration-200 cursor-pointer border active:scale-95 ${
                       link.linkType === "support"
-                        ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/40"
-                        : "bg-slate-800/50 text-slate-400 hover:bg-slate-800"
+                        ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/40 shadow-lg shadow-cyan-500/10"
+                        : "bg-slate-800/50 text-slate-400 border-slate-700/50 hover:bg-slate-800 hover:text-slate-300"
                     }`}
                   >
-                    <LuCornerRightUp size={14} className="inline mr-1" />
+                    <LuCornerRightUp size={14} className="inline mr-2 mb-0.5" />
                     Support
                   </button>
                 </div>
-                <div className="flex items-center text-slate-500 mt-2 gap-2">
-                  <LuCircleHelp size={14} />
-                  <p className="text-sm">
+                <div className="flex items-start text-slate-500 mt-4 gap-2 px-1">
+                  <LuCircleHelp size={14} className="mt-0.5 shrink-0" />
+                  <p className="text-xs leading-relaxed">
                     {link.linkType === "prerequisite"
                       ? "Essential foundation required before this skill."
                       : "Helpful but optional to master this skill."}
@@ -164,55 +178,31 @@ export const SkillLinkerModal = ({
               </div>
             )}
 
-            {link.hasDirectLink && (
+            {/* Error Messages */}
+            {(link.hasDirectLink || error) && (
               <motion.div
-                className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg"
-                initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="mt-6 p-4 bg-rose-500/10 border border-rose-500/20 rounded-lg"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
               >
-                <div className="flex gap-2.5">
-                  <LuX className="mt-0.5 text-red-400" size={16} />
-                  <p className="text-sm text-red-300">
-                    This connection already exists between these two skills.
-                    Select another skill.
+                <div className="flex gap-3">
+                  <LuX className="mt-0.5 text-rose-400" size={16} />
+                  <p className="text-sm text-rose-300">
+                    {link.hasDirectLink
+                      ? "This connection already exists between these two skills. Select another skill."
+                      : error}
                   </p>
                 </div>
               </motion.div>
             )}
-
-            {error && !link.hasDirectLink && (
-              <motion.div
-                className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg"
-                initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-              >
-                <div className="flex gap-2.5">
-                  <LuX className="mt-0.5 text-red-400" size={16} />
-                  <p className="text-sm text-red-300">{error}</p>
-                </div>
-              </motion.div>
-            )}
-
-            {link.hasReverseLink && !link.hasDirectLink && (
-              <motion.div
-                className="mt-6 p-4 bg-cyan-500/5 border border-teal-500/20 rounded-xl"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-              >
-                {/* contenu inchangé */}
-              </motion.div>
-            )}
           </div>
 
+          {/* Footer Actions */}
           {!link.hasReverseLink && (
-            <div className="py-5 border-t border-slate-800/50 flex flex-col md:flex-row md:justify-end gap-3">
+            <div className="p-6 border-t border-slate-800/50 flex flex-col md:flex-row md:justify-end gap-3 bg-slate-900/20">
               <button
                 onClick={closeModal}
-                className="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg cursor-pointer order-2 md:order-1"
+                className="px-6 py-2.5 text-sm font-bold text-slate-400 hover:text-slate-100 bg-slate-800/50 hover:bg-slate-800 rounded-lg border border-slate-700/50 transition-all duration-200 cursor-pointer order-2 md:order-1 active:scale-95"
                 type="button"
               >
                 Cancel
@@ -222,21 +212,16 @@ export const SkillLinkerModal = ({
                 onClick={handleSubmit}
                 type="button"
                 disabled={!selectedSkill || isBlocked}
-                className={`px-4 py-2.5 text-white rounded-lg transition-colors text-sm cursor-pointer order-1 md:order-2 disabled:bg-slate-800/30 disabled:cursor-not-allowed border disabled:border-slate-700/20 disabled:text-slate-500
-                ${
+                className={`px-6 py-2.5 text-sm font-bold rounded-lg transition-all duration-200 cursor-pointer order-1 md:order-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 shadow-lg ${
                   link.linkType === "prerequisite"
-                    ? "bg-amber-600 hover:bg-amber-700 border border-amber-500/40"
-                    : "bg-cyan-600 hover:bg-cyan-700 border border-cyan-500/40"
+                    ? "bg-linear-to-r from-amber-500 to-amber-600 text-white shadow-amber-500/20"
+                    : "bg-linear-to-r from-cyan-500 to-blue-600 text-white shadow-cyan-500/20"
                 }`}
               >
                 {loader.isChecking ? (
-                  <ButtonSpinner
-                    label="Checking for conflicts…"
-                    labelColor="text-slate-500"
-                    color="text-slate-500"
-                  />
+                  <ButtonSpinner label="Checking..." color="text-white" />
                 ) : loader.isCreating ? (
-                  <ButtonSpinner label={`Creating ${link.linkType} link...`} />
+                  <ButtonSpinner label="Linking..." />
                 ) : (
                   `Link as ${selectedSkill ? link.linkType : "..."}`
                 )}
@@ -244,56 +229,59 @@ export const SkillLinkerModal = ({
             </div>
           )}
 
+          {/* Synergy Special Block */}
           {link.hasReverseLink && !link.hasDirectLink && (
-            <motion.div
-              className="mt-6 p-4 bg-cyan-500/5 border border-teal-500/20 rounded-xl"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-            >
-              <div className="flex gap-3">
-                <div className="p-2 bg-teal-500/10 rounded-lg h-fit">
-                  <LuCircleHelp className="text-teal-400" size={20} />
+            <div className="p-6 border-t border-slate-800/50 bg-slate-900/40">
+              <motion.div
+                className="p-4 bg-cyan-500/5 border border-cyan-500/20 rounded-xl"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+              >
+                <div className="flex gap-4">
+                  <div className="p-2 bg-cyan-500/10 rounded-lg h-fit">
+                    <LuCircleHelp className="text-cyan-400" size={20} />
+                  </div>
+                  <div>
+                    <h4 className="text-cyan-400 font-bold text-sm uppercase tracking-wide">
+                      Synergy Detected
+                    </h4>
+                    <p
+                      className="text-slate-400 text-sm mt-2 leading-relaxed"
+                      data-testid="skills-synergy"
+                    >
+                      <strong className="text-slate-100">
+                        {selectedSkill?.name}
+                      </strong>{" "}
+                      and{" "}
+                      <strong className="text-slate-100">
+                        {currentSkillName}
+                      </strong>{" "}
+                      form a reinforcing loop. They are best learned together.
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-teal-100 font-semibold text-sm">
-                    Synergy Detected
-                  </h4>
-                  <p
-                    className="text-slate-400 text-sm mt-1 leading-relaxed"
-                    data-testid="skills-synergy"
+
+                <div className="flex justify-end gap-3 mt-6">
+                  <button
+                    onClick={closeModal}
+                    className="px-4 py-2 text-xs font-bold text-slate-400 bg-slate-800/50 hover:bg-slate-800 rounded-lg border border-slate-700/50 transition-all duration-200 cursor-pointer active:scale-95"
                   >
-                    <strong className="text-slate-100">
-                      {selectedSkill?.name}
-                    </strong>{" "}
-                    and{" "}
-                    <strong className="text-slate-100">
-                      {currentSkillName}
-                    </strong>{" "}
-                    form a reinforcing loop. They are best learned together.
-                  </p>
+                    Cancel
+                  </button>
+
+                  <button
+                    onClick={handleSubmit}
+                    className="px-6 py-2.5 bg-linear-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-sm font-bold rounded-lg shadow-lg shadow-cyan-500/20 transition-all active:scale-95 cursor-pointer"
+                  >
+                    {loader.isCreating ? (
+                      <ButtonSpinner label="Syncing..." />
+                    ) : (
+                      "Confirm Synergy"
+                    )}
+                  </button>
                 </div>
-              </div>
-
-              <div className="flex justify-end gap-3 mt-4">
-                <button
-                  onClick={closeModal}
-                  className="px-4 py-2 bg-slate-800/50 border border-slate-700/50 text-slate-300 hover:bg-slate-800 hover:text-slate-100 transition-all rounded-lg text-sm font-medium cursor-pointer"
-                >
-                  Cancel
-                </button>
-
-                <button
-                  onClick={handleSubmit}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded-lg shadow-lg shadow-emerald-900/20 transition-all active:scale-95 cursor-pointer"
-                >
-                  {loader.isCreating ? (
-                    <ButtonSpinner label="Syncing..." />
-                  ) : (
-                    "Confirm Synergy"
-                  )}
-                </button>
-              </div>
-            </motion.div>
+              </motion.div>
+            </div>
           )}
         </Modal>
       )}

@@ -12,52 +12,60 @@ function Header({ signOut, user }) {
   };
 
   return (
-    <header className="sticky top-0 z-10 flex items-center justify-between px-4 md:px-6 py-4 border-b border-slate-800/50 bg-slate-900/60 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 flex items-center justify-between px-6 md:px-8 py-4 border-b border-slate-800/60 bg-[#0a0e1a]/80 backdrop-blur-md">
       <Link
         to="/"
-        className="text-xl md:text-2xl font-bold text-slate-100 uppercase"
+        className="flex items-center gap-3 group transition-all duration-200 active:scale-95"
       >
-        Synapse
+        <div className="relative w-9 h-9 flex items-center justify-center">
+          <img
+            src="/logo-neural.png"
+            alt="Synapse Logo"
+            className="w-full h-full object-contain drop-shadow-[0_0_8px_rgba(34,211,238,0.4)]"
+          />
+        </div>
+        <span className="text-xl md:text-2xl font-bold text-slate-50 tracking-tighter uppercase">
+          Synapse
+        </span>
       </Link>
 
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-3">
-          <Avatar.Root className="w-10 h-10 rounded-full overflow-hidden">
-            <Avatar.Image
-              // src={"/user-img.jpeg"}
-              alt={`Avatar of ${user?.name}`}
-              className="w-full h-full object-cover"
-            />
-            <Avatar.Fallback className="flex items-center justify-center bg-slate-700 text-slate-200 font-medium">
-              {user?.name && user?.name.charAt(0)}
-            </Avatar.Fallback>
-          </Avatar.Root>
-
-          <div className="hidden sm:flex flex-col text-sm">
-            <span className="font-bold text-slate-100">{user?.email}</span>
-            <p className="text-slate-400">{user?.region}</p>
+      <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4">
+          <div className="hidden sm:flex flex-col items-end leading-tight">
+            <span className="text-xs font-bold text-slate-100 truncate max-w-45">
+              {user?.email}
+            </span>
+            <p className="text-[10px] text-cyan-400 font-medium uppercase tracking-widest">
+              {user?.region || "Neural Node"}
+            </p>
           </div>
 
           <button
             onClick={handleLogout}
             disabled={isSigningOut}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all text-xs md:text-sm ${
-              isSigningOut
-                ? "bg-slate-700 text-slate-400 cursor-not-allowed"
-                : "bg-slate-800 text-slate-200 hover:bg-slate-700 cursor-pointer"
-            }`}
+            className={`
+    flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 border group
+    /* Typo ciselée */
+    text-[10px] font-bold uppercase tracking-[0.15em]
+    /* Interaction dynamique du curseur */
+    ${
+      isSigningOut
+        ? "bg-slate-800/50 text-slate-500 border-slate-700/30 cursor-not-allowed"
+        : "bg-[#1a2332] hover:bg-[#232d3f] text-slate-200 border-blue-800/50 hover:border-rose-500/50 active:scale-95 cursor-pointer shadow-sm"
+    }
+  `}
           >
             {isSigningOut ? (
-              <>
-                <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
-                <span>Signing out...</span>
-              </>
+              <div className="w-3.5 h-3.5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
             ) : (
-              <>
-                <LuLogOut size={18} />
-                <span>Logout</span>
-              </>
+              <LuLogOut
+                size={16}
+                className="text-cyan-400 transition-colors duration-300 group-hover:text-rose-400"
+              />
             )}
+            <span className="text-[10px] font-bold capitalize tracking-[0.15em] transition-colors duration-300 group-hover:text-rose-100">
+              {isSigningOut ? "Logging out..." : "Logout"}
+            </span>
           </button>
         </div>
       </div>

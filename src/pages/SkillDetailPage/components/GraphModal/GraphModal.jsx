@@ -1,4 +1,4 @@
-import { Modal } from "@/shared/components/Modal/Modal";
+import { Modal } from "@shared/components/Modal/Modal";
 import { LuBrainCircuit } from "react-icons/lu";
 
 export const GraphModal = ({ isOpened, onClose, skillName, children }) => {

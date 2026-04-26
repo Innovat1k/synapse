@@ -4,9 +4,9 @@ import { LuClock, LuLayers, LuZap } from "react-icons/lu";
 import { motion } from "framer-motion";
 
 const MetricCardSkeleton = () => (
-  <div className="p-4 rounded-xl bg-slate-900/50 border border-slate-800/50 animate-pulse">
+  <div className="p-4 rounded-lg bg-slate-900/50 border border-slate-800/50 animate-pulse">
     <div className="h-5 w-5 bg-slate-800 rounded mb-3" />
-    <div className="h-8 w-16 bg-slate-800 rounded mb-1" />
+    <div className="h-8 w-16 bg-slate-800 rounded mb-2" />
     <div className="h-3 w-20 bg-slate-800/50 rounded" />
   </div>
 );
@@ -16,7 +16,7 @@ const MetricCard = ({
   label,
   value,
   sublabel,
-  color = "text-teal-400",
+  color = "text-cyan-400",
   delay = 0,
   testid,
 }) => {
@@ -28,25 +28,23 @@ const MetricCard = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.25 }}
       whileHover={{ y: -2 }}
-      className="
-      p-4 rounded-xl bg-slate-900/50 border border-slate-800/50
+      className="p-4 rounded-lg bg-slate-900/50 border border-slate-800/50
       hover:border-slate-700/50 hover:bg-slate-900/70
-      transition-all
-    "
+      transition-all duration-200"
       data-testid={testid}
     >
       <Icon className={`text-xl ${color} mb-2`} />
 
-      <div className="text-xl font-black text-slate-100 leading-tight">
+      <div className="text-2xl font-black text-slate-50 leading-tight">
         {value}
       </div>
 
-      <div className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
+      <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">
         {label}
       </div>
 
       {sublabel && (
-        <div className="text-[10px] text-slate-500 mt-0.5">{sublabel}</div>
+        <div className="text-xs text-slate-500 mt-1">{sublabel}</div>
       )}
     </motion.div>
   );
@@ -86,7 +84,7 @@ const KeyMetrics = ({ data, isLoading, error }) => {
         label="Hours"
         value={data.hours_this_week || 0}
         sublabel="This week"
-        color="text-teal-400"
+        color="text-cyan-400"
         testid="this-week-metric"
       />
       <MetricCard

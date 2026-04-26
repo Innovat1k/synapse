@@ -18,15 +18,15 @@ export const ConfirmDeleteTrack = ({
       icon={LuTriangleAlert}
       size="sm"
     >
-      <div className="bg-red-500/5 border border-red-500/10 rounded-xl p-4 mb-6">
-        <p
-          className="text-sm text-slate-400 leading-relaxed"
-          data-testid="action-description"
-        >
+      <div
+        className="bg-rose-500/10 border border-rose-500/20 rounded-lg p-4 mb-6"
+        data-testid="action-description"
+      >
+        <p className="text-sm text-slate-400 leading-relaxed">
           Deleting{" "}
-          <span className="text-red-400 font-bold">"{trackTitle}"</span> will
+          <span className="text-rose-400 font-bold">"{trackTitle}"</span> will
           permanently disconnect all associated nodes. This action is
-          <span className="text-red-500 font-bold"> irreversible</span>.
+          <span className="text-rose-500 font-bold"> irreversible</span>.
         </p>
       </div>
 
@@ -35,7 +35,7 @@ export const ConfirmDeleteTrack = ({
           type="button"
           onClick={onClose}
           disabled={isLoading}
-          className="w-full sm:w-auto order-2 sm:order-1 px-5 py-2.5 bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-slate-200 rounded-lg transition-all disabled:opacity-30 cursor-pointer"
+          className="w-full sm:w-auto order-2 sm:order-1 px-6 py-2.5 bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-slate-200 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           Cancel
         </button>
@@ -44,20 +44,16 @@ export const ConfirmDeleteTrack = ({
           type="button"
           onClick={onConfirm}
           disabled={isLoading}
-          className="w-full sm:w-auto order-1 sm:order-2 min-w-40 flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg transition-all shadow-lg active:scale-95 cursor-pointer
-    bg-red-500 text-slate-950 shadow-red-500/20 hover:bg-red-400
-    disabled:bg-red-500/50 disabled:text-slate-950/70 disabled:cursor-not-allowed disabled:shadow-none"
+          className="w-full sm:w-auto order-1 sm:order-2 min-w-40 flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg transition-all duration-200 shadow-lg shadow-rose-500/20 active:scale-95 cursor-pointer
+    bg-rose-600 text-white hover:bg-rose-700
+    disabled:bg-rose-600/50 disabled:text-white/70 disabled:cursor-not-allowed disabled:shadow-none"
         >
           {isLoading ? (
-            <ButtonSpinner
-              label="Deleting..."
-              labelColor="text-slate-950"
-              color="border-slate-950"
-            />
+            <ButtonSpinner label="Deleting..." />
           ) : (
             <>
               <LuTrash2 size={16} />
-              <span className="text-xs font-black uppercase tracking-wider">
+              <span className="text-xs font-bold uppercase tracking-widest">
                 Permanently Delete
               </span>
             </>

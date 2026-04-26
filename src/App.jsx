@@ -9,18 +9,30 @@ function App() {
   const { loader, methods, user } = useAuth();
   useAuthRedirect();
 
-  if (loader.isInitialLoading && !loader.isSigningOut) {return <Loader />;}
-  if (loader.isSigningOut) {return <Loader />;}
+  if (loader.isInitialLoading && !loader.isSigningOut) {
+    return <Loader />;
+  }
+  if (loader.isSigningOut) {
+    return <Loader />;
+  }
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-slate-950">
+    <div className="relative min-h-screen flex flex-col bg-[#0a0e1a] text-slate-50 selection:bg-cyan-500/30">
       <Header signOut={methods.handleSignOut} user={user} />
-      <div className="flex flex-1 overflow-hidden">
+
+      <div className="flex flex-1 overflow-hidden relative">
         <NavBar />
-        <main className="flex-1 p-4 md:p-6 pb-24 md:pb-0 md:ml-[20%] overflow-y-auto bg-slate-950">
-          <Outlet context={{ methods, user }} />
+
+        {/* Main Content Area */}
+        <main className="flex-1 p-6 md:p-8 pb-28 md:pb-8 md:ml-[20%] overflow-y-auto bg-[#0a0e1a]">
+          <div className="max-w-7xl mx-auto w-full animate-in fade-in duration-500">
+            <Outlet context={{ methods, user }} />
+          </div>
         </main>
       </div>
+
+      {/* Decorative background gradient */}
+      <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_-20%,#1e293b_0%,transparent_50%)] opacity-20" />
     </div>
   );
 }

@@ -95,7 +95,7 @@ describe("Dashboard – Log Activity Flow", () => {
     renderWithProviders(<Dashboard />);
 
     expect(await screen.findByText(/current focus/i)).toBeInTheDocument();
-    expect(await screen.findByTestId("skill-count-badge")).toHaveTextContent(
+    expect(await screen.findByTestId("skills-count-badge")).toHaveTextContent(
       "03",
     );
 

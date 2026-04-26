@@ -17,9 +17,10 @@ function ToastComponent() {
   ) : (
     <LuCircleCheck className="w-5 h-5" />
   );
+
   const colorClasses = isError
-    ? "bg-red-600 border-red-700"
-    : "bg-emerald-600 border-emerald-700";
+    ? "bg-rose-600 border-rose-700/50"
+    : "bg-cyan-600 border-cyan-700/50";
 
   return (
     <>
@@ -34,27 +35,27 @@ function ToastComponent() {
               transition={{ type: "spring", duration: 0.5 }}
               className={`
          ${colorClasses} 
-          text-slate-100 border-b-4 p-4 rounded-xl shadow-2xl flex items-start space-x-3 cursor-default transition-colors fixed top-0 left-1/2 transform -translate-x-1/2 mt-4 w-11/12 max-w-lg z-2000 
+          text-white border-b-4 p-4 rounded-lg shadow-xl flex items-start gap-3 cursor-default transition-all fixed top-4 left-1/2 transform -translate-x-1/2 w-11/12 max-w-sm z-2000 
         `}
             >
-              <div className="shrink-0 pt-0.5">{icon}</div>
+              <div className="shrink-0 pt-0.5 flex-none">{icon}</div>
 
-              <div className="grow">
-                <Toast.Title className="font-semibold text-lg capitalize mb-1 text-slate-100">
+              <div className="flex-1 min-w-0">
+                <Toast.Title className="font-bold text-base capitalize mb-1 text-white">
                   {notif.type || (isError ? "Error" : "Success")}
                 </Toast.Title>
 
-                <Toast.Description className="text-sm font-light leading-snug text-slate-300">
+                <Toast.Description className="text-sm font-medium leading-snug text-white/90">
                   {notif.message}
                 </Toast.Description>
               </div>
 
               <Toast.Close asChild>
                 <button
-                  className="shrink-0 ml-4 p-1 rounded-full hover:bg-slate-800/50 transition-colors"
+                  className="shrink-0 ml-4 p-1.5 rounded-lg hover:bg-white/10 transition-all duration-200 flex-none"
                   aria-label="Close"
                 >
-                  <LuX className="w-4 h-4 text-slate-400" />
+                  <LuX className="w-4 h-4 text-white/80 hover:text-white" />
                 </button>
               </Toast.Close>
             </motion.div>

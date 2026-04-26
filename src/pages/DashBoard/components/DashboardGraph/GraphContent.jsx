@@ -18,7 +18,7 @@ export const GraphContent = ({ skills, links, isCompact, selectors }) => {
   );
 
   return (
-    <div className="relative w-full h-full bg-slate-950 overflow-hidden">
+    <div className="relative w-full h-full bg-[#0a0e1a] overflow-hidden">
       <ReactFlow
         nodes={nodes}
         edges={edges}

@@ -52,7 +52,7 @@ describe("ActivityTimeline", () => {
 
   it("shows empty state", () => {
     render(<ActivityTimeline isLoading={false} data={[]} />);
-    expect(screen.getByText(/No activities yet/i)).toBeInTheDocument();
+    expect(screen.getByText(/No activity recorded/i)).toBeInTheDocument();
   });
 
   it("renders activities", () => {
