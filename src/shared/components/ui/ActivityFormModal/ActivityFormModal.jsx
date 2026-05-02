@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { LuClock, LuTriangleAlert, LuCircleAlert } from "react-icons/lu";
 import { useActivityForm } from "./hooks/useActivityForm";
 import ButtonSpinner from "../ButtonSpinner";
-import DeleteModal from "../DeleteModal/DeleteModal";
+import DeleteModal from "../DeleteModal";
 import DatetimeInput from "./components/DatetimeInput/DatetimeInput";
 import SelectInput from "./components/SelectInput";
 import { Modal } from "../Modal/Modal";

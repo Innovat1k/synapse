@@ -20,7 +20,7 @@ vi.mock("@pages/UserAuthPage/hooks/useAuth", () => ({
 const mockShowNotif = vi.fn();
 const mockNavigate = vi.fn();
 
-vi.mock("@shared/components/Toast/hooks/useToast", () => ({
+vi.mock("@shared/components/ui/Toast/hooks/useToast", () => ({
   useToast: () => ({ showNotif: mockShowNotif }),
 }));
 

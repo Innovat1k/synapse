@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { LuZapOff } from "react-icons/lu";
-import { Modal } from "@shared/components/Modal/Modal";
-import ButtonSpinner from "@shared/components/ButtonSpinner";
+import { Modal } from "@shared/components/ui/Modal/Modal";
+import ButtonSpinner from "@shared/components/ui/ButtonSpinner";
 
 export const UnlinkConfirmModal = ({
   isOpened,

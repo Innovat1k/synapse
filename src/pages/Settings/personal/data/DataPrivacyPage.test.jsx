@@ -4,14 +4,14 @@ import userEvent from "@testing-library/user-event";
 import DataPrivacyPage from "./DataPrivacyPage";
 import { useDataExport } from "./hooks/useDataExport";
 import { useDataPurge } from "./hooks/useDataPurge";
-import { useSkillsQuery } from "@shared/hooks/useSkillsQuery/useSkillsQuery";
-import { useAllActivitiesQuery } from "@shared/hooks/useActivitiesQuery/useActivitiesQuery";
+import { useSkillsQuery } from "@shared/hooks/useSkillsQuery";
+import { useAllActivitiesQuery } from "@shared/hooks/useActivitiesQuery";
 import { useTracksQuery } from "@shared/hooks/useTracksQuery";
 
 vi.mock("./hooks/useDataExport");
 vi.mock("./hooks/useDataPurge");
-vi.mock("@shared/hooks/useSkillsQuery/useSkillsQuery");
-vi.mock("@shared/hooks/useActivitiesQuery/useActivitiesQuery");
+vi.mock("@shared/hooks/useSkillsQuery");
+vi.mock("@shared/hooks/useActivitiesQuery");
 vi.mock("@shared/hooks/useTracksQuery");
 
 const renderWithRouter = (ui) => {

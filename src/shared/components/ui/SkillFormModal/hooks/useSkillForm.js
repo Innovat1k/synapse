@@ -4,8 +4,8 @@ import {
   useIncomingSkillLinks,
   useOutgoingSkillLinks,
 } from "@pages/SkillDetailPage/components/SkillLinks/hooks/useSkillLinks";
-import { useActivitiesQuery } from "../../../hooks/useActivitiesQuery/useActivitiesQuery";
-import { useTracksQuery } from "../../../hooks/useTracksQuery";
+import { useActivitiesQuery } from "@shared/hooks/useActivitiesQuery";
+import { useTracksQuery } from "@shared/hooks/useTracksQuery";
 
 const initialFormData = {
   name: "",

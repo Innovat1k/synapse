@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDeleteSkillLink } from "../../../hooks/useSkillLinks";
-import { useToast } from "@shared/components/Toast/hooks/useToast";
-import { TOAST_MESSAGES } from "@shared/components/Toast/toastMessages";
+import { useToast } from "@shared/components/ui/Toast/hooks/useToast";
+import { TOAST_MESSAGES } from "@shared/components/ui/Toast/toastMessages";
 
 // Manages skill link editing mode and deletion confirmation flow with toast feedback
 

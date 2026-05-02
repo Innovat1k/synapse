@@ -4,7 +4,7 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { useActivitiesQuery } from "./useActivitiesQuery";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-vi.mock("../../../services/activityService");
+vi.mock("@services/activityService");
 
 const mockActivities = [
   {
@@ -53,11 +53,14 @@ describe("useActivitiesQuery", () => {
 
   it("returns the fetched array data if loading is finished", async () => {
     vi.mocked(activityService.fetchActivitiesBySkill).mockResolvedValue(
-      mockActivities
+      mockActivities,
     );
-    const { result } = renderHook(() => useActivitiesQuery(), {
-      wrapper: queryWrapper,
-    });
+    const { result } = renderHook(
+      () => useActivitiesQuery("550e8400-e29b-41d4-a716-446655440000"),
+      {
+        wrapper: queryWrapper,
+      },
+    );
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -75,16 +78,19 @@ describe("useActivitiesQuery", () => {
               activity_type: "project work",
             },
           ]),
-        100
-      )
+        100,
+      ),
     );
     vi.mocked(activityService.fetchActivitiesBySkill).mockReturnValue(
-      mockPromise
+      mockPromise,
     );
 
-    const { result } = renderHook(() => useActivitiesQuery(), {
-      wrapper: queryWrapper,
-    });
+    const { result } = renderHook(
+      () => useActivitiesQuery("550e8400-e29b-41d4-a716-446655440000"),
+      {
+        wrapper: queryWrapper,
+      },
+    );
 
     expect(result.current.isLoading).toBe(true);
     expect(result.current.activities).toEqual([]);

@@ -11,8 +11,8 @@ import {
 } from "react-icons/lu";
 import { Link } from "react-router-dom";
 
-import { Modal } from "@shared/components/Modal/Modal";
-import ButtonSpinner from "@shared/components/ButtonSpinner";
+import { Modal } from "@shared/components/ui/Modal/Modal";
+import ButtonSpinner from "@shared/components/ui/ButtonSpinner";
 
 import Card from "./components/Card";
 import CurrentFocus from "./components/CurrentFocus/CurrentFocus";
@@ -25,8 +25,8 @@ import { TrackSelector } from "./components/TrackSelector";
 import { CategorySelector } from "./components/CategorySelector";
 import { DashboardGraph } from "./components/DashboardGraph/DashboardGraph";
 
-import { useActivityModal } from "@shared/components/ActivityFormModal/hooks/useActivityModal";
-import { useSkillModal } from "@shared/components/SkillFormModal/hooks/useSkillModal";
+import { useActivityModal } from "@shared/components/ui/ActivityFormModal/hooks/useActivityModal";
+import { useSkillModal } from "@shared/components/ui/SkillFormModal/hooks/useSkillModal";
 
 import { useAuth } from "@pages/UserAuthPage/hooks/useAuth";
 import { useDashboardData } from "./hooks/useDashboardData";
@@ -36,8 +36,8 @@ import { useCurrentFocus } from "./components/CurrentFocus/hooks/useCurrentFocus
 import { useKeyMetrics } from "./components/KeyMetrics/hooks/useKeyMetrics";
 import { useDailyActivity } from "./components/DailyActivity/hooks/useDailyActivity";
 
-import ActivityFormModal from "@shared/components/ActivityFormModal/ActivityFormModal";
-import SkillFormModal from "@shared/components/SkillFormModal/SkillFormModal";
+import ActivityFormModal from "@shared/components/ui/ActivityFormModal/ActivityFormModal";
+import SkillFormModal from "@shared/components/ui/SkillFormModal/SkillFormModal";
 import { containerVariants, itemVariants } from "@shared/utils/animations";
 
 const Dashboard = () => {
@@ -175,7 +175,10 @@ const Dashboard = () => {
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-1.5 bg-[#1a2332] px-2.5 py-1 rounded-lg">
                     <LuBookOpen size={14} className="text-cyan-400" />
-                    <span className="text-sm font-bold text-slate-200">
+                    <span
+                      className="text-sm font-bold text-slate-200"
+                      data-testid="skills-count-badge"
+                    >
                       {filtered.skills.length.toString().padStart(2, "0")}
                     </span>
                   </div>
@@ -191,8 +194,8 @@ const Dashboard = () => {
               }
             >
               {filtered.skills.length > 0 && (
-                <div className="flex flex-col gap-5 mb-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="flex flex-col gap-5 mb-8 items-center">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <TrackSelector
                       tracks={data.tracks}
                       selectedTrackId={view.selectedTrackId}

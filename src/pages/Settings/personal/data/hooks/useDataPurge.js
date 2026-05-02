@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@pages/UserAuthPage/hooks/useAuth";
-import { useToast } from "@shared/components/Toast/hooks/useToast";
+import { useToast } from "@shared/components/ui/Toast/hooks/useToast";
 import { useQueryClient } from "@tanstack/react-query";
 import invalidateDashboardQueries from "@pages/DashBoard/utils/invalidateDashboardQueries";
 

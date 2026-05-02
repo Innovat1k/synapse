@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import ButtonSpinner from "@shared/components/ButtonSpinner";
+import ButtonSpinner from "@shared/components/ui/ButtonSpinner";
 import { LuCircleAlert } from "react-icons/lu";
 import { useAtomValue } from "jotai";
 import { formDataAtom, isLoginAtom, touchedAtom } from "@atoms/formDataAtom";
@@ -30,7 +30,7 @@ function UserAuthPage() {
   return (
     <div className="w-full flex items-center justify-center min-h-[80vh]">
       <div className="p-8 w-full max-w-md bg-[#0f1420]/80 backdrop-blur-md rounded-2xl border border-slate-800/50 shadow-2xl shadow-cyan-900/10">
-        <div className="relative mb-8 text-center">
+        <div className="relative text-center">
           <div
             className="absolute inset-0 bg-cyan-500/10 blur-3xl rounded-full"
             aria-hidden="true"
@@ -38,7 +38,7 @@ function UserAuthPage() {
 
           <img
             className="w-24 mx-auto relative drop-shadow-[0_0_15px_rgba(34,211,238,0.2)]"
-            src="/logo.svg"
+            src="/synapse.svg"
             alt="Synapse Logo"
           />
         </div>

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useAuth } from "@pages/UserAuthPage/hooks/useAuth";
-import { useToast } from "@shared/components/Toast/hooks/useToast";
-import { useSkillsQuery } from "@shared/hooks/useSkillsQuery/useSkillsQuery";
-import { useAllActivitiesQuery } from "@shared/hooks/useActivitiesQuery/useActivitiesQuery";
+import { useToast } from "@shared/components/ui/Toast/hooks/useToast";
+import { useSkillsQuery } from "@shared/hooks/useSkillsQuery";
+import { useAllActivitiesQuery } from "@shared/hooks/useActivitiesQuery";
 import { useTracksQuery } from "@shared/hooks/useTracksQuery";
 
 // Exports user data (skills, activities, tracks) as JSON file with timestamped filename

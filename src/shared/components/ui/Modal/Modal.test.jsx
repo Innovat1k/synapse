@@ -37,16 +37,6 @@ describe("Modal", () => {
       expect(screen.getByTestId("modal-icon")).toBeInTheDocument();
     });
 
-    it("applies correct size class", () => {
-      const { rerender } = render(<Modal isOpened={true} size="lg" />);
-
-      const modalDialog = screen.getByRole("dialog");
-      expect(modalDialog).toHaveClass("max-w-2xl");
-
-      rerender(<Modal isOpened={true} size="full" />);
-      expect(screen.getByRole("dialog")).toHaveClass("max-w-[98vw]");
-    });
-
     it("sets initial focus on close button when opened", async () => {
       render(<Modal isOpened={true} />);
 

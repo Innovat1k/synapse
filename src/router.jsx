@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import Loader from "@shared/components/Loader";
+import Loader from "@shared/components/ui/Loader";
 import {
   App,
   AuthLayout,
@@ -24,8 +24,8 @@ import SkillSkeleton from "./pages/SkillDetailPage/components/SkillSkeleton.jsx"
 import SkillsListSkeleton from "./pages/SkillsListPage/components/SkillsListSkeleton.jsx";
 import ComingSoonPage from "./pages/Settings/components/ComingSoonPage.jsx";
 import SettingsSkeleton from "./pages/Settings/components/SettingsSkeleton.jsx";
-import PageTransition from "./shared/components/PageTransition.jsx";
-import { AnimatedRoute } from "./shared/components/AnimatedRoute.jsx";
+import PageTransition from "./shared/components/utils/PageTransition.jsx";
+import { AnimatedRoute } from "./shared/components/utils/AnimatedRoute.jsx";
 
 export const router = createBrowserRouter([
   {

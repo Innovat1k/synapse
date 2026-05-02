@@ -1,4 +1,4 @@
-import ButtonSpinner from "../ButtonSpinner";
+import ButtonSpinner from "./ButtonSpinner";
 import { formatDateShort } from "@utils/utils";
 import { forwardRef } from "react";
 

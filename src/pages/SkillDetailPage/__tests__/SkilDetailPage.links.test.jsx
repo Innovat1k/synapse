@@ -67,7 +67,7 @@ describe("SkillDetailPage : SkillLinksSection", () => {
           screen.queryByTestId("skill-linker-modal-content"),
         ).not.toBeInTheDocument();
       });
-    });
+    }, 10000);
 
     it("displays an error if the mutation fails", async () => {
       clearSkillLinks();

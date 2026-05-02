@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { ResourceForm } from "@pages/Settings/components/ResourceForm/ResourceForm";
-import { Modal } from "@/shared/components/Modal/Modal";
+import { Modal } from "@/shared/components/ui/Modal/Modal";
 import { useResourceForm } from "@pages/Settings/components/ResourceForm/hooks/useResourceForm";
 
 export const TrackFormModal = ({

@@ -4,12 +4,12 @@ import {
   LuTrash2,
   LuTriangleAlert,
 } from "react-icons/lu";
-import { Modal } from "@shared/components/Modal/Modal";
+import { Modal } from "@shared/components/ui/Modal/Modal";
 import { useDataExport } from "./hooks/useDataExport";
 import { useDataPurge } from "./hooks/useDataPurge";
-import ButtonSpinner from "@shared/components/ButtonSpinner";
-import { useSkillsQuery } from "@shared/hooks/useSkillsQuery/useSkillsQuery";
-import { useAllActivitiesQuery } from "@shared/hooks/useActivitiesQuery/useActivitiesQuery";
+import ButtonSpinner from "@shared/components/ui/ButtonSpinner";
+import { useSkillsQuery } from "@shared/hooks/useSkillsQuery";
+import { useAllActivitiesQuery } from "@shared/hooks/useActivitiesQuery";
 import { useTracksQuery } from "@shared/hooks/useTracksQuery";
 
 // eslint-disable-next-line no-unused-vars

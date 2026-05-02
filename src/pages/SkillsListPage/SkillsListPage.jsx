@@ -1,7 +1,7 @@
 import { LuSearch, LuPlus, LuFilter, LuBookOpen } from "react-icons/lu";
 import { useSkillsList } from "../SkillsListPage/hooks/useSkillsList";
-import { useSkillModal } from "@shared/components/SkillFormModal/hooks/useSkillModal";
-import SkillFormModal from "@shared/components/SkillFormModal/SkillFormModal";
+import { useSkillModal } from "@shared/components/ui/SkillFormModal/hooks/useSkillModal";
+import SkillFormModal from "@shared/components/ui/SkillFormModal/SkillFormModal";
 import SkillsTable from "./components/SkillsTable";
 import SkillsCard from "./components/SkillsCard";
 import { useOutletContext } from "react-router-dom";

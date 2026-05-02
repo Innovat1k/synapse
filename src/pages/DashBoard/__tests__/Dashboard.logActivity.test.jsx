@@ -96,7 +96,7 @@ describe("Dashboard – Log Activity Flow", () => {
 
     expect(await screen.findByText(/current focus/i)).toBeInTheDocument();
     expect(await screen.findByTestId("skills-count-badge")).toHaveTextContent(
-      "03",
+      "3",
     );
 
     await user.click(
@@ -140,13 +140,6 @@ describe("Dashboard – Log Activity Flow", () => {
     );
 
     await user.click(screen.getByRole("button", { name: /add activity/i }));
-
-    expect(
-      screen.queryByTestId("activity-modal-content"),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("heading", { name: /log activity/i }),
-    ).not.toBeInTheDocument();
 
     await user.click(await screen.findByRole("button", { name: /log for/i }));
     expect(

@@ -1,8 +1,8 @@
 import { act, renderHook } from "@testing-library/react";
 import { useDataExport } from "./useDataExport";
-import { useToast } from "@shared/components/Toast/hooks/useToast";
-import { useSkillsQuery } from "@shared/hooks/useSkillsQuery/useSkillsQuery";
-import { useAllActivitiesQuery } from "@shared/hooks/useActivitiesQuery/useActivitiesQuery";
+import { useToast } from "@shared/components/ui/Toast/hooks/useToast";
+import { useSkillsQuery } from "@shared/hooks/useSkillsQuery";
+import { useAllActivitiesQuery } from "@shared/hooks/useActivitiesQuery";
 import { useTracksQuery } from "@shared/hooks/useTracksQuery";
 
 vi.mock("@pages/UserAuthPage/hooks/useAuth", () => ({
@@ -11,9 +11,9 @@ vi.mock("@pages/UserAuthPage/hooks/useAuth", () => ({
   }),
 }));
 
-vi.mock("@shared/components/Toast/hooks/useToast");
-vi.mock("@shared/hooks/useSkillsQuery/useSkillsQuery");
-vi.mock("@shared/hooks/useActivitiesQuery/useActivitiesQuery");
+vi.mock("@shared/components/ui/Toast/hooks/useToast");
+vi.mock("@shared/hooks/useSkillsQuery");
+vi.mock("@shared/hooks/useActivitiesQuery");
 vi.mock("@shared/hooks/useTracksQuery");
 
 describe("useDataExport", () => {

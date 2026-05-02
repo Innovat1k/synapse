@@ -104,16 +104,16 @@ const CurrentFocus = ({ data, isLoading, error, onLogActivity }) => {
           }}
           className="group mt-6 flex items-center gap-2 px-4 py-2 bg-slate-800/40 hover:bg-slate-800/60
           border border-slate-700/50 hover:border-cyan-500/40 rounded-lg text-sm font-medium
-          text-slate-400 hover:text-cyan-300 transition-all duration-200 cursor-pointer active:scale-95"
+          text-slate-400 hover:text-cyan-300 transition-all duration-200 cursor-pointer active:scale-95 group/log"
         >
           <LuPlus
             size={14}
-            className="transition-transform group-hover:rotate-90"
+            className="transition-transform group-hover/log:rotate-90"
           />
           <span>Log your first activity</span>
           <LuArrowRight
             size={14}
-            className="opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all"
+            className="opacity-0 group-hover:opacity-100 -translate-x-1 group-hover/log:translate-x-0 transition-all"
           />
         </button>
       </div>

@@ -5,7 +5,7 @@ import { Provider } from "jotai";
 import { RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as Toast from "@radix-ui/react-toast";
-import ToastComponent from "@shared/components/Toast/ToastComponent";
+import ToastComponent from "@shared/components/ui/Toast/ToastComponent";
 import { router } from "./router";
 
 // Sora font

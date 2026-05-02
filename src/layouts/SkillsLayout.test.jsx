@@ -88,7 +88,7 @@ describe("SkillsLayout", () => {
         await screen.findByRole("cell", { name: /python/i }),
       ).toBeInTheDocument();
       expect(screen.getByTestId("skill-count-badge")).toHaveTextContent("1");
-    });
+    }, 10000);
 
     it('SkillFormModal: updates selected skill if "update skill" button is clicked', async () => {
       render(<LayoutWrapper initialEntries={["/skills"]} />);

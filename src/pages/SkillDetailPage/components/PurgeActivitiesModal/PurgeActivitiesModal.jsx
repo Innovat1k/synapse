@@ -1,6 +1,6 @@
 import { useRef } from "react";
-import { Modal } from "@shared/components/Modal/Modal";
-import ButtonSpinner from "@shared/components/ButtonSpinner";
+import { Modal } from "@shared/components/ui/Modal/Modal";
+import ButtonSpinner from "@shared/components/ui/ButtonSpinner";
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
@@ -57,7 +57,7 @@ function PurgeActivitiesModal({
                 </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex flex-col-reverse sm:flex-row gap-3">
                 <button
                   type="button"
                   onClick={closeModal}
@@ -111,7 +111,7 @@ function PurgeActivitiesModal({
                 )}
               </AnimatePresence>
 
-              <div className="mt-6 flex flex-col sm:flex-row gap-3">
+              <div className="mt-6 flex flex-col-reverse sm:flex-row gap-3">
                 <button
                   type="button"
                   onClick={closeModal}

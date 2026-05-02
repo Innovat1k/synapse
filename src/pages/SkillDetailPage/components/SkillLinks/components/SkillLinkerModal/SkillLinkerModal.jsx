@@ -6,9 +6,9 @@ import {
   LuCircleHelp,
   LuX,
 } from "react-icons/lu";
-import { Modal } from "@shared/components/Modal/Modal";
+import { Modal } from "@shared/components/ui/Modal/Modal";
 import { useSkillLinkerForm } from "./hooks/useSkillLinkerForm";
-import ButtonSpinner from "@shared/components/ButtonSpinner";
+import ButtonSpinner from "@shared/components/ui/ButtonSpinner";
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
@@ -63,7 +63,7 @@ export const SkillLinkerModal = ({
           dataTestId="skill-linker-modal"
         >
           {/* Main Container with Standard Spacing */}
-          <div className="p-6">
+          <div className="p-2">
             {/* Search Input Section */}
             <div className="relative mb-6">
               <label
@@ -201,7 +201,7 @@ export const SkillLinkerModal = ({
 
           {/* Footer Actions */}
           {!link.hasReverseLink && (
-            <div className="p-6 border-t border-slate-800/50 flex flex-col md:flex-row md:justify-end gap-3 bg-slate-900/20">
+            <div className="p-2 border-t border-slate-800/50 flex flex-col md:flex-row md:justify-end gap-3 bg-slate-900/20">
               <button
                 onClick={closeModal}
                 className="px-6 py-2.5 text-sm font-bold text-slate-400 hover:text-slate-100 bg-slate-800/50 hover:bg-slate-800 rounded-lg border border-slate-700/50 transition-all duration-200 cursor-pointer order-2 md:order-1 active:scale-95"

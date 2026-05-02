@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { useDataPurge } from "./useDataPurge";
-import { useToast } from "@shared/components/Toast/hooks/useToast";
+import { useToast } from "@shared/components/ui/Toast/hooks/useToast";
 import { useQueryClient } from "@tanstack/react-query";
 import * as skillService from "@services/skillService";
 import * as activityService from "@services/activityService";
@@ -19,7 +19,7 @@ vi.mock("react-router-dom", () => ({
   MemoryRouter: ({ children }) => children,
 }));
 
-vi.mock("@shared/components/Toast/hooks/useToast");
+vi.mock("@shared/components/ui/Toast/hooks/useToast");
 vi.mock("@tanstack/react-query");
 vi.mock("@services/skillService");
 vi.mock("@services/activityService");

@@ -1,9 +1,9 @@
 import { createPortal } from "react-dom";
 import { useRef } from "react";
 import { LuX } from "react-icons/lu";
-import { useInitialFocus } from "@shared/hooks/useInitialFocus/useInitialFocus";
-import { useFocusTrap } from "@shared/hooks/useFocusTrap/useFocusTrap";
-import { useKeyboardDismiss } from "@shared/hooks/useKeyboardDismiss/useKeyboardDismiss";
+import { useInitialFocus } from "@shared/hooks/useInitialFocus";
+import { useFocusTrap } from "@shared/hooks/useFocusTrap";
+import { useKeyboardDismiss } from "@shared/hooks/useKeyboardDismiss";
 import { useIsTopModal } from "./hooks/useIsTopModal";
 
 // eslint-disable-next-line no-unused-vars

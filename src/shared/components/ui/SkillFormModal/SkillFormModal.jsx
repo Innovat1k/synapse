@@ -1,7 +1,7 @@
 import { useSkillForm } from "./hooks/useSkillForm";
 import { useTracks } from "@pages/Settings/app/tracks/hooks/useTracks";
 import { Modal } from "../Modal/Modal";
-import { TrackFormModal } from "../TrackFormModal/TrackFormModal";
+import { TrackFormModal } from "../TrackFormModal";
 import SkillFormContent from "./components/SkillFormContent";
 import SkillDeleteContent from "./components/SkillDeleteContent";
 

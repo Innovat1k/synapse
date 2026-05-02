@@ -1,5 +1,5 @@
 import { LuCheck, LuLayoutGrid, LuTag, LuChevronDown } from "react-icons/lu";
-import ButtonSpinner from "@shared/components/ButtonSpinner";
+import ButtonSpinner from "@shared/components/ui/ButtonSpinner";
 
 export const ResourceForm = ({
   title = "",

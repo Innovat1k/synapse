@@ -3,8 +3,8 @@ import { useAtom } from "jotai";
 import { notification_atom, session_atom, user_atom } from "@atoms/atoms";
 import { useNavigate } from "react-router-dom";
 import { useFormData } from "./useFormData";
-import { useToast } from "@shared/components/Toast/hooks/useToast";
-import { TOAST_MESSAGES } from "@shared/components/Toast/toastMessages";
+import { useToast } from "@shared/components/ui/Toast/hooks/useToast";
+import { TOAST_MESSAGES } from "@shared/components/ui/Toast/toastMessages";
 import { getSupabase } from "@services/supabase-lazy";
 
 // Manages full authentication flow (sign-in/sign-up/sign-out) with session persistence via Jotai atoms.

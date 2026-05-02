@@ -7,7 +7,7 @@ import {
   LuCircleAlert,
   LuArrowLeft,
 } from "react-icons/lu";
-import ButtonSpinner from "@shared/components/ButtonSpinner";
+import ButtonSpinner from "@shared/components/ui/ButtonSpinner";
 import { useTracks } from "./hooks/useTracks";
 import { useResourceForm } from "../../components/ResourceForm/hooks/useResourceForm";
 import { ConfirmDeleteTrack } from "./components/ConfirmDeleteTrack";

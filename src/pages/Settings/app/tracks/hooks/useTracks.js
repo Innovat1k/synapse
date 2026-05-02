@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createTrack, fetchTracks, deleteTrack } from "@services/tracksService";
-import { useToast } from "@shared/components/Toast/hooks/useToast";
-import { useModal } from "@shared/components/Modal/hooks/useModal";
-import { TOAST_MESSAGES } from "@shared/components/Toast/toastMessages";
+import { useToast } from "@shared/components/ui/Toast/hooks/useToast";
+import { useModal } from "@shared/components/ui/Modal/hooks/useModal";
+import { TOAST_MESSAGES } from "@shared/components/ui/Toast/toastMessages";
 import { useTracksQuery } from "@shared/hooks/useTracksQuery";
 
 // Manages tracks list data, creation flow, and UI state (form open/close, loading, errors).

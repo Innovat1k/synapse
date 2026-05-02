@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useSkillsQuery } from "@shared/hooks/useSkillsQuery/useSkillsQuery";
+import { useSkillsQuery } from "@shared/hooks/useSkillsQuery";
 import { useCreateSkillLink } from "../../../hooks/useSkillLinks";
 import { checkExistingLinks } from "@services/skillLinksService";
-import { useToast } from "@shared/components/Toast/hooks/useToast";
-import { TOAST_MESSAGES } from "@shared/components/Toast/toastMessages";
+import { useToast } from "@shared/components/ui/Toast/hooks/useToast";
+import { TOAST_MESSAGES } from "@shared/components/ui/Toast/toastMessages";
 
 // Manages skill linking form with real-time validation (prevents self-links and duplicates).
 // Supports "incoming" (prerequisite) and "outgoing" modes with skill search and selection.

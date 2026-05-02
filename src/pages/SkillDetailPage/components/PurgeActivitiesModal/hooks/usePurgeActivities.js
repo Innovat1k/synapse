@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { purgeActivitiesBySkill } from "@services/activityService";
 import { useQueryClient } from "@tanstack/react-query";
-import { useToast } from "@shared/components/Toast/hooks/useToast";
-import { TOAST_MESSAGES } from "@shared/components/Toast/toastMessages";
+import { useToast } from "@shared/components/ui/Toast/hooks/useToast";
+import { TOAST_MESSAGES } from "@shared/components/ui/Toast/toastMessages";
 import invalidateDashboardQueries from "@pages/DashBoard/utils/invalidateDashboardQueries";
 import { useAuth } from "@pages/UserAuthPage/hooks/useAuth";
 

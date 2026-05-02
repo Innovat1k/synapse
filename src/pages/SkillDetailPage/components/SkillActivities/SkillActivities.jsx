@@ -6,11 +6,11 @@ import {
   LuPencil,
   LuTrash2,
 } from "react-icons/lu";
-import { useActivityModal } from "@shared/components/ActivityFormModal/hooks/useActivityModal";
-import ActivityFormModal from "@shared/components/ActivityFormModal/ActivityFormModal";
-import { useActivitiesQuery } from "@shared/hooks/useActivitiesQuery/useActivitiesQuery";
+import { useActivityModal } from "@shared/components/ui/ActivityFormModal/hooks/useActivityModal";
+import ActivityFormModal from "@shared/components/ui/ActivityFormModal/ActivityFormModal";
+import { useActivitiesQuery } from "@shared/hooks/useActivitiesQuery";
 import { formatDateShort, formatDuration } from "@shared/utils/utils";
-import ButtonSpinner from "@shared/components/ButtonSpinner";
+import ButtonSpinner from "@shared/components/ui/ButtonSpinner";
 import { AnimatePresence } from "framer-motion";
 
 function SkillActivities({ skill, skills }) {
@@ -19,7 +19,9 @@ function SkillActivities({ skill, skills }) {
     skill.skill_id,
   );
 
-  if (!skill) {return null;}
+  if (!skill) {
+    return null;
+  }
 
   return (
     <>
