@@ -27,7 +27,7 @@ function App() {
           <NavBar />
 
           {/* Main Content Area */}
-          <main className="flex-1 p-6 md:p-8 pb-28 md:pb-8 md:ml-[20%] overflow-y-auto bg-[#0a0e1a]">
+          <main className="flex-1 p-2 md:p-8 pb-28 md:pb-8 md:ml-[20%] overflow-y-auto bg-[#0a0e1a]">
             <div className="max-w-7xl mx-auto w-full animate-in fade-in duration-500">
               <Outlet context={{ methods, user }} />
             </div>

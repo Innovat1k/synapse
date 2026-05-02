@@ -24,15 +24,8 @@ import SkillSkeleton from "./pages/SkillDetailPage/components/SkillSkeleton.jsx"
 import SkillsListSkeleton from "./pages/SkillsListPage/components/SkillsListSkeleton.jsx";
 import ComingSoonPage from "./pages/Settings/components/ComingSoonPage.jsx";
 import SettingsSkeleton from "./pages/Settings/components/SettingsSkeleton.jsx";
-import { AnimatePresence } from "framer-motion";
 import PageTransition from "./shared/components/PageTransition.jsx";
-
-// Transition wrapper
-const AnimatedRoute = ({ children }) => (
-  <AnimatePresence mode="wait">
-    <PageTransition>{children}</PageTransition>
-  </AnimatePresence>
-);
+import { AnimatedRoute } from "./shared/components/AnimatedRoute.jsx";
 
 export const router = createBrowserRouter([
   {

@@ -27,10 +27,10 @@ function NavBar() {
 
   return (
     <>
-      {/* 🔹 DESKTOP/TABLET: Left Sidebar */}
+      {/* DESKTOP/TABLET: Left Sidebar */}
       <nav
         className="hidden md:flex md:flex-col md:fixed md:top-18.25 md:left-0 md:w-[20%] md:h-[calc(100vh-73px)] 
-                   bg-[#0f1420]/90 border-r border-blue-800/50 backdrop-blur-md p-6 overflow-y-auto z-10 
+                   bg-[#0f1420]/90 border-r border-slate-800/50 backdrop-blur-md p-6 overflow-y-auto z-10 
                    transition-all duration-300"
       >
         <ul className="flex flex-col gap-3">
@@ -68,10 +68,10 @@ function NavBar() {
         </ul>
       </nav>
 
-      {/* 🔹 MOBILE: Bottom Navbar */}
+      {/* MOBILE: Bottom Navbar */}
       <nav
         className="md:hidden fixed bottom-0 left-0 right-0 
-                   bg-[#0f1420]/95 border-t border-blue-800/50 backdrop-blur-lg 
+                   bg-[#0f1420]/95 border-t border-slate-800/50 backdrop-blur-lg 
                    shadow-2xl z-50"
       >
         <ul

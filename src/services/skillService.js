@@ -88,7 +88,7 @@ export const deleteSkill = async (id) => {
 
 // Deletes all skills associated with a user ID from Supabase
 export const deleteUserSkills = async (userId) => {
-  if (!userId) return { error: new Error("No user_id provided") };
+  if (!userId) {return { error: new Error("No user_id provided") };}
 
   const supabase = await getSupabase();
   const { error } = await supabase
@@ -96,6 +96,6 @@ export const deleteUserSkills = async (userId) => {
     .delete()
     .eq("user_id", userId);
 
-  if (error) throw error;
+  if (error) {throw error;}
   return { success: true };
 };

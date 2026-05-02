@@ -19,7 +19,7 @@ function SkillActivities({ skill, skills }) {
     skill.skill_id,
   );
 
-  if (!skill) return null;
+  if (!skill) {return null;}
 
   return (
     <>

@@ -1,10 +1,13 @@
 import React, { Suspense, useState } from "react";
+
+// eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
 import {
   LuCirclePlus,
   LuBookOpen,
   LuMaximize2,
   LuLayoutDashboard,
+  LuNetwork,
 } from "react-icons/lu";
 import { Link } from "react-router-dom";
 
@@ -57,7 +60,6 @@ const Dashboard = () => {
     trackId: view.selectedTrackId !== "all" ? view.selectedTrackId : null,
   });
 
-  // Loading state avec animation
   if (loader.isInitialLoading) {
     return (
       <motion.div
@@ -76,25 +78,28 @@ const Dashboard = () => {
 
   return (
     <>
-      {/* Modals */}
-      <ActivityFormModal
-        mode={activityModal.modal.mode}
-        isOpened={activityModal.modal.isOpened}
-        allSkills={data.skills}
-        onSubmit={activityModal.methods.handleSaveActivity}
-        closeModal={activityModal.methods.closeModal}
-        isSubmitting={activityModal.isSubmitting}
-        closeByOverlay={activityModal.methods.handleCloseOverlay}
-        openSkillModal={skillModal.methods.openCreateModal}
-        skill={activityModal.preselectedSkill}
-      />
+      <AnimatePresence>
+        {activityModal.modal.isOpened && (
+          <ActivityFormModal
+            mode={activityModal.modal.mode}
+            isOpened={true}
+            allSkills={data.skills}
+            onSubmit={activityModal.methods.handleSaveActivity}
+            closeModal={activityModal.methods.closeModal}
+            isSubmitting={activityModal.isSubmitting}
+            closeByOverlay={activityModal.methods.handleCloseOverlay}
+            openSkillModal={skillModal.methods.openCreateModal}
+            skill={activityModal.preselectedSkill}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Main Container */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="min-h-screen bg-[#0a0e1a] text-slate-100 p-2 md:p-6"
+        className="min-h-screen bg-[#0a0e1a] text-slate-100 p-4 md:p-0"
       >
         {/* Header */}
         <motion.header
@@ -106,11 +111,11 @@ const Dashboard = () => {
               <LuLayoutDashboard className="text-cyan-400" size={24} />
             </div>
             <div>
-              <h1 className="text-2xl font-black tracking-tight text-slate-50 uppercase">
+              <h1 className="text-2xl md:text-3xl font-black tracking-tight text-slate-50">
                 Dashboard
               </h1>
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">
-                Neural Network Overview
+              <p className="text-sm font-bold text-slate-500 tracking-widest first-letter:capitalize">
+                Your learning activity overview
               </p>
             </div>
           </div>
@@ -125,7 +130,7 @@ const Dashboard = () => {
           <motion.div variants={itemVariants} className="space-y-8">
             <Card
               dataTestId="current-focus"
-              className="relative overflow-hidden bg-[#0f1420]/80 border-slate-800/50 shadow-xl"
+              className="relative overflow-hidden bg-[#0f1420]/80 border-slate-800/50 shadow-xl group"
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 blur-[50px] -mr-10 -mt-10 pointer-events-none" />
               <CurrentFocus
@@ -145,11 +150,10 @@ const Dashboard = () => {
               />
             </Card>
 
-            <Card className="bg-[#0f1420]/80 border-slate-800/50">
-              <h2 className="text-sm font-bold text-slate-100 mb-6 flex items-center gap-2 tracking-tight">
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" /> Key
-                Metrics
-              </h2>
+            <Card
+              className="bg-[#0f1420]/80 border-slate-800/50"
+              title="Metrics"
+            >
               <KeyMetrics
                 data={keyMetrics.data}
                 isLoading={keyMetrics.isLoading}
@@ -163,78 +167,69 @@ const Dashboard = () => {
             variants={itemVariants}
             className="space-y-8 lg:col-span-1"
           >
-            {/* Skills Card */}
             <Card
-              className="flex flex-col bg-[#0f1420]/90 border-slate-800/50 shadow-2xl relative overflow-hidden"
+              className="flex flex-col bg-[#0f1420]/90 border-slate-800/50 shadow-2xl relative overflow-hidden group"
+              title={view.currentTrack?.title || "All Skills"}
               dataTestId="skills"
-            >
-              <div className="absolute top-0 left-0 w-full h-0.5 bg-linear-to-r from-transparent via-cyan-500/50 to-transparent" />
-
-              <div className="flex items-start justify-between mb-8">
-                <div className="flex items-start gap-4">
-                  <h2 className="text-base font-bold text-slate-100 mb-6 flex items-center gap-2 tracking-tight">
-                    {view.currentTrack?.title || "All Skills"}
-                  </h2>
-                  <div
-                    data-testid="skills-count-badge"
-                    className="flex items-center gap-1.5 bg-[#1a2332] px-2.5 py-1 rounded-lg border border-slate-700/30 shadow-inner"
-                  >
-                    <LuBookOpen size={14} className="text-cyan-400 shrink-0" />
-                    <span className="text-sm font-bold text-slate-200 tabular-nums">
+              action={
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-1.5 bg-[#1a2332] px-2.5 py-1 rounded-lg">
+                    <LuBookOpen size={14} className="text-cyan-400" />
+                    <span className="text-sm font-bold text-slate-200">
                       {filtered.skills.length.toString().padStart(2, "0")}
                     </span>
                   </div>
-                </div>
-
-                <button
-                  className="flex items-center gap-2 bg-linear-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-6 py-2.5 rounded-lg text-sm font-bold transition-all active:scale-95 shadow-lg shadow-cyan-500/20 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                  onClick={skillModal.methods.openCreateModal}
-                >
-                  <LuCirclePlus size={18} />
-                  <span className="hidden md:block">Add Skill</span>
-                </button>
-              </div>
-
-              {/* Skills Toolbar */}
-              <div className="flex flex-col gap-5 mb-8">
-                <div className="flex flex-wrap flex-col md:flex-row items-center gap-3">
-                  <TrackSelector
-                    tracks={data.tracks}
-                    selectedTrackId={view.selectedTrackId}
-                    onSelect={actions.selectTrack}
-                    isLoading={isLoading}
-                  />
-                  <CategorySelector
-                    categories={data.categories}
-                    selectedCategory={view.selectedCategory}
-                    onSelect={actions.selectCategory}
-                  />
-                </div>
-
-                {(view.selectedTrackId !== "all" ||
-                  view.selectedCategory !== "") && (
                   <button
-                    onClick={() => {
-                      actions.selectTrack("all");
-                      actions.selectCategory("");
-                    }}
-                    className="text-xs text-slate-500 hover:text-cyan-400 font-bold uppercase tracking-widest transition-colors w-fit px-1 cursor-pointer"
+                    onClick={skillModal.methods.openCreateModal}
+                    className="flex items-center gap-2 bg-linear-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-6 py-2.5 rounded-lg 
+                   text-sm font-bold transition-all active:scale-95 shadow-lg shadow-cyan-500/20 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Reset Filters
+                    <LuCirclePlus size={18} />
+                    <span className="hidden md:block">Add Skill</span>
                   </button>
-                )}
-              </div>
+                </div>
+              }
+            >
+              {filtered.skills.length > 0 && (
+                <div className="flex flex-col gap-5 mb-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <TrackSelector
+                      tracks={data.tracks}
+                      selectedTrackId={view.selectedTrackId}
+                      onSelect={actions.selectTrack}
+                      isLoading={isLoading}
+                    />
+                    <CategorySelector
+                      categories={data.categories}
+                      selectedCategory={view.selectedCategory}
+                      onSelect={actions.selectCategory}
+                    />
+                  </div>
+
+                  {(view.selectedTrackId !== "all" ||
+                    view.selectedCategory !== "") && (
+                    <button
+                      onClick={() => {
+                        actions.selectTrack("all");
+                        actions.selectCategory("");
+                      }}
+                      className="text-xs text-slate-500 hover:text-cyan-400 font-bold uppercase tracking-widest transition-colors w-fit px-1 cursor-pointer"
+                    >
+                      Reset Filters
+                    </button>
+                  )}
+                </div>
+              )}
 
               <div className="flex-1">
                 <SkillsGrid skills={displayedSkills} isLoading={isLoading} />
               </div>
             </Card>
 
-            {/* Weekly Progress */}
-            <Card className="bg-[#0f1420]/80 border-slate-800/50">
-              <h2 className="text-sm font-bold text-slate-100 mb-6 flex items-center gap-2 tracking-tight">
-                Weekly Progress
-              </h2>
+            <Card
+              className="bg-[#0f1420]/80 border-slate-800/50 group"
+              title="Weekly Progress"
+            >
               <WeeklyProgress
                 data={weeklyProgress.data || []}
                 isLoading={weeklyProgress.isLoading}
@@ -242,11 +237,10 @@ const Dashboard = () => {
               />
             </Card>
 
-            {/* Daily Activity */}
-            <Card className="bg-[#0f1420]/80 border-slate-800/50">
-              <h2 className="text-sm font-bold text-slate-100 mb-6 flex items-center gap-2 tracking-tight">
-                Daily Activity
-              </h2>
+            <Card
+              className="bg-[#0f1420]/80 border-slate-800/50 group"
+              title="Daily Activity"
+            >
               <DailyActivity
                 data={dailyActivity.data}
                 isLoading={dailyActivity.isLoading}
@@ -258,43 +252,65 @@ const Dashboard = () => {
           {/* Column 3: Graph & Timeline */}
           <motion.div variants={itemVariants} className="space-y-8">
             <Card
-              dataTestId="knowledge-graph"
               className="group bg-[#0f1420]/90 border-slate-800/50 shadow-2xl relative overflow-hidden"
-            >
-              <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-violet-500/5 blur-[60px] pointer-events-none" />
-
-              <div className="flex justify-between items-start mb-6">
-                <h2 className="text-sm font-bold text-slate-100 flex items-center gap-2 tracking-tight">
-                  Knowledge Graph
-                </h2>
+              title="Knowledge Graph"
+              dataTestId="knowledge-graph"
+              action={
                 <button
                   onClick={() => setIsFullscreenGraph(true)}
                   className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold capitalize tracking-widest 
-                     text-slate-400 hover:text-cyan-400 
-                     bg-slate-800/50 hover:bg-slate-800 
-                     border border-slate-700/50 
-                     rounded-lg transition-all active:scale-90 group/btn cursor-pointer
-                     disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-slate-400 disabled:hover:bg-slate-800/50 disabled:active:scale-100"
+                  text-slate-300 hover:text-cyan-400 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/50 hover:border-cyan-500/30
+                  rounded-lg transition-all duration-200 active:scale-95 group/btn cursor-pointer disabled:text-slate-600 disabled:bg-slate-900/40 disabled:border-slate-800 disabled:cursor-not-allowed disabled:active:scale-100"
                   disabled={filtered?.skills.length === 0}
                 >
                   <span className="hidden sm:inline-block">Expand graph</span>
                   <LuMaximize2
                     size={16}
-                    className="group-hover/btn:scale-110 group-hover/btn:drop-shadow-[0_0_8px_rgba(34,211,238,0.6)] transition-transform duration-200 disabled:group-hover/btn:scale-100 disabled:group-hover/btn:drop-shadow-none"
+                    className="group-hover/btn:scale-110 group-hover/btn:drop-shadow-[0_0_8px_rgba(34,211,238,0.6)] 
+                    transition-transform duration-200 disabled:opacity-50 disabled:group-hover/btn:scale-100 disabled:group-hover/btn:drop-shadow-none"
                   />
                 </button>
-              </div>
+              }
+            >
+              {/* CONDITIONAL – Empty State OR Graph */}
+              {filtered?.skills.length === 0 ? (
+                <div className="h-80 flex flex-col items-center justify-center text-center p-6 relative rounded-lg overflow-hidden bg-[#0a0e1a]/60 border border-slate-800/50 shadow-inner">
+                  <div className="relative mb-4">
+                    <div className="w-12 h-12 flex items-center justify-center rounded-full bg-slate-800/50">
+                      <LuNetwork className="text-slate-500" size={24} />
+                    </div>
 
-              <div className="h-80 relative rounded-lg overflow-hidden bg-[#0a0e1a]/60 border border-slate-800/50 shadow-inner group-hover:border-cyan-500/20 transition-all duration-300">
-                <DashboardGraph skills={data.skills} isCompact={true} />
-                <div className="absolute inset-0 bg-linear-to-t from-[#0a0e1a]/80 via-transparent to-transparent pointer-events-none" />
-              </div>
+                    <motion.div
+                      className="absolute inset-0 border-2 border-dashed border-cyan-500/20 rounded-full scale-150 opacity-0 group-hover:opacity-100"
+                      animate={{ rotate: 360 }}
+                      transition={{
+                        duration: 10,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
+                    />
+                  </div>
+
+                  <h3 className="text-base font-semibold text-slate-300 mb-1">
+                    No skills to visualize
+                  </h3>
+
+                  <p className="text-sm text-slate-500">
+                    Add skills to see your knowledge network
+                  </p>
+                </div>
+              ) : (
+                <div className="h-80 relative rounded-lg overflow-hidden bg-[#0a0e1a]/60 border border-slate-800/50 shadow-inner group-hover:border-cyan-500/20 transition-all duration-300">
+                  <DashboardGraph skills={data.skills} isCompact={true} />
+                  <div className="absolute inset-0 bg-linear-to-t from-[#0a0e1a]/80 via-transparent to-transparent pointer-events-none" />
+                </div>
+              )}
             </Card>
 
-            <Card className="bg-[#0f1420]/80 border-slate-800/50">
-              <h2 className="text-sm font-bold text-slate-100 mb-6 flex items-center gap-2 tracking-tight">
-                Activity Timeline
-              </h2>
+            <Card
+              className="bg-[#0f1420]/80 border-slate-800/50 group"
+              title="Activity Timeline"
+            >
               <ActivityTimeline
                 data={recentActivities.data || []}
                 isLoading={recentActivities.isLoading}

@@ -1,6 +1,8 @@
-import { AnimatePresence, motion } from "framer-motion";
 import { LuClock, LuCircleAlert } from "react-icons/lu";
 import TimelineItem from "./components/TimelineItem";
+
+// eslint-disable-next-line no-unused-vars
+import { AnimatePresence, motion } from "framer-motion";
 
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
@@ -19,9 +21,13 @@ const groupActivities = (activities, now = new Date()) => {
   const groups = { Today: [], Yesterday: [], Earlier: [] };
   for (const activity of activities) {
     const days = getDayDiff(activity.logged_at, now);
-    if (days === 0) groups.Today.push(activity);
-    else if (days === 1) groups.Yesterday.push(activity);
-    else groups.Earlier.push(activity);
+    if (days === 0) {
+      groups.Today.push(activity);
+    } else if (days === 1) {
+      groups.Yesterday.push(activity);
+    } else {
+      groups.Earlier.push(activity);
+    }
   }
   return groups;
 };
@@ -30,7 +36,9 @@ const limitActivities = (grouped, max = 7) => {
   let count = 0;
   const result = {};
   for (const [group, activities] of Object.entries(grouped)) {
-    if (count >= max) break;
+    if (count >= max) {
+      break;
+    }
     const slice = activities.slice(0, max - count);
     if (slice.length) {
       result[group] = slice;
@@ -40,7 +48,6 @@ const limitActivities = (grouped, max = 7) => {
   return result;
 };
 
-// Skeleton amélioré avec effet de pulse Neural
 const TimelineSkeleton = () => (
   <div className="p-4 space-y-6" data-testid="timeline-skeleton">
     {Array.from({ length: 3 }).map((_, i) => (
@@ -56,7 +63,9 @@ const TimelineSkeleton = () => (
 );
 
 const ActivityTimeline = ({ data = [], isLoading, error, onActivityClick }) => {
-  if (isLoading) return <TimelineSkeleton />;
+  if (isLoading) {
+    return <TimelineSkeleton />;
+  }
 
   if (error) {
     return (
@@ -74,17 +83,22 @@ const ActivityTimeline = ({ data = [], isLoading, error, onActivityClick }) => {
 
   if (!data.length) {
     return (
-      <div className="flex flex-col items-center py-12 text-slate-600">
+      <div className="flex flex-col items-center justify-center text-center p-6">
         <div className="relative mb-4">
-          <LuClock size={32} className="opacity-20" />
+          <div className="w-12 h-12 flex items-center justify-center rounded-full bg-slate-800/50">
+            <LuClock className="text-slate-500" size={24} />
+          </div>
           <motion.div
+            className="absolute inset-0 border-2 border-dashed border-cyan-500/20 rounded-full scale-150 opacity-0 group-hover:opacity-100"
             animate={{ rotate: 360 }}
             transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-            className="absolute inset-0 border-2 border-dashed border-cyan-500/10 rounded-full scale-150"
           />
         </div>
-        <p className="text-sm font-medium tracking-tight">
-          No activity recorded.
+        <h3 className="text-base font-semibold text-slate-300 mb-1">
+          No activity recorded
+        </h3>
+        <p className="text-sm text-slate-500">
+          Your recent activities will appear here
         </p>
       </div>
     );
@@ -100,7 +114,9 @@ const ActivityTimeline = ({ data = [], isLoading, error, onActivityClick }) => {
 
       <div className="space-y-8">
         {Object.entries(limitedGroups).map(([group, activities]) => {
-          if (!activities.length) return null;
+          if (!activities.length) {
+            return null;
+          }
 
           return (
             <div key={group} className="relative">

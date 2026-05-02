@@ -5,8 +5,14 @@ import { Provider } from "jotai";
 import { RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as Toast from "@radix-ui/react-toast";
-import ToastComponent from "@shared/components/Toast/ToastComponent"
+import ToastComponent from "@shared/components/Toast/ToastComponent";
 import { router } from "./router";
+
+// Sora font
+import "@fontsource/sora/400.css";
+import "@fontsource/sora/500.css";
+import "@fontsource/sora/600.css";
+import "@fontsource/sora/700.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {

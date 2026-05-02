@@ -1,6 +1,5 @@
 import {
   fireEvent,
-  queryByText,
   render,
   screen,
   waitFor,

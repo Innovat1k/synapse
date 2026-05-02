@@ -1,6 +1,5 @@
-import { act, renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { useDataPurge } from "./useDataPurge";
-import { useAuth } from "@pages/UserAuthPage/hooks/useAuth";
 import { useToast } from "@shared/components/Toast/hooks/useToast";
 import { useQueryClient } from "@tanstack/react-query";
 import * as skillService from "@services/skillService";
@@ -148,7 +147,10 @@ describe("useDataPurge", () => {
 
     await result.current.handleReset();
 
-    expect(mockShowNotif).toHaveBeenCalledWith("Failed to delete data", "error");
+    expect(mockShowNotif).toHaveBeenCalledWith(
+      "Failed to delete data",
+      "error",
+    );
     expect(result.current.isDeleting).toBe(false);
   });
 });

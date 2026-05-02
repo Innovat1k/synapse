@@ -1,9 +1,5 @@
 @import "tailwindcss";
 
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-}
-
 .slider::-webkit-slider-thumb {
   appearance: none;
   height: 16px;
@@ -33,9 +29,6 @@
   }
 }
 
-/* ─────────────────────────────────────────────────────────
-   CSS VARIABLES (Pour les couleurs du thème)
-   ───────────────────────────────────────────────────────── */
 :root {
   --color-primary: #0a0e1a;
   --color-secondary: #0f1420;
@@ -51,9 +44,6 @@
   --color-danger: #fb7185;
 }
 
-/* ─────────────────────────────────────────────────────────
-   BASE (Ce que Tailwind ne fait pas)
-   ───────────────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
 }

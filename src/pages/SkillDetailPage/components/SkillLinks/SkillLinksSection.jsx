@@ -32,8 +32,8 @@ export const SkillLinksSection = ({ skillId, skill }) => {
 
   const isLoadingAny = inLoading || outLoading;
 
-  if (isLoadingAny) return <SkillLinksSkeleton />;
-  if (inError || outError) return null;
+  if (isLoadingAny) {return <SkillLinksSkeleton />;}
+  if (inError || outError) {return null;}
 
   const noLinks = incomingLinks.length === 0 && outgoingLinks.length === 0;
 
@@ -47,7 +47,7 @@ export const SkillLinksSection = ({ skillId, skill }) => {
   return (
     <section className="my-8">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-semibold text-slate-50">
+        <h3 className="text-lg sm:text-xl font-semibold text-slate-50">
           Skill Connections
         </h3>
 

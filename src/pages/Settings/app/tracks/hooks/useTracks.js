@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createTrack, fetchTracks, deleteTrack } from "@services/tracksService";
 import { useToast } from "@shared/components/Toast/hooks/useToast";
 import { useModal } from "@shared/components/Modal/hooks/useModal";

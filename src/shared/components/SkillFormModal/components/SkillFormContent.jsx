@@ -20,19 +20,13 @@ const SkillFormContent = ({
   onClose,
 }) => {
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95, y: 20 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95, y: 10 }}
-      transition={{ type: "spring", damping: 25, stiffness: 300 }}
-      className="relative"
-    >
+    <div className="relative">
       {/* Glow effect */}
       <div className="absolute inset-0 rounded-xl bg-linear-to-br from-transparent via-cyan-400/5 to-transparent pointer-events-none opacity-30" />
 
       <form
         onSubmit={methods.handleSubmit}
-        className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-8"
+        className="p-2 md:p-4 grid grid-cols-1 lg:grid-cols-2 gap-8"
       >
         {/* Left column */}
         <div className="space-y-6">
@@ -250,7 +244,7 @@ const SkillFormContent = ({
         </div>
 
         {/* Actions */}
-        <div className="lg:col-span-2 flex justify-end gap-3 pt-6 border-t border-slate-800/50 order-2 md:order-1">
+        <div className="lg:col-span-2 flex flex-col-reverse md:flex-row justify-end gap-3 pt-6 border-t border-slate-800/50 order-2 md:order-1">
           <button
             type="button"
             disabled={isSubmitting}
@@ -276,7 +270,7 @@ const SkillFormContent = ({
           </button>
         </div>
       </form>
-    </motion.div>
+    </div>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { LuClock, LuTriangleAlert, LuCircleAlert } from "react-icons/lu";
 import { useActivityForm } from "./hooks/useActivityForm";
 import ButtonSpinner from "../ButtonSpinner";
@@ -258,7 +258,7 @@ function ActivityFormModal({
             </div>
           </div>
 
-          <div className="md:col-span-2 flex flex-col sm:flex-row sm:justify-end gap-3 pt-6 border-t border-slate-800/50">
+          <div className="md:col-span-2 flex flex-col-reverse md:flex-row sm:flex-row sm:justify-end gap-3 pt-6 border-t border-slate-800/50">
             <button
               type="button"
               disabled={isSubmitting}
@@ -290,4 +290,3 @@ function ActivityFormModal({
 }
 
 export default ActivityFormModal;
-

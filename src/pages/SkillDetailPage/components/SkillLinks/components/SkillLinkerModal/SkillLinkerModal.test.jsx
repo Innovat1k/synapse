@@ -212,7 +212,7 @@ describe("SkillLinkerModal", () => {
 
       await user.click(screen.getByRole("button", { name: /node js/i }));
       expect(
-        screen.getByLabelText(/Checking for conflicts…/i),
+        screen.getByLabelText(/Checking for conflicts.../i),
       ).toBeInTheDocument();
     });
 

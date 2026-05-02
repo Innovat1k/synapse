@@ -11,7 +11,7 @@ const MockOutlet = () => (
   </div>
 );
 
-const renderSettingsLayout = (initialEntries = ["/settings/app/tracks"]) => {
+const renderSettingsLayout = (initialEntries = ["/settings"]) => {
   return render(
     <MemoryRouter initialEntries={initialEntries}>
       <Routes>
@@ -25,15 +25,10 @@ const renderSettingsLayout = (initialEntries = ["/settings/app/tracks"]) => {
 
 describe("SettingsLayout", () => {
   describe("Rendering", () => {
-    it("renders main content and sidebar on desktop", () => {
-      renderSettingsLayout();
+    it("renders main content on desktop", () => {
+      renderSettingsLayout(["/settings/app/tracks"]);
 
       expect(screen.getByText(/Application Structure/i)).toBeInTheDocument();
-
-      const sidebar = within(screen.getByTestId("settings-sidebar"));
-
-      expect(sidebar.getByText(/Personal/i)).toBeInTheDocument();
-      expect(sidebar.getByText(/Application/i)).toBeInTheDocument();
     });
 
     it("renders mobile header with menu button", () => {

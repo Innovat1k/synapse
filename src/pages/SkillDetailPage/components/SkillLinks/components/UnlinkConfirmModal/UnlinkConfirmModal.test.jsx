@@ -54,7 +54,7 @@ describe("UnlinkConfirmModal", () => {
     renderComponent({ isLoading: true });
 
     expect(screen.getByRole("heading", { name: /sever synapse?/i }));
-    expect(screen.getByRole("button", { name: /sever!/i })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /severing.../i })).toBeDisabled();
     expect(screen.getByText(/severing.../i)).toBeInTheDocument();
   });
 

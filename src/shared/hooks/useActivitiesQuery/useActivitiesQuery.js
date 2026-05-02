@@ -10,6 +10,7 @@ export const useActivitiesQuery = (skillId) => {
   const { data: activities = [], isLoading } = useQuery({
     queryKey: ["skill-activities", skillId],
     queryFn: () => fetchActivitiesBySkill(skillId),
+    enabled: !!skillId,
     staleTime: 5 * 60 * 1000,
   });
 

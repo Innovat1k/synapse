@@ -61,7 +61,7 @@ function PurgeActivitiesModal({
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="flex-1 px-6 py-2.5 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700 text-slate-200 rounded-lg transition-colors duration-200 font-medium"
+                  className="flex-1 px-6 py-2.5 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700 text-slate-200 rounded-lg transition-colors duration-200 font-medium cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -115,7 +115,7 @@ function PurgeActivitiesModal({
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="flex-1 px-6 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-lg transition-colors duration-200 font-medium"
+                  className="flex-1 px-6 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-lg transition-colors duration-200 font-medium cursor-pointer"
                 >
                   Cancel
                 </button>

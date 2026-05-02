@@ -1,6 +1,12 @@
 import { ResourceForm } from "../../components/ResourceForm/ResourceForm";
 import { TrackList } from "./components/TrackList";
-import { LuPlus, LuX, LuLayers, LuCircleAlert } from "react-icons/lu";
+import {
+  LuPlus,
+  LuX,
+  LuLayers,
+  LuCircleAlert,
+  LuArrowLeft,
+} from "react-icons/lu";
 import ButtonSpinner from "@shared/components/ButtonSpinner";
 import { useTracks } from "./hooks/useTracks";
 import { useResourceForm } from "../../components/ResourceForm/hooks/useResourceForm";
@@ -8,6 +14,7 @@ import { ConfirmDeleteTrack } from "./components/ConfirmDeleteTrack";
 
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 
 export const TracksPage = () => {
   const { data, status, createForm, deleteModal, actions } = useTracks();
@@ -42,25 +49,35 @@ export const TracksPage = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 pb-24">
-      {/* HEADER : Adaptatif */}
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <LuLayers size={18} className="text-cyan-400/60" />
-            <span className="text-xs font-bold uppercase tracking-widest text-slate-600">
-              Architecture
-            </span>
+    <div className="m-auto">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mb-8">
+          {/* Back Button */}
+          <Link
+            to="/settings"
+            className="hidden md:inline-flex items-center gap-2 px-3 py-2 text-sm text-slate-400 
+                   hover:text-cyan-400 hover:bg-slate-800/50 
+                   rounded-lg border border-transparent hover:border-slate-700/50 
+                   transition-all group w-fit shrink-0"
+            aria-label="Go back to Settings"
+          >
+            <LuArrowLeft
+              className="group-hover:-translate-x-0.5 transition-transform"
+              size={18}
+            />
+            <span className="font-medium hidden sm:inline">Back</span>
+          </Link>
+
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-50 capitalize tracking-tight">
+              Learning Tracks
+            </h1>
+            <p className="text-sm text-slate-400 mt-1 sm:mt-2 max-w-2xl">
+              Organize your skill ecosystem into structured thematic paths.
+            </p>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-slate-50">
-            Learning Tracks
-          </h1>
-          <p className="text-slate-500 text-sm max-w-md leading-relaxed">
-            Organize your skill ecosystem into structured thematic paths.
-          </p>
         </div>
 
-        {/* Button : Pleine largeur sur mobile, auto sur desktop */}
         {!createForm.isOpen && (
           <button
             onClick={createForm.open}
@@ -73,7 +90,6 @@ export const TracksPage = () => {
         )}
       </header>
 
-      {/* ZONE FORMULAIRE : Full screen-ish sur mobile */}
       <AnimatePresence>
         {createForm.isOpen && (
           <motion.div
@@ -110,7 +126,6 @@ export const TracksPage = () => {
         )}
       </AnimatePresence>
 
-      {/* LISTE OU EMPTY STATE */}
       <section>
         {data.tracks.length === 0 ? (
           <div className="text-center py-20 bg-slate-900/20 border border-dashed border-slate-800/50 rounded-xl px-6">

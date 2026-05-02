@@ -133,9 +133,11 @@ export const useAuth = () => {
     try {
       const supabase = await getSupabase();
       const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       resetForm();
-    } catch (error) {
+    } catch {
       navigate("/auth", { replace: true });
     } finally {
       setTimeout(() => {

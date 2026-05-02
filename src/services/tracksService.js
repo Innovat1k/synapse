@@ -45,7 +45,7 @@ export const deleteTrack = async (trackId) => {
 
 // Deletes all tracks associated with a user ID from Supabase
 export const deleteUserTracks = async (userId) => {
-  if (!userId) return { error: new Error("No user_id provided") };
+  if (!userId) {return { error: new Error("No user_id provided") };}
 
   const supabase = await getSupabase();
   const { error } = await supabase
@@ -53,6 +53,6 @@ export const deleteUserTracks = async (userId) => {
     .delete()
     .eq("user_id", userId);
 
-  if (error) throw error;
+  if (error) {throw error;}
   return { success: true };
 };

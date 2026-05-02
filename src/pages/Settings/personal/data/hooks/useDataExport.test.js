@@ -1,6 +1,5 @@
-import { act, renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { useDataExport } from "./useDataExport";
-import { useAuth } from "@pages/UserAuthPage/hooks/useAuth";
 import { useToast } from "@shared/components/Toast/hooks/useToast";
 import { useSkillsQuery } from "@shared/hooks/useSkillsQuery/useSkillsQuery";
 import { useAllActivitiesQuery } from "@shared/hooks/useActivitiesQuery/useActivitiesQuery";

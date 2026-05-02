@@ -41,8 +41,7 @@ export const useDataExport = () => {
       URL.revokeObjectURL(url);
 
       showNotif("Data exported successfully", "success");
-    } catch (error) {
-      console.error("Export error:", error);
+    } catch {
       showNotif("Failed to export data", "error");
     } finally {
       setIsExporting(false);

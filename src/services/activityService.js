@@ -30,7 +30,7 @@ export const fetchActivities = async (userId) => {
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
 
-  if (error) throw error;
+  if (error) {throw error;}
   return data || [];
 };
 
@@ -87,7 +87,7 @@ export const purgeActivitiesBySkill = async (skillId) => {
 
 // Deletes all activities associated with a user ID from Supabase
 export const deleteUserActivities = async (userId) => {
-  if (!userId) return { error: new Error("No user_id provided") };
+  if (!userId) {return { error: new Error("No user_id provided") };}
 
   const supabase = await getSupabase();
   const { error } = await supabase
@@ -95,6 +95,6 @@ export const deleteUserActivities = async (userId) => {
     .delete()
     .eq("user_id", userId);
 
-  if (error) throw error;
+  if (error) {throw error;}
   return { success: true };
 };

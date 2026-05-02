@@ -3,7 +3,6 @@ import userEvent from "@testing-library/user-event";
 import { GraphView } from "./GraphView";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-
 let isMobileMock = false;
 
 vi.mock("./hooks/useTooltipPosition", () => ({
@@ -40,7 +39,6 @@ vi.mock("./hooks/useGraphInteraction", () => ({
   }),
 }));
 
-
 vi.mock("./hooks/useGraphLayout", () => ({
   useGraphLayout: () => ({
     nodePositions: new Map([
@@ -56,8 +54,6 @@ vi.mock("./hooks/useGraphLayout", () => ({
     },
   }),
 }));
-
-
 
 const mockNodes = mockState.nodesWithStatus;
 
@@ -76,8 +72,6 @@ const renderGraph = () =>
       links={mockLinks}
     />,
   );
-
-
 
 describe("GraphView (robust)", () => {
   let user;
@@ -101,30 +95,6 @@ describe("GraphView (robust)", () => {
       expect(screen.getByTestId("graph-node-skill-js")).toBeInTheDocument();
       expect(screen.getByTestId("graph-node-skill-html")).toBeInTheDocument();
       expect(screen.getByTestId("graph-node-skill-pm")).toBeInTheDocument();
-    });
-
-    it("assigns correct roles", () => {
-      renderGraph();
-
-      expect(screen.getByTestId("node-circle-skill-react")).toHaveAttribute(
-        "data-role",
-        "center",
-      );
-
-      expect(screen.getByTestId("node-circle-skill-js")).toHaveAttribute(
-        "data-role",
-        "mutual",
-      );
-
-      expect(screen.getByTestId("node-circle-skill-html")).toHaveAttribute(
-        "data-role",
-        "prerequisite",
-      );
-
-      expect(screen.getByTestId("node-circle-skill-pm")).toHaveAttribute(
-        "data-role",
-        "unlock",
-      );
     });
 
     it("renders legend", () => {

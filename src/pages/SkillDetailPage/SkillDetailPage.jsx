@@ -12,10 +12,12 @@ import { SkillLinksSection } from "./components/SkillLinks/SkillLinksSection";
 import { useGraphModal } from "./components/GraphModal/hooks/useGraphModal";
 import { GraphModal } from "./components/GraphModal/GraphModal";
 import { useSubgraph } from "./components/GraphModal/hooks/useSubgraph";
-import { AnimatePresence, motion } from "framer-motion";
 import { GraphView } from "./components/GraphModal/GraphView";
 import ButtonSpinner from "@shared/components/ButtonSpinner";
 import { useTracks } from "../Settings/app/tracks/hooks/useTracks";
+
+// eslint-disable-next-line no-unused-vars
+import { AnimatePresence, motion } from "framer-motion";
 
 function SkillDetailPage() {
   const { skills } = useOutletContext();
@@ -46,12 +48,12 @@ function SkillDetailPage() {
         isSubmitting={activityPurge.isSubmitting}
       />
 
-      <div className="min-h-screen bg-[#0a0e1a] text-slate-50 p-2 md:p-6">
+      <div className="min-h-screen bg-[#0a0e1a] text-slate-50 p-4 md:p-0">
         <div className="max-w-7xl mx-auto">
           {/* --- HEADER SECTION --- */}
           <div className="flex justify-between items-start gap-4 mb-8 md:mb-10">
             <div className="space-y-1 w-full md:w-auto">
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-50 wrap-break-word">
+              <h1 className="text-2xl md:text-3xl font-black tracking-tight text-slate-50 wrap-break-word">
                 Skill: <span className="text-cyan-400">{skill?.name}</span>
               </h1>
               <Link

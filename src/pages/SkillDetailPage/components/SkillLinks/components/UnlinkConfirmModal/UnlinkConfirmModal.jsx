@@ -77,7 +77,7 @@ export const UnlinkConfirmModal = ({
                 color="text-rose-500"
               />
             ) : (
-              "Sever Synapse"
+              "Sever!"
             )}
           </button>
         </div>

@@ -1,6 +1,9 @@
 import { LuTag, LuLayers } from "react-icons/lu";
 import { Link } from "react-router-dom";
 
+// eslint-disable-next-line no-unused-vars
+import { motion } from "framer-motion";
+
 // Renders filtered skills as interactive cards with loading/empty states; each links to its detail page.
 export const SkillsGrid = ({ skills = [], isLoading = false }) => {
   if (isLoading) {
@@ -18,9 +21,24 @@ export const SkillsGrid = ({ skills = [], isLoading = false }) => {
 
   if (skills.length === 0) {
     return (
-      <div className="text-center py-8 text-slate-400">
-        <p className="text-sm">No skills found for this track.</p>
-        <p className="text-xs mt-1">Add your first skill to get started.</p>
+      <div className="flex flex-col items-center justify-center text-center p-6">
+        <div className="relative mb-4">
+          <div className="w-12 h-12 flex items-center justify-center rounded-full bg-slate-800/50">
+            <LuLayers className="text-slate-500" size={24} />
+          </div>
+
+          <motion.div
+            className="absolute inset-0 border-2 border-dashed border-cyan-500/20 rounded-full scale-150 opacity-0 group-hover:opacity-100"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+          />
+        </div>
+        <h3 className="text-base font-semibold text-slate-300 mb-1">
+          No skills found
+        </h3>
+        <p className="text-sm text-slate-500">
+          Add your first skill to get started
+        </p>
       </div>
     );
   }

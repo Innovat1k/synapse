@@ -1,0 +1,34 @@
+<!-- /public/synapse.svg -->
+<svg width="144" height="144" viewBox="0 0 144 144" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22D3EE"/>
+      <stop offset="50%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#D946EF"/>
+    </linearGradient>
+    
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Top Horizontal Curve (S top) -->
+  <path d="M45 50 Q72 40 95 50" stroke="url(#gradient)" stroke-width="4" stroke-linecap="round" opacity="0.8" fill="none"/>
+  
+  <!-- Middle Diagonal (S middle) -->
+  <line x1="45" y1="50" x2="95" y2="90" stroke="url(#gradient)" stroke-width="3" opacity="0.5"/>
+  
+  <!-- Bottom Horizontal Curve (S bottom) -->
+  <path d="M95 90 Q72 100 45 90" stroke="url(#gradient)" stroke-width="4" stroke-linecap="round" opacity="0.8" fill="none"/>
+  
+  <!-- 5 Nodes -->
+  <circle cx="45" cy="50" r="5.5" fill="#22D3EE" filter="url(#glow)"/>
+  <circle cx="72" cy="45" r="5" fill="#6366F1" filter="url(#glow)"/>
+  <circle cx="72" cy="70" r="4.5" fill="#22D3EE" filter="url(#glow)" opacity="0.9"/>
+  <circle cx="95" cy="90" r="5.5" fill="#A78BFA" filter="url(#glow)"/>
+  <circle cx="45" cy="90" r="5.5" fill="#D946EF" filter="url(#glow)"/>
+</svg>

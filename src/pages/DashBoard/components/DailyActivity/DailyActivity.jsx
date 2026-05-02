@@ -9,7 +9,10 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
-import { LuClock, LuCircleAlert } from "react-icons/lu";
+import { LuClock, LuCircleAlert, LuCalendar } from "react-icons/lu";
+
+// eslint-disable-next-line no-unused-vars
+import { motion } from "framer-motion";
 
 const DailyActivity = ({
   data = [],
@@ -64,13 +67,21 @@ const DailyActivity = ({
 
   if (!chartData.length) {
     return (
-      <div
-        className="flex flex-col items-center justify-center text-center p-6 text-slate-500"
-        style={{ height }}
-      >
-        <LuClock size={24} />
-        <p className="text-sm mt-2">No activities this week</p>
-        <p className="text-xs opacity-70 mt-1">
+      <div className="flex flex-col items-center justify-center text-center p-6">
+        <div className="relative mb-4">
+          <div className="w-12 h-12 flex items-center justify-center rounded-full bg-slate-800/50">
+            <LuCalendar className="text-slate-500" size={24} />
+          </div>
+          <motion.div
+            className="absolute inset-0 border-2 border-dashed border-cyan-500/20 rounded-full scale-150 opacity-0 group-hover:opacity-100"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+          />
+        </div>
+        <h3 className="text-base font-semibold text-slate-300 mb-1">
+          No activities this week
+        </h3>
+        <p className="text-sm text-slate-500">
           Your daily progress will appear here
         </p>
       </div>

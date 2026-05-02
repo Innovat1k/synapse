@@ -17,7 +17,7 @@ const SkillDeleteContent = ({
       animate={{ scale: 1, opacity: 1, y: 0 }}
       exit={{ scale: 0.9, opacity: 0, y: 20 }}
       transition={{ type: "spring", damping: 25, stiffness: 300 }}
-      className="relative p-6"
+      className="relative p-2"
     >
       {/* Glow effect */}
       <div className="absolute inset-0 rounded-xl bg-linear-to-br from-transparent via-rose-500/5 to-transparent pointer-events-none opacity-40" />

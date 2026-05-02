@@ -5,6 +5,8 @@ import { useAtomValue } from "jotai";
 import { formDataAtom, isLoginAtom, touchedAtom } from "@atoms/formDataAtom";
 import { useAuth } from "./hooks/useAuth";
 import { useFormValidation } from "./hooks/useFormValidation";
+
+// eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
 
 function UserAuthPage() {

@@ -1,5 +1,5 @@
-import * as Avatar from "@radix-ui/react-avatar";
 import { useState } from "react";
+import * as Avatar from "@radix-ui/react-avatar";
 import { LuLogOut } from "react-icons/lu";
 import { Link } from "react-router-dom";
 
@@ -19,7 +19,7 @@ function Header({ signOut, user }) {
       >
         <div className="relative w-9 h-9 flex items-center justify-center">
           <img
-            src="/logo-neural.png"
+            src="/synapse.svg"
             alt="Synapse Logo"
             className="w-full h-full object-contain drop-shadow-[0_0_8px_rgba(34,211,238,0.4)]"
           />
@@ -35,9 +35,6 @@ function Header({ signOut, user }) {
             <span className="text-xs font-bold text-slate-100 truncate max-w-45">
               {user?.email}
             </span>
-            <p className="text-[10px] text-cyan-400 font-medium uppercase tracking-widest">
-              {user?.region || "Neural Node"}
-            </p>
           </div>
 
           <button
@@ -45,13 +42,11 @@ function Header({ signOut, user }) {
             disabled={isSigningOut}
             className={`
     flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 border group
-    /* Typo ciselée */
     text-[10px] font-bold uppercase tracking-[0.15em]
-    /* Interaction dynamique du curseur */
     ${
       isSigningOut
         ? "bg-slate-800/50 text-slate-500 border-slate-700/30 cursor-not-allowed"
-        : "bg-[#1a2332] hover:bg-[#232d3f] text-slate-200 border-blue-800/50 hover:border-rose-500/50 active:scale-95 cursor-pointer shadow-sm"
+        : "bg-[#1a2332] hover:bg-[#232d3f] text-slate-200 border-slate-800/50 hover:border-rose-500/50 active:scale-95 cursor-pointer shadow-sm"
     }
   `}
           >

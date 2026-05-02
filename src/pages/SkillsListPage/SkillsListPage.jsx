@@ -33,10 +33,10 @@ const SkillsListPage = () => {
         )}
       </AnimatePresence>
 
-      <div className="min-h-screen bg-[#0a0e1a] text-slate-50 p-2 md:p-6 transition-colors duration-500">
+      <div className="min-h-screen bg-[#0a0e1a] text-slate-50 p-4 md:p-0 transition-colors duration-500">
         {/* Header Section */}
         <div className="flex items-center gap-4 mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-50">
+          <h1 className="text-2xl md:text-3xl font-black tracking-tight text-slate-50 capitalize">
             Skill Management
           </h1>
 

@@ -1,5 +1,9 @@
-import { useState } from "react";
-import { LuDownload, LuTrash2, LuTriangleAlert } from "react-icons/lu";
+import {
+  LuArrowLeft,
+  LuDownload,
+  LuTrash2,
+  LuTriangleAlert,
+} from "react-icons/lu";
 import { Modal } from "@shared/components/Modal/Modal";
 import { useDataExport } from "./hooks/useDataExport";
 import { useDataPurge } from "./hooks/useDataPurge";
@@ -10,6 +14,7 @@ import { useTracksQuery } from "@shared/hooks/useTracksQuery";
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const DataPrivacyPage = () => {
   const { isExporting, handleExport } = useDataExport();
@@ -36,13 +41,35 @@ const DataPrivacyPage = () => {
       transition={{ duration: 0.3 }}
       className="space-y-8"
     >
-      {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold text-slate-50">Data & Privacy</h2>
-        <p className="text-slate-500 mt-2">
-          Manage your data, export or delete your account information.
-        </p>
-      </div>
+      <header className="mb-12 px-1">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mb-8">
+          {/* Back Button – Desktop only (mobile has it in header) */}
+          <Link
+            to="/settings"
+            className="hidden md:inline-flex items-center gap-2 px-3 py-2 text-sm text-slate-400 
+                     hover:text-cyan-400 hover:bg-slate-800/50 
+                     rounded-lg border border-transparent hover:border-slate-700/50 
+                     transition-all group w-fit shrink-0"
+            aria-label="Go back to Settings"
+          >
+            <LuArrowLeft
+              className="group-hover:-translate-x-0.5 transition-transform"
+              size={18}
+            />
+            <span className="font-medium hidden sm:inline">Back</span>
+          </Link>
+
+          {/* Title Section */}
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-50 capitalize tracking-tight">
+              Data & Privacy
+            </h1>
+            <p className="text-sm text-slate-400 mt-1 sm:mt-2 max-w-2xl">
+              Manage your data, export or delete your account information.
+            </p>
+          </div>
+        </div>
+      </header>
 
       {/* Export Data */}
       <div className="p-6 bg-slate-900/50 border border-slate-800/50 rounded-xl hover:border-slate-700/50 transition-all duration-200">
@@ -135,27 +162,34 @@ const DataPrivacyPage = () => {
             isOpened={isResetModalOpen}
             onClose={() => setIsResetModalOpen(false)}
             title="Delete All Data?"
-            description="This will permanently delete all your skills, activities, tracks, and progress. This action cannot be undone."
           >
-            <div className="flex flex-col sm:flex-row gap-3 justify-end mt-6">
-              <button
-                type="button"
-                onClick={() => setIsResetModalOpen(false)}
-                className="flex-1 px-6 py-2.5 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700 text-slate-200 rounded-lg transition-colors duration-200 text-sm font-medium cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleReset}
-                className="flex-1 sm:flex-none bg-rose-600 hover:bg-rose-700 text-white px-6 py-2.5 rounded-lg transition-colors duration-200 font-bold text-sm cursor-pointer active:scale-95"
-              >
-                {isDeleting ? (
-                  <ButtonSpinner label="Deleting data..." />
-                ) : (
-                  "Yes, Delete Everything"
-                )}
-              </button>
+            <div className="relative space-y-6">
+              <p className="text-slate-300 text-sm leading-relaxed">
+                This will permanently delete all your skills, activities,
+                tracks, and progress. This action cannot be undone.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-end mt-6">
+                <button
+                  type="button"
+                  onClick={() => setIsResetModalOpen(false)}
+                  className="flex-1 px-6 py-2.5 order-2 md:order-1 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700 text-slate-200 rounded-lg transition-colors duration-200 text-sm font-medium cursor-pointer"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="flex-1 sm:flex-none order-1 md:order-2 bg-rose-600 hover:bg-rose-700 text-white px-6 py-2.5 rounded-lg transition-colors duration-200 font-bold text-sm cursor-pointer active:scale-95"
+                >
+                  {isDeleting ? (
+                    <ButtonSpinner label="Deleting data..." />
+                  ) : (
+                    "Yes, Delete Everything"
+                  )}
+                </button>
+              </div>
             </div>
           </Modal>
         )}

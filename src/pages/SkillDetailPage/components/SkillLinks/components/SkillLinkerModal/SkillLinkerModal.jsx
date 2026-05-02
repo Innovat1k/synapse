@@ -9,6 +9,8 @@ import {
 import { Modal } from "@shared/components/Modal/Modal";
 import { useSkillLinkerForm } from "./hooks/useSkillLinkerForm";
 import ButtonSpinner from "@shared/components/ButtonSpinner";
+
+// eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
 
 export const SkillLinkerModal = ({
@@ -219,7 +221,10 @@ export const SkillLinkerModal = ({
                 }`}
               >
                 {loader.isChecking ? (
-                  <ButtonSpinner label="Checking..." color="text-white" />
+                  <ButtonSpinner
+                    label="Checking for conflicts..."
+                    color="text-white"
+                  />
                 ) : loader.isCreating ? (
                   <ButtonSpinner label="Linking..." />
                 ) : (

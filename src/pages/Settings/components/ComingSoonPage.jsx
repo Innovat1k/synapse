@@ -1,4 +1,6 @@
 import { LuClock } from "react-icons/lu";
+
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
 const ComingSoonPage = () => {
