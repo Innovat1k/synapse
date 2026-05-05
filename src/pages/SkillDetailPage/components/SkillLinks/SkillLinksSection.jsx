@@ -10,6 +10,7 @@ import { SkillLinkItem } from "./components/SkillLinkItem.jsx";
 import { UnlinkConfirmModal } from "./components/UnlinkConfirmModal/UnlinkConfirmModal.jsx";
 import { useSkillLinkEditor } from "./components/UnlinkConfirmModal/hooks/useSkillLinkEditor.js";
 import { AnimatePresence } from "framer-motion";
+import { useIsOnline } from "@shared/components/utils/NetworkStatus/hooks/useNetworkStatus";
 
 export const SkillLinksSection = ({ skillId, skill }) => {
   const {
@@ -32,8 +33,14 @@ export const SkillLinksSection = ({ skillId, skill }) => {
 
   const isLoadingAny = inLoading || outLoading;
 
-  if (isLoadingAny) {return <SkillLinksSkeleton />;}
-  if (inError || outError) {return null;}
+  const isOnline = useIsOnline();
+
+  if (isLoadingAny) {
+    return <SkillLinksSkeleton />;
+  }
+  if (inError || outError) {
+    return null;
+  }
 
   const noLinks = incomingLinks.length === 0 && outgoingLinks.length === 0;
 
@@ -54,9 +61,9 @@ export const SkillLinksSection = ({ skillId, skill }) => {
         <button
           type="button"
           title={noLinks ? "No connections to edit" : ""}
-          disabled={noLinks}
+          disabled={noLinks || !isOnline}
           onClick={methods.toggleEditing}
-          className={`text-xs font-bold px-4 py-1.5 rounded-full transition-all border flex items-center justify-center min-w-16.25 ${
+          className={`text-xs font-bold px-4 py-1.5 rounded-full transition-all border flex items-center justify-center min-w-16.25 disabled:opacity-50 ${
             noLinks
               ? "cursor-not-allowed opacity-30 grayscale"
               : "cursor-pointer active:scale-95"
@@ -85,7 +92,7 @@ export const SkillLinksSection = ({ skillId, skill }) => {
               <button
                 onClick={() => openLinkerModal("incoming")}
                 disabled={isEditing}
-                className={`p-1.5 rounded-lg transition-colors cursor-pointer border active:scale-95 ${
+                className={`p-1.5 rounded-lg transition-colors cursor-pointer border active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${
                   isEditing
                     ? "border-amber-300/20 bg-amber-300/5 text-amber-300/40 opacity-60"
                     : "border-amber-300/30 bg-amber-300/10 text-amber-300 hover:bg-amber-300/20"
@@ -130,10 +137,10 @@ export const SkillLinksSection = ({ skillId, skill }) => {
               </h4>
               <button
                 onClick={() => openLinkerModal("outgoing")}
-                disabled={isEditing}
-                className={`p-1.5 rounded-lg transition-colors cursor-pointer border active:scale-95 ${
+                disabled={isEditing || !isOnline}
+                className={`p-1.5 rounded-lg transition-colors cursor-pointer border active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 ${
                   isEditing
-                    ? "border-cyan-400/20 bg-cyan-400/5 text-cyan-400/40 opacity-60"
+                    ? "border-cyan-400/20 bg-cyan-400/5 text-cyan-400/40"
                     : "border-cyan-400/30 bg-cyan-400/10 text-cyan-400 hover:bg-cyan-400/20"
                 }`}
                 aria-label={

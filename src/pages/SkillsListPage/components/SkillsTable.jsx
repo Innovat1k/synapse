@@ -2,6 +2,7 @@ import { LuPencil, LuTrash2 } from "react-icons/lu";
 import { Link } from "react-router-dom";
 import TableHead from "./TableHead";
 import { formatDate } from "@shared/utils/utils";
+import { useIsOnline } from "@shared/components/utils/NetworkStatus/hooks/useNetworkStatus";
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
@@ -13,6 +14,8 @@ function SkillsTable({
   handleSort,
   isLoading,
 }) {
+  const isOnline = useIsOnline();
+
   return (
     <div
       className="hidden md:block overflow-x-auto"
@@ -86,16 +89,18 @@ function SkillsTable({
                   <td className="py-3 px-6 text-right">
                     <div className="flex justify-end gap-3">
                       <button
-                        className="text-cyan-400 hover:text-cyan-300 transition-colors cursor-pointer"
+                        className="text-cyan-400 hover:text-cyan-300 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         aria-label={`Edit skill ${skill.name}`}
                         onClick={() => methods.openEditModal(skill)}
+                        disabled={!isOnline}
                       >
                         <LuPencil size={18} />
                       </button>
                       <button
-                        className="text-rose-400 hover:text-rose-300 transition-colors cursor-pointer"
+                        className="text-rose-400 hover:text-rose-300 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         aria-label={`Delete skill ${skill.name}`}
                         onClick={() => methods.openDeleteModal(skill)}
+                        disabled={!isOnline}
                       >
                         <LuTrash2 size={18} />
                       </button>

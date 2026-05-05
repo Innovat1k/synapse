@@ -54,7 +54,7 @@ describe("Dashboard – Graph Rendering and Interaction", () => {
 
     await user.click(screen.getByRole("button", { name: /expand graph/i }));
     expect(
-      screen.getByRole("heading", { name: /knowledge network/i }),
+      screen.getByRole("heading", { name: /knowledge graph/i }),
     ).toBeInTheDocument();
 
     const knowledgeGraph = screen.getByTestId("knowledge-graph-modal-content");
@@ -70,7 +70,7 @@ describe("Dashboard – Graph Rendering and Interaction", () => {
 
     await user.click(screen.getByRole("button", { name: /expand graph/i }));
     expect(
-      screen.getByRole("heading", { name: /knowledge network/i }),
+      screen.getByRole("heading", { name: /knowledge graph/i }),
     ).toBeInTheDocument();
 
     const trackSelect = screen.getByRole("combobox", { name: /track/i });
@@ -95,7 +95,7 @@ describe("Dashboard – Graph Rendering and Interaction", () => {
 
     await user.click(screen.getByRole("button", { name: /expand graph/i }));
     expect(
-      screen.getByRole("heading", { name: /knowledge network/i }),
+      screen.getByRole("heading", { name: /knowledge graph/i }),
     ).toBeInTheDocument();
 
     const categorySelect = screen.getByRole("combobox", { name: /category/i });

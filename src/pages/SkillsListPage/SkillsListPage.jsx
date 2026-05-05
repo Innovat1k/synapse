@@ -5,6 +5,7 @@ import SkillFormModal from "@shared/components/ui/SkillFormModal/SkillFormModal"
 import SkillsTable from "./components/SkillsTable";
 import SkillsCard from "./components/SkillsCard";
 import { useOutletContext } from "react-router-dom";
+import { useIsOnline } from "@shared/components/utils/NetworkStatus/hooks/useNetworkStatus";
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
@@ -16,6 +17,8 @@ const SkillsListPage = () => {
   const { skillsCategory, search, sortStates, handleSort } =
     useSkillsList(skills);
   const { modal, isSubmitting, selectedSkill, methods } = useSkillModal();
+
+  const isOnline = useIsOnline();
 
   return (
     <>
@@ -99,7 +102,8 @@ const SkillsListPage = () => {
           {/* Add Skill Button */}
           <button
             onClick={methods.openCreateModal}
-            className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl transition-all duration-200 font-bold text-xs capitalize tracking-widest bg-linear-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white shadow-lg shadow-cyan-500/30 active:scale-95 cursor-pointer whitespace-nowrap"
+            className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl transition-all duration-200 font-bold text-xs capitalize tracking-widest bg-linear-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white shadow-lg shadow-cyan-500/30 active:scale-95 cursor-pointer whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!isOnline}
           >
             <LuPlus size={18} />
             <span>Add new skill</span>
@@ -154,7 +158,8 @@ const SkillsListPage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.25, duration: 0.3 }}
                   onClick={methods.openCreateModal}
-                  className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-linear-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white text-xs font-bold uppercase tracking-widest shadow-lg shadow-cyan-500/20 active:scale-95 transition-all cursor-pointer"
+                  className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-linear-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white text-xs font-bold uppercase tracking-widest shadow-lg shadow-cyan-500/20 active:scale-95 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={!isOnline}
                 >
                   <LuPlus size={16} />
                   Add a skill

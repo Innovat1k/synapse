@@ -11,6 +11,7 @@ import ButtonSpinner from "@shared/components/ui/ButtonSpinner";
 import { useTracks } from "./hooks/useTracks";
 import { useResourceForm } from "../../components/ResourceForm/hooks/useResourceForm";
 import { ConfirmDeleteTrack } from "./components/ConfirmDeleteTrack";
+import { useIsOnline } from "@shared/components/utils/NetworkStatus/hooks/useNetworkStatus";
 
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
@@ -22,6 +23,8 @@ export const TracksPage = () => {
   const { state, methods, categories } = useResourceForm({
     onSubmit: actions.create,
   });
+
+  const isOnline = useIsOnline();
 
   if (status.isLoading) {
     return (
@@ -81,8 +84,9 @@ export const TracksPage = () => {
         {!createForm.isOpen && (
           <button
             onClick={createForm.open}
-            className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold rounded-xl transition-all duration-200 active:scale-95 shadow-lg shadow-cyan-500/20 cursor-pointer"
+            className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold rounded-xl transition-all duration-200 active:scale-95 shadow-lg shadow-cyan-500/20 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             type="button"
+            disabled={!isOnline}
           >
             <LuPlus size={20} />
             <span>New Track</span>
@@ -141,8 +145,9 @@ export const TracksPage = () => {
             </p>
             <button
               onClick={createForm.open}
-              className="mt-6 text-cyan-400 hover:text-cyan-300 font-bold text-sm underline underline-offset-2 decoration-cyan-500/30 hover:decoration-cyan-500/50 transition-all duration-200 cursor-pointer"
+              className="mt-6 text-cyan-400 hover:text-cyan-300 font-bold text-sm underline underline-offset-2 decoration-cyan-500/30 hover:decoration-cyan-500/50 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               type="button"
+              disabled={!isOnline}
             >
               Initialize first track
             </button>

@@ -130,7 +130,7 @@ export const useActivityForm = ({
     return {
       ...activityData,
       skill_id: activityData.skill_id,
-      track_id: selected_skill?.track_id || "default-track",
+      track_id: selected_skill?.track_id || null,
       logged_at: isoLoggedAt,
       duration_minutes: formatMinutes(durationData),
     };

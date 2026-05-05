@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
 export const Card = ({
@@ -38,7 +39,7 @@ export const Card = ({
           <div className="flex items-start justify-between mb-6">
             <div className="flex flex-col gap-1">
               {title && (
-                <h2 className="text-sm font-bold text-slate-100 tracking-tight">
+                <h2 className="text-sm font-bold text-slate-100 tracking-tight capitalize">
                   {title}
                 </h2>
               )}

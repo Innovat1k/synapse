@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from "react";
+import React, { useState } from "react";
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
@@ -39,8 +39,10 @@ import { useDailyActivity } from "./components/DailyActivity/hooks/useDailyActiv
 import ActivityFormModal from "@shared/components/ui/ActivityFormModal/ActivityFormModal";
 import SkillFormModal from "@shared/components/ui/SkillFormModal/SkillFormModal";
 import { containerVariants, itemVariants } from "@shared/utils/animations";
+import { useIsOnline } from "@shared/components/utils/NetworkStatus/hooks/useNetworkStatus";
 
 const Dashboard = () => {
+  const isOnline = useIsOnline();
   const [isFullscreenGraph, setIsFullscreenGraph] = useState(false);
 
   const { data, filtered, view, actions, isLoading } = useDashboardData();
@@ -186,6 +188,7 @@ const Dashboard = () => {
                     onClick={skillModal.methods.openCreateModal}
                     className="flex items-center gap-2 bg-linear-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-6 py-2.5 rounded-lg 
                    text-sm font-bold transition-all active:scale-95 shadow-lg shadow-cyan-500/20 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={!isOnline}
                   >
                     <LuCirclePlus size={18} />
                     <span className="hidden md:block">Add Skill</span>
@@ -264,7 +267,7 @@ const Dashboard = () => {
                   className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold capitalize tracking-widest 
                   text-slate-300 hover:text-cyan-400 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/50 hover:border-cyan-500/30
                   rounded-lg transition-all duration-200 active:scale-95 group/btn cursor-pointer disabled:text-slate-600 disabled:bg-slate-900/40 disabled:border-slate-800 disabled:cursor-not-allowed disabled:active:scale-100"
-                  disabled={filtered?.skills.length === 0}
+                  disabled={filtered?.skills.length === 0 || !isOnline}
                 >
                   <span className="hidden sm:inline-block">Expand graph</span>
                   <LuMaximize2

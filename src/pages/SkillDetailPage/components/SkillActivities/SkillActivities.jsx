@@ -12,12 +12,15 @@ import { useActivitiesQuery } from "@shared/hooks/useActivitiesQuery";
 import { formatDateShort, formatDuration } from "@shared/utils/utils";
 import ButtonSpinner from "@shared/components/ui/ButtonSpinner";
 import { AnimatePresence } from "framer-motion";
+import { useIsOnline } from "@shared/components/utils/NetworkStatus/hooks/useNetworkStatus";
 
 function SkillActivities({ skill, skills }) {
   const { activities, isLoading } = useActivitiesQuery(skill.skill_id);
   const { modal, methods, selectedActivity, isSubmitting } = useActivityModal(
     skill.skill_id,
   );
+
+  const isOnline = useIsOnline();
 
   if (!skill) {
     return null;
@@ -47,8 +50,9 @@ function SkillActivities({ skill, skills }) {
 
           <button
             type="button"
-            className="flex items-center justify-center gap-2 bg-linear-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white px-6 py-2.5 rounded-xl shadow-lg shadow-cyan-500/30 transition-all duration-200 text-sm font-bold cursor-pointer active:scale-95"
+            className="flex items-center justify-center gap-2 bg-linear-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white px-6 py-2.5 rounded-xl shadow-lg shadow-cyan-500/30 transition-all duration-200 text-sm font-bold cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={methods.openCreateModal}
+            disabled={!isOnline}
           >
             <LuAlarmClockPlus size={18} />
             <span>Log activity</span>
@@ -161,18 +165,20 @@ function SkillActivities({ skill, skills }) {
                         </div>
                         <div className="flex gap-3 shrink-0">
                           <button
-                            className="text-cyan-400 active:scale-95"
+                            className="text-cyan-400 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                             onClick={() => methods.openEditModal(activity)}
                             type="button"
                             aria-label={`Edit activity ${activity.id}`}
+                            disabled={!isOnline}
                           >
                             <LuPencil size={16} />
                           </button>
                           <button
-                            className="text-rose-400 active:scale-95"
+                            className="text-rose-400 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                             onClick={() => methods.openDeleteModal(activity)}
                             type="button"
                             aria-label={`Delete activity ${activity.id}`}
+                            disabled={!isOnline}
                           >
                             <LuTrash2 size={16} />
                           </button>

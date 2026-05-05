@@ -1,4 +1,5 @@
 import { LuTrash2, LuExternalLink } from "react-icons/lu";
+import { useIsOnline } from "@shared/components/utils/NetworkStatus/hooks/useNetworkStatus";
 
 const CATEGORIES = {
   frontend: {
@@ -28,6 +29,8 @@ const CATEGORIES = {
 };
 
 export const TrackList = ({ tracks = [], onDelete }) => {
+  const isOnline = useIsOnline();
+
   return (
     <div className="grid gap-3">
       {tracks.map((track) => {
@@ -96,8 +99,9 @@ export const TrackList = ({ tracks = [], onDelete }) => {
                     onClick={() => {
                       onDelete(track.track_id, track.title);
                     }}
-                    className="p-2 text-slate-500 hover:text-rose-400 hover:bg-rose-400/10 rounded-lg transition-all duration-200 cursor-pointer"
+                    className="p-2 text-slate-500 hover:text-rose-400 hover:bg-rose-400/10 rounded-lg transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     aria-label={`Delete track ${track.title}`}
+                    disabled={!isOnline}
                   >
                     <LuTrash2 size={18} />
                   </button>

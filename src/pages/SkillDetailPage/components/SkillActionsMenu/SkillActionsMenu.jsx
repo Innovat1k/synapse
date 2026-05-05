@@ -5,6 +5,7 @@ import {
   LuTrash2,
   LuX,
 } from "react-icons/lu";
+import { useIsOnline } from "@shared/components/utils/NetworkStatus/hooks/useNetworkStatus";
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
@@ -17,14 +18,17 @@ function SkillActionsMenu({
   methods,
   openGraphModal,
 }) {
+  const isOnline = useIsOnline();
+
   return (
     <div className="relative">
       {!actionsMenu.isOpened && (
         <button
           type="button"
           aria-label="Open skill actions"
-          className="p-2.5 rounded-lg border active:scale-95 border-slate-800/50 bg-[#1a2332]/50 hover:border-cyan-500/40 hover:text-cyan-400 text-slate-400 transition-all duration-200 cursor-pointer"
+          className="p-2.5 rounded-lg border active:scale-95 border-slate-800/50 bg-[#1a2332]/50 hover:border-cyan-500/40 hover:text-cyan-400 text-slate-400 transition-all duration-200 cursor-pointer disabled:opacity-50"
           onClick={actionsMenu.handleToggle}
+          disabled={!isOnline}
         >
           <LuEllipsis size={20} aria-hidden="true" />
         </button>
@@ -70,7 +74,8 @@ function SkillActionsMenu({
                     openGraphModal();
                     actionsMenu.handleToggle();
                   }}
-                  className="w-full md:hidden flex items-center gap-3 px-3 py-2.5 text-sm text-slate-300 hover:bg-cyan-500/10 hover:text-cyan-400 transition-all duration-200 rounded-lg cursor-pointer group"
+                  className="w-full md:hidden flex items-center gap-3 px-3 py-2.5 text-sm text-slate-300 hover:bg-cyan-500/10 hover:text-cyan-400 transition-all duration-200 rounded-lg cursor-pointer group disabled:opacity-50"
+                  disabled={!isOnline}
                 >
                   <LuBrainCircuit
                     size={18}
@@ -81,11 +86,12 @@ function SkillActionsMenu({
 
                 <button
                   type="button"
-                  className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-300 hover:bg-slate-800/80 hover:text-slate-100 transition-all duration-200 rounded-lg cursor-pointer group"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-300 hover:bg-slate-800/80 hover:text-slate-100 transition-all duration-200 rounded-lg cursor-pointer group disabled:opacity-50"
                   onClick={() => {
                     methods.openEditModal(skill);
                     actionsMenu.handleToggle();
                   }}
+                  disabled={!isOnline}
                 >
                   <LuPencil
                     size={18}
@@ -114,7 +120,7 @@ function SkillActionsMenu({
 
                 {/* Purge Activities */}
                 <button
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm transition-all duration-200 rounded-lg ${
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm transition-all duration-200 rounded-lg disabled:opacity-50 ${
                     activityCount === 0
                       ? "opacity-40 cursor-not-allowed text-slate-500"
                       : "text-rose-500 hover:bg-rose-500/10 cursor-pointer font-bold"
@@ -125,7 +131,7 @@ function SkillActionsMenu({
                       actionsMenu.handleToggle();
                     }
                   }}
-                  disabled={activityCount === 0}
+                  disabled={activityCount === 0 || !isOnline}
                   type="button"
                 >
                   <LuTrash2 size={18} />

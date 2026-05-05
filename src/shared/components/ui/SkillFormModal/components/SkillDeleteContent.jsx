@@ -1,5 +1,6 @@
 import { LuX } from "react-icons/lu";
 import ButtonSpinner from "../../ButtonSpinner";
+import { useIsOnline } from "@shared/components/utils/NetworkStatus/hooks/useNetworkStatus";
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
@@ -11,6 +12,8 @@ const SkillDeleteContent = ({
   onDelete,
   onClose,
 }) => {
+  const isOnline = useIsOnline();
+
   return (
     <motion.div
       initial={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -55,6 +58,7 @@ const SkillDeleteContent = ({
                 Keep it
               </button>
               <button
+                disabled={!isOnline}
                 type="button"
                 onClick={() => onDelete(initialData)}
                 className="flex-1 px-6 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-all duration-200 text-sm font-bold shadow-lg shadow-rose-500/20 cursor-pointer active:scale-95 order-1 md:order-2"

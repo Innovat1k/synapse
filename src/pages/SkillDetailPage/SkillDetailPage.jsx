@@ -15,6 +15,7 @@ import { useSubgraph } from "./components/GraphModal/hooks/useSubgraph";
 import { GraphView } from "./components/GraphModal/GraphView";
 import ButtonSpinner from "@shared/components/ui/ButtonSpinner";
 import { useTracks } from "../Settings/app/tracks/hooks/useTracks";
+import { useIsOnline } from "@shared/components/utils/NetworkStatus/hooks/useNetworkStatus";
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
@@ -31,6 +32,8 @@ function SkillDetailPage() {
   const { data: subgraphData, isLoading: isGraphLoading } =
     useSubgraph(skillId);
   const { data: trackData } = useTracks(skill);
+
+  const isOnline = useIsOnline();
 
   return (
     <>
@@ -75,8 +78,9 @@ function SkillDetailPage() {
               <button
                 type="button"
                 onClick={openGraphModal}
-                className="flex-1 md:flex-none items-center active:scale-95 justify-center gap-2 px-4 py-2.5 rounded-lg cursor-pointer hidden md:flex bg-[#1a2332] hover:bg-[#232d3f] border border-slate-800/50 hover:border-cyan-500/40 text-slate-200 transition-all duration-200 shadow-lg shadow-cyan-500/10 group"
+                className="flex-1 md:flex-none items-center active:scale-95 justify-center gap-2 px-4 py-2.5 rounded-lg cursor-pointer hidden md:flex bg-[#1a2332] hover:bg-[#232d3f] border border-slate-800/50 hover:border-cyan-500/40 text-slate-200 transition-all duration-200 shadow-lg shadow-cyan-500/10 group disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-label={`View knowledge graph for ${skill?.name}`}
+                disabled={!isOnline}
               >
                 <LuBrainCircuit
                   size={18}

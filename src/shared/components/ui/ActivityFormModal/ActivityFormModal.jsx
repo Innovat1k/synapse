@@ -6,6 +6,7 @@ import DeleteModal from "../DeleteModal";
 import DatetimeInput from "./components/DatetimeInput/DatetimeInput";
 import SelectInput from "./components/SelectInput";
 import { Modal } from "../Modal/Modal";
+import { useIsOnline } from "@shared/components/utils/NetworkStatus/hooks/useNetworkStatus";
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
@@ -31,6 +32,8 @@ function ActivityFormModal({
     "administration/setup",
     "other",
   ];
+
+  const isOnline = useIsOnline();
 
   const isBlocked = allSkills.length === 0;
   const isSkillContext = !!skill;
@@ -269,7 +272,7 @@ function ActivityFormModal({
             </button>
             <button
               type="submit"
-              disabled={!isFormValid || isSubmitting}
+              disabled={!isFormValid || isSubmitting || !isOnline}
               className="px-6 py-2.5 bg-linear-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-lg transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-cyan-500/20 w-full sm:w-auto cursor-pointer font-bold active:scale-95"
             >
               {isSubmitting ? (

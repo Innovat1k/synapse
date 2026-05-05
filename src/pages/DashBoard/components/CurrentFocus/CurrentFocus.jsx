@@ -7,6 +7,7 @@ import {
   LuArrowRight,
 } from "react-icons/lu";
 import ProgressCircle from "../ProgressCircle";
+import { useIsOnline } from "@shared/components/utils/NetworkStatus/hooks/useNetworkStatus";
 
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
@@ -59,6 +60,8 @@ const LEVEL_MESSAGES = {
 };
 
 const CurrentFocus = ({ data, isLoading, error, onLogActivity }) => {
+  const isOnline = useIsOnline();
+
   const progressPercent = Math.min((data?.skill_level / 5) * 100, 100);
   const duration = Math.round((data?.total_minutes / 60) * 10) / 10;
 
@@ -104,7 +107,8 @@ const CurrentFocus = ({ data, isLoading, error, onLogActivity }) => {
           }}
           className="group mt-6 flex items-center gap-2 px-4 py-2 bg-slate-800/40 hover:bg-slate-800/60
           border border-slate-700/50 hover:border-cyan-500/40 rounded-lg text-sm font-medium
-          text-slate-400 hover:text-cyan-300 transition-all duration-200 cursor-pointer active:scale-95 group/log"
+          text-slate-400 hover:text-cyan-300 transition-all duration-200 cursor-pointer active:scale-95 group/log disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={!isOnline}
         >
           <LuPlus
             size={14}
@@ -229,7 +233,8 @@ const CurrentFocus = ({ data, isLoading, error, onLogActivity }) => {
                  text-white px-6 py-3 rounded-xl 
                  text-sm font-bold shadow-lg shadow-cyan-500/20
                  hover:from-cyan-400 hover:to-blue-500 hover:shadow-lg hover:shadow-cyan-500/30 
-                 transition-all duration-200 cursor-pointer active:scale-95"
+                 transition-all duration-200 cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!isOnline}
           >
             <LuPlus size={16} />
             Log for {data?.skill_name}
@@ -239,7 +244,8 @@ const CurrentFocus = ({ data, isLoading, error, onLogActivity }) => {
           <button
             onClick={() => onLogActivity(null)}
             className="w-full text-xs text-slate-500 hover:text-cyan-300 
-                 font-medium text-center py-3 mt-2 transition-colors duration-200 cursor-pointer uppercase"
+                 font-medium text-center py-3 mt-2 transition-colors duration-200 cursor-pointer uppercase disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!isOnline}
           >
             Log other activity →
           </button>

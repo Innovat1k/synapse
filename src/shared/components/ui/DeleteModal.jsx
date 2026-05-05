@@ -1,12 +1,15 @@
 import ButtonSpinner from "./ButtonSpinner";
 import { formatDateShort } from "@utils/utils";
 import { forwardRef } from "react";
+import { useIsOnline } from "@shared/components/utils/NetworkStatus/hooks/useNetworkStatus";
 
 const DeleteModal = forwardRef(
   (
     { entity = "skill", initialData, isSubmitting, closeModal, confirmDelete },
     ref,
   ) => {
+    const isOnline = useIsOnline();
+
     return (
       <div ref={ref} className="space-y-6">
         <div className="absolute inset-0 rounded-xl bg-linear-to-br from-transparent via-rose-500/5 to-transparent pointer-events-none opacity-40"></div>
@@ -59,6 +62,7 @@ const DeleteModal = forwardRef(
               </button>
               <button
                 type="submit"
+                disabled={!isOnline}
                 onClick={() => confirmDelete(initialData)}
                 className="flex-1 px-6 py-2.5 order-1 sm:order-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-all duration-200 text-sm sm:text-base shadow-lg shadow-rose-500/20 cursor-pointer font-bold active:scale-95"
               >

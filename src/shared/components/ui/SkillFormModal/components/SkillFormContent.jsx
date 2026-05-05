@@ -1,6 +1,7 @@
 import { LuPlus, LuTriangleAlert } from "react-icons/lu";
 import SelectInput from "../../ActivityFormModal/components/SelectInput";
 import ButtonSpinner from "../../ButtonSpinner";
+import { useIsOnline } from "@shared/components/utils/NetworkStatus/hooks/useNetworkStatus";
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
@@ -19,6 +20,8 @@ const SkillFormContent = ({
   createForm,
   onClose,
 }) => {
+  const isOnline = useIsOnline();
+
   return (
     <div className="relative">
       {/* Glow effect */}
@@ -255,8 +258,8 @@ const SkillFormContent = ({
           </button>
           <button
             type="submit"
-            disabled={isSubmitting}
-            className="px-6 py-2.5 bg-linear-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-lg transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed font-bold shadow-lg shadow-cyan-500/20 cursor-pointer active:scale-95 order-1 md:order-2"
+            disabled={!isOnline || isSubmitting}
+            className="px-6 py-2.5 bg-linear-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-bold shadow-lg shadow-cyan-500/20 cursor-pointer active:scale-95 order-1 md:order-2"
           >
             {isSubmitting ? (
               <ButtonSpinner

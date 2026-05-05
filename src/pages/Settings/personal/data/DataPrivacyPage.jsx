@@ -11,6 +11,7 @@ import ButtonSpinner from "@shared/components/ui/ButtonSpinner";
 import { useSkillsQuery } from "@shared/hooks/useSkillsQuery";
 import { useAllActivitiesQuery } from "@shared/hooks/useActivitiesQuery";
 import { useTracksQuery } from "@shared/hooks/useTracksQuery";
+import { useIsOnline } from "@shared/components/utils/NetworkStatus/hooks/useNetworkStatus";
 
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
@@ -33,6 +34,8 @@ const DataPrivacyPage = () => {
     skills.length === 0 &&
     activities.length === 0 &&
     tracks.length === 0;
+
+  const isOnline = useIsOnline();
 
   return (
     <motion.div
@@ -125,11 +128,11 @@ const DataPrivacyPage = () => {
             <button
               type="button"
               onClick={() => setIsResetModalOpen(true)}
-              disabled={isDataEmpty}
-              className={`flex items-center gap-2 text-white px-6 py-2.5 rounded-lg transition-all duration-200 font-bold text-sm ${
+              disabled={isDataEmpty || !isOnline}
+              className={`flex items-center gap-2 text-white px-6 py-2.5 rounded-lg transition-all duration-200 font-bold text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
                 isDataEmpty
-                  ? "bg-slate-800/50 text-slate-500 cursor-not-allowed"
-                  : "bg-rose-600 hover:bg-rose-700 cursor-pointer active:scale-95"
+                  ? "bg-slate-800/50 text-slate-500"
+                  : "bg-rose-600 hover:bg-rose-700 active:scale-95"
               }`}
             >
               <LuTrash2 size={18} />

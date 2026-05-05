@@ -5,10 +5,13 @@ import Header from "@shared/components/layout/Header";
 import NavBar from "@shared/components/layout/NavBar";
 import Loader from "@shared/components/ui/Loader";
 import ScrollToTop from "@shared/components/utils/ScrollToTop";
+import NetworkStatus from "@shared/components/utils/NetworkStatus/NetworkStatus";
+import { useNetworkStatus } from "@shared/components/utils/NetworkStatus/hooks/useNetworkStatus";
 
 function App() {
   const { loader, methods, user } = useAuth();
   useAuthRedirect();
+  useNetworkStatus();
 
   if (loader.isInitialLoading && !loader.isSigningOut) {
     return <Loader />;
@@ -20,6 +23,8 @@ function App() {
   return (
     <>
       <ScrollToTop />
+      <NetworkStatus />
+
       <div className="relative min-h-screen flex flex-col bg-[#0a0e1a] text-slate-50 selection:bg-cyan-500/30">
         <Header signOut={methods.handleSignOut} user={user} />
 
