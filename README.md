@@ -9,6 +9,7 @@
 
 - [📝 Description](#-description)
 - [✨ Features](#-features)
+- [🌐 Offline Support](#-offline-support)
 - [🔧 Technologies Used](#-technologies-used)
 - [📦 Installation & Usage](#-installation--usage)
 - [🔐 Environment Variables](#-environment-variables)
@@ -39,21 +40,44 @@ The goal is to build a **solid, intuitive, and visually appealing web app**, whi
 - ✅ **UX Polish:** Custom form validation + **Framer Motion** animations
 - ✅ **Protected routes:** Secure access to main app
 - ✅ **CRUD Skills:** Create, Read, Update, Delete skills (name, category, level 1–5)
-- ✅ Linking Skills: Define dependencies & related skills (graph-style relationships)
+- ✅ **Linking Skills:** Define dependencies & related skills (graph-style relationships)
 - ✅ **Log activity** (time spent, sessions) to track effort
-- ✅ Dashboard with progress charts & activity timelines
-- ⬜ User profile management (name, avatar, settings)
+- ✅ **Dashboard** with progress charts & activity timelines (6 interactive widgets)
+- ✅ **Offline UX:** Network status indicator + disabled write actions when offline
+- ✅ **Responsive Design:** Mobile-first layout (filters stack, buttons adapt)
+- ✅ **Empty States:** 6 standardized widgets with hover animations (Framer Motion)
+- ✅ **Error Handling:** Clear feedback for Supabase errors + real-time form validation
+- ✅ **Global State:** Jotai atoms for network status + UI flags
+- ✅ **Testing:** Vitest + React Testing Library (hooks + components)
+- ✅ **Data Management:** User data export and format
+
+---
+
+## 🌐 Offline Support
+
+Synapse detects network status and adapts the UI accordingly:
+
+- 📶 **Network Indicator**: Banner appears when offline (top-center, animated)
+- 🔒 **Write Actions Disabled**: Add/Edit/Delete/Log buttons are disabled when offline
+- 👁️ **Read Actions Active**: Navigation, filters, and view operations remain functional
+- ♻️ **Auto-Retry**: React Query automatically retries failed requests when back online
+
+> Note: Full offline caching (service worker) is planned for v1.1.
 
 ---
 
 ## 🔧 Technologies Used
 
-- **Frontend**: React (Vite)
-- **Styling**: Tailwind CSS
-- **Backend & Auth**: Supabase (Auth + Postgres DB)
-- **Animations**: Framer Motion
-- **Routing**: React Router DOM
-- **Charts/Graphs**: Recharts (or Chart.js)
+| **Frontend** | React 19 + Vite |
+| **Styling** | Tailwind CSS |
+| **Animations** | Framer Motion |
+| **State Management** | Jotai (atoms) + React Query (server state) |
+| **Backend & Auth** | Supabase (Auth + Postgres + RLS) |
+| **Routing** | React Router DOM v7 |
+| **Charts/Graphs** | React Flow |
+| **Testing** | Vitest + React Testing Library + userEvent + Mock Service Worker for integration tests |
+| **Icons** | React Icons (Lucide) |
+| **Fonts** | Sora (@fontsource/sora) |
 
 ---
 
@@ -61,7 +85,7 @@ The goal is to build a **solid, intuitive, and visually appealing web app**, whi
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/<YOUR_USERNAME>/synapse.git
+git clone https://github.com/Innovat1k/synapse.git
 cd synapse
 
 # 2. Install dependencies
@@ -93,22 +117,29 @@ VITE_BASE_URL=<your_supabase_url>
 
 ```bash
 src/
-├── atoms/                   # Global state management using Jotai atoms
-├── pages/                   # App pages, organized by feature
-│   ├── UserAuthPage/        # Handles authentication (login/signup)
-│   │   ├── components/      # Page-specific UI components
-│   │   └── hooks/           # Page-specific hooks (form/API handling)
-│   ├── DashboardPage/       # Main dashboard page
-│       ├── components/      # Dashboard widgets, charts, etc.
-│       └── hooks/           # Dashboard hooks (data fetching/state logic)
-├── services/                # API calls, external services, business logic
-├── shared/                  # Reusable code across the project
-│   ├── __tests__/           # Test helpers
-│   ├── components/          # Generic UI components
-│   ├── hooks/               # Generic hooks
-│   ├── utils/               # Utility functions/helpers
-├── App.jsx                  # Main entry point; renders routes & providers
-└── main.jsx                 # App bootstrap; mounts <App /> into DOM
+├── atoms/                  # Jotai atoms (global state: network, UI flags)
+├── pages/                  # App pages by feature
+│   ├── UserAuthPage/       # Authentication (login/signup)
+│   │   ├── components/     # Page-specific UI components
+│   │   └── hooks/          # Auth hooks (form/API handling)
+│   ├── DashboardPage/      # Main dashboard
+│       ├── components/     # Widgets, charts, filters
+│       └── hooks/          # Data fetching + state logic
+├── features/               # Feature-based modules (skills, activities, tracks)
+│   ├── skills/
+│   ├── activities/
+│   └── tracks/
+├── services/               # Supabase API calls + business logic
+├── shared/
+│   ├── components/
+│   │   ├── ui/             # Primitives: Button, Card, Modal, Loader
+│   │   ├── layout/         # Header, NavBar, Sidebar
+│   │   └── utils/          # NetworkStatus, ScrollToTop, Fallback
+│   ├── hooks/              # Reusable hooks (useNetworkStatus, useIsOnline)
+│   ├── utils/              # Helpers, formatters, validators
+│   └── __tests__/          # Test utilities + global mocks
+├── App.jsx                 # Main entry + providers + NetworkStatus
+└── main.jsx                # Bootstrap + font imports
 ```
 
 ---
@@ -146,6 +177,8 @@ See the [LICENSE](./LICENSE) file for full details.
 
 **Heïdi Al Ihmid Jeremia** – [Innovat1k](https://github.com/Innovat1k)
 Open to **collaboration, feedback, or freelance opportunities**. Reach out anytime!
+
+Built with ❤️ using React, Supabase, and Tailwind CSS
 
 ```
 
