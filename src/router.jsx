@@ -22,7 +22,7 @@ import {
 import DashboardSkeleton from "./pages/DashBoard/components/DashboardSkeleton.jsx";
 import SkillSkeleton from "./pages/SkillDetailPage/components/SkillSkeleton.jsx";
 import SkillsListSkeleton from "./pages/SkillsListPage/components/SkillsListSkeleton.jsx";
-import ComingSoonPage from "./pages/Settings/components/ComingSoonPage.jsx";
+import ComingSoonPage from "./shared/components/utils/ComingSoonPage.jsx";
 import SettingsSkeleton from "./pages/Settings/components/SettingsSkeleton.jsx";
 import PageTransition from "./shared/components/utils/PageTransition.jsx";
 import { AnimatedRoute } from "./shared/components/utils/AnimatedRoute.jsx";
@@ -124,13 +124,43 @@ export const router = createBrowserRouter([
             ),
           },
           { path: "personal/data", element: <DataPrivacyPage /> },
-          { path: "personal/account", element: <ComingSoonPage /> },
-          { path: "personal/general", element: <ComingSoonPage /> },
+          {
+            path: "personal/account",
+            element: <ComingSoonPage feature="Settings" />,
+          },
+          {
+            path: "personal/general",
+            element: <ComingSoonPage feature="Settings" />,
+          },
           { path: "app", element: <AppSettingsPage /> },
           { path: "app/tracks", element: <TracksPage /> },
-          { path: "app/categories", element: <ComingSoonPage /> },
+          {
+            path: "app/categories",
+            element: <ComingSoonPage feature="Settings" />,
+          },
         ],
       },
+      {
+        path: "/projects",
+        element: (
+          <ComingSoonPage
+            feature="projects"
+            title="Projects"
+            description="Organize your skills into projects and track learning goals for each one."
+          />
+        ),
+      },
+      {
+        path: "/goals",
+        element: (
+          <ComingSoonPage
+            feature="goals"
+            title="Goals"
+            description="Set learning milestones, track progress, and celebrate achievements."
+          />
+        ),
+      },
+      { path: "*", element: <FallbackComponent /> },
     ],
   },
 ]);
