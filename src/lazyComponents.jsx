@@ -57,5 +57,5 @@ export const DataPrivacyPage = React.lazy(
 );
 
 export const FallbackComponent = React.lazy(
-  () => import("@shared/components/utils/FallBackComponent.jsx"),
+  () => import("@shared/components/utils/FallbackComponent.jsx"),
 );
